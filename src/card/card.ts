@@ -1,19 +1,12 @@
-import { convertToStaticHtml } from './react-to-html';
-
-type CardInfo = {
-  name: string;
-  count: string;
-  frontTemplate: string;
-  backTemplate: string;
-  [key: string]: string;  // For unknown values
-};
+import { CardInfo } from '../card-info.types';
+import { convertToStaticHtml } from '../react-to-html/react-to-html';
 
 export class Card {
   name: string;
   count: string;
   frontTemplate: string;
   backTemplate: string;
-  unknownValues: Record<string, string>;
+  data: Record<string, string>;
 
   constructor(cardInfo: CardInfo) {
     this.name = cardInfo.name;
@@ -22,9 +15,7 @@ export class Card {
     this.backTemplate = cardInfo.backTemplate;
 
     // Store all unknown values
-    this.unknownValues = Object.keys(cardInfo)
-      .filter(key => !['name', 'count', 'frontTemplate', 'backTemplate'].includes(key))
-      .reduce((acc, key) => ({ ...acc, [key]: cardInfo[key] }), {});
+    this.data = cardInfo;
   }
 
   static from(cardInfo: CardInfo) {
@@ -32,8 +23,8 @@ export class Card {
   }
 
   async toHtml() {
-    const frontHtml = await convertToStaticHtml(this.frontTemplate, this.unknownValues);
-    const backHtml = await convertToStaticHtml(this.backTemplate, this.unknownValues);
+    const frontHtml = await convertToStaticHtml(this.frontTemplate, this.data);
+    const backHtml = await convertToStaticHtml(this.backTemplate, this.data);
     return [frontHtml, backHtml];
   }
 }
