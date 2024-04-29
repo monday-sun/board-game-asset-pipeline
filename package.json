@@ -10,8 +10,9 @@
     "react-card-gen": "./build/react-card-gen.js"
   },
   "scripts": {
+    "react-card-gen": "node ./build/react-card-gen.js",
     "lint": "eslint",
-    "card-gen": "node build/react-card-gen.js",
+    "format": "prettier --write .",
     "build": "tsc",
     "build:watch": "tsc -w",
     "test": "jest"
