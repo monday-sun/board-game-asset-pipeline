@@ -6,6 +6,11 @@
   "repository": "git@github.com:monday-sun/react-card-gen.git",
   "author": "Monday Romelfanger <monday.romelfanger@gmail.com>",
   "license": "MIT",
+  "scripts": {
+    "card-gen": "node build/react-card-gen.js",
+    "build": "tsc",
+    "build:watch": "tsc -w"
+  },
   "devDependencies": {
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
