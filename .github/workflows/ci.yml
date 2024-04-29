@@ -21,15 +21,13 @@ jobs:
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
+        run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
 
-      - uses: actions/cache@v2
+      - uses: actions/cache/save@v3
         id: yarn-cache
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
 
       - name: Install dependencies
         run: yarn install
@@ -41,6 +39,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - uses: actions/cache/restore@v3
+        id: restore-cache
+        with:
+          key: cache-${{ hashFiles('**/yarn.lock') }}
+
+      - name: yarn install
+        run: yarn install --prefer-offline
+
       - name: Run lint
         run: yarn lint
 
@@ -51,6 +57,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - uses: actions/cache/restore@v3
+        id: restore-cache
+        with:
+          key: cache-${{ hashFiles('**/yarn.lock') }}
+
+      - name: yarn install
+        run: yarn install --prefer-offline
+
       - name: Build
         run: yarn build
 
@@ -60,6 +74,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+
+      - uses: actions/cache/restore@v3
+        id: restore-cache
+        with:
+          key: cache-${{ hashFiles('**/yarn.lock') }}
+
+      - name: yarn install
+        run: yarn install --prefer-offline
 
       - name: Run tests
         run: yarn test
