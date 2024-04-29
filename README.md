@@ -1,2 +1,2 @@
 # react-card-gen
-Tool that uses CSV, React, and HtmlToImage for Board Game Card generation
+Tool that uses CSV, React, and html-to-image for Board Game Card generation
