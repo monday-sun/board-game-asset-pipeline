@@ -34,9 +34,9 @@ describe('Card', () => {
     };
     const card = Card.from(cardInfo);
     const html = await card.toHtml();
-    expect(html).toEqual([
-      `Front1${JSON.stringify(cardInfo)}`,
-      `Back1${JSON.stringify(cardInfo)}`,
-    ]);
+    expect(html).toEqual({
+      frontHtml: `Front1${JSON.stringify(cardInfo)}`,
+      backHtml: `Back1${JSON.stringify(cardInfo)}`,
+    });
   });
 });
