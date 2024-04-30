@@ -16,3 +16,5 @@ export class ReactLayoutRenderer implements LayoutRenderer {
     return convertToStaticHtml(templatePath, data);
   }
 }
+
+export const layoutRenderer = new ReactLayoutRenderer();
