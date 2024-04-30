@@ -23,8 +23,16 @@ export class Card {
   }
 
   async toHtml() {
-    const frontHtml = await convertToStaticHtml(this.frontTemplate, this.data);
-    const backHtml = await convertToStaticHtml(this.backTemplate, this.data);
+    const frontHtml = await this.getFrontHtml();
+    const backHtml = await this.getBackHtml();
     return { frontHtml, backHtml };
+  }
+
+  private getFrontHtml(): Promise<string> {
+    return convertToStaticHtml(this.frontTemplate, this.data);
+  }
+
+  private getBackHtml(): Promise<string> {
+    return convertToStaticHtml(this.backTemplate, this.data);
   }
 }
