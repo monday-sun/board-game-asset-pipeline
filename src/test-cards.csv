@@ -1,2 +1,2 @@
 name,count,frontTemplate,backTemplate,message
-a,2,src/react-to-html/test-component,src/react-to-html/test-component,hello
+a,2,../test-component,../test-component,hello
