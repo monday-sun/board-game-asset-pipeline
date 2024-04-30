@@ -1,2 +1,2 @@
 name,count,frontTemplate,backTemplate,message
-a,2,../test-component,../test-component,hello
+a,2,build/test-component,build/test-component,hello
