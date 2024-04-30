@@ -1,5 +1,4 @@
-import { convertToStaticHtml } from '../react-to-html/react-to-html';
-import { CardInfo } from '../types';
+import { CardInfo, LayoutRenderer } from '../types';
 
 export class Card {
   name: string;
@@ -8,7 +7,10 @@ export class Card {
   backTemplate: string;
   data: Record<string, string>;
 
-  constructor(cardInfo: CardInfo) {
+  constructor(
+    cardInfo: CardInfo,
+    private layoutRenderer: LayoutRenderer,
+  ) {
     this.name = cardInfo.name;
     this.count = cardInfo.count;
     this.frontTemplate = cardInfo.frontTemplate;
@@ -18,8 +20,8 @@ export class Card {
     this.data = cardInfo;
   }
 
-  static from(cardInfo: CardInfo) {
-    return new Card(cardInfo);
+  static from(cardInfo: CardInfo, layoutRenderer: LayoutRenderer) {
+    return new Card(cardInfo, layoutRenderer);
   }
 
   async toHtml() {
@@ -29,10 +31,10 @@ export class Card {
   }
 
   private getFrontHtml(): Promise<string> {
-    return convertToStaticHtml(this.frontTemplate, this.data);
+    return this.layoutRenderer.toHTML(this.frontTemplate, this.data);
   }
 
   private getBackHtml(): Promise<string> {
-    return convertToStaticHtml(this.backTemplate, this.data);
+    return this.layoutRenderer.toHTML(this.backTemplate, this.data);
   }
 }
