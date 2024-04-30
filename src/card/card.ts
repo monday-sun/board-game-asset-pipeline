@@ -1,5 +1,5 @@
-import { CardInfo } from '../card-info.types';
 import { convertToStaticHtml } from '../react-to-html/react-to-html';
+import { CardInfo } from '../types';
 
 export class Card {
   name: string;
