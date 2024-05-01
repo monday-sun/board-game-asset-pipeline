@@ -6,9 +6,9 @@ function dashifyCardName(cardName: string): string {
 export function createImageFileName(
   outputPath: string,
   cardName: string,
-  format: string = 'png',
-  cardNumber: number = -1,
   suffix?: string,
+  cardNumber: number = -1,
+  format: string = 'png',
 ): string {
   let cardNumberSuffix = '';
   if (cardNumber >= 1) {
