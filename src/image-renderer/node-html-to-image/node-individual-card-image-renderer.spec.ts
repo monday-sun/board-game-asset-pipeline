@@ -55,8 +55,8 @@ describe('NodeIndividualCardImageRenderer', () => {
     const images = await testSubject.toImages(cardInfos, layoutRenderer);
     expect(images).toEqual([
       'card-1-front-1.png',
-      'card-1-back-1.png',
       'card-1-front-2.png',
+      'card-1-back-1.png',
       'card-1-back-2.png',
     ]);
   });

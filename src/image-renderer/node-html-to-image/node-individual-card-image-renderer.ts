@@ -1,69 +1,85 @@
 import nodeHtmlToImage from 'node-html-to-image';
-import { CardInfo, ImageRenderer, LayoutRenderer } from '../../types';
+import {
+  CardInfo,
+  ImageFileInfo,
+  ImageRenderer,
+  LayoutRenderer,
+} from '../../types';
 import { createImageFileName } from '../../util/image-file-name';
 
-function cardsToImages(
+type ImageRenderInfo = {
+  template: string;
+  data: Record<string, string>;
+  content: { output: string }[];
+};
+
+function createOutputList(info: ImageFileInfo, count: number) {
+  if (count === 1) {
+    return [{ output: createImageFileName(info) }];
+  }
+
+  return Array.from({ length: count }, (_, i) => ({
+    output: createImageFileName({
+      ...info,
+      cardNumber: i + 1,
+    }),
+  }));
+}
+
+function cardsToRenderInfo(
   cardInfos: CardInfo[],
-  layoutRenderer: LayoutRenderer,
-): Promise<string>[] {
+  outputPath: string,
+): ImageRenderInfo[] {
   return cardInfos
-    .map((cardInfo) => cardCopiesToImages(cardInfo, layoutRenderer))
+    .map((cardInfo) => {
+      const fileInfo = {
+        outputPath,
+        cardName: cardInfo.name,
+      };
+      return [
+        {
+          template: cardInfo.frontTemplate,
+          data: cardInfo,
+          content: createOutputList(
+            { ...fileInfo, suffix: 'front' },
+            parseInt(cardInfo.count) || 0,
+          ),
+        },
+        {
+          template: cardInfo.backTemplate,
+          data: cardInfo,
+          content: createOutputList(
+            { ...fileInfo, suffix: 'back' },
+            parseInt(cardInfo.count) || 0,
+          ),
+        },
+      ];
+    })
     .flat();
 }
 
-function cardCopiesToImages(
-  cardInfo: CardInfo,
+function toImages(
+  html: string,
+  content: { output: string }[],
+): Promise<string[]> {
+  return nodeHtmlToImage({ content, html }).then(() =>
+    content.map((c) => c.output),
+  );
+}
+
+function renderImages(
+  renderInfo: ImageRenderInfo[],
   layoutRenderer: LayoutRenderer,
-): Promise<string>[] {
-  const count = parseInt(cardInfo.count, 10) || 0;
-  if (count === 0) {
-    return [];
-  }
-
-  if (count === 1) {
-    // Skip the copy number if there is only one card
-    return cardToImages(cardInfo, layoutRenderer);
-  }
-
-  return Array.from({ length: count }, (_, i) =>
-    cardToImages(cardInfo, layoutRenderer, i + 1),
-  ).flat();
+): Promise<string[]>[] {
+  return renderInfo.map((info) =>
+    info.content.length < 1
+      ? Promise.resolve([])
+      : layoutRenderer.toHTML(info.template, info.data).then((html) => {
+          return toImages(html, info.content);
+        }),
+  );
 }
 
-function cardToImages(
-  cardInfo: CardInfo,
-  layoutRenderer: LayoutRenderer,
-  copyNumber?: number,
-): Promise<string>[] {
-  return [
-    sideToImage(cardInfo, layoutRenderer, 'front', copyNumber),
-    sideToImage(cardInfo, layoutRenderer, 'back', copyNumber),
-  ];
-}
-
-function sideToImage(
-  cardInfo: CardInfo,
-  layoutRenderer: LayoutRenderer,
-  side: 'front' | 'back',
-  copyNumber?: number,
-): Promise<string> {
-  const output = createImageFileName({
-    outputPath: '',
-    cardName: cardInfo.name,
-    suffix: side,
-    cardNumber: copyNumber,
-  });
-  return layoutRenderer
-    .toHTML(cardInfo[`${side}Template`], cardInfo)
-    .then((html) => toImage(html, output));
-}
-
-function toImage(html: string, output: string): Promise<string> {
-  return nodeHtmlToImage({ output, html }).then(() => {
-    console.log('Rendered ', output);
-    return output;
-  });
-}
 class NodeIndividualCardImageRenderer implements ImageRenderer {
   constructor() {}
 
@@ -71,7 +87,10 @@ class NodeIndividualCardImageRenderer implements ImageRenderer {
     cardInfos: CardInfo[],
     layoutRenderer: LayoutRenderer,
   ): Promise<string[]> {
-    return Promise.all(cardsToImages(cardInfos, layoutRenderer));
+    const renderInfo = cardsToRenderInfo(cardInfos, '');
+    return Promise.all(renderImages(renderInfo, layoutRenderer)).then(
+      (images) => images.flat(),
+    );
   }
 }
 
