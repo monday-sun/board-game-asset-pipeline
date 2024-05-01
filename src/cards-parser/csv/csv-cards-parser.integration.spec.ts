@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { createCardsParser } from './csv-to-card-info';
+import { createCardsParser } from './csv-cards-parser';
 
 jest.mock('fs');
 

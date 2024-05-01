@@ -6,7 +6,7 @@ const pathToCSV = './src/test-cards.csv';
 
 let allPromises: Promise<void>[] = [];
 
-import('./csv-to-card-info/csv-to-card-info').then(({ createCardsParser }) => {
+import('./cards-parser/csv/csv-cards-parser').then(({ createCardsParser }) => {
   createCardsParser()
     .parseCards(pathToCSV)
     .then(async (cardInfos) => {

@@ -1,6 +1,6 @@
 import fs from 'fs';
 import * as Papa from 'papaparse';
-import { CardInfo, CardsParser } from '../types';
+import { CardInfo, CardsParser } from '../../types';
 
 async function parseCsvToCardInfo(path: string): Promise<CardInfo[]> {
   const csvFile = fs.readFileSync(path, 'utf8');
