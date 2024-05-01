@@ -7,10 +7,10 @@
   "author": "Monday Romelfanger <monday.romelfanger@gmail.com>",
   "license": "MIT",
   "bin": {
-    "react-card-gen": "./build/react-card-gen.js"
+    "react-card-gen": "./build/src/react-card-gen.js"
   },
   "scripts": {
-    "react-card-gen": "node ./build/react-card-gen.js",
+    "react-card-gen": "node ./build/src/react-card-gen.js",
     "clean": "rm -rf ./build",
     "lint": "eslint",
     "format": "prettier --write .",
