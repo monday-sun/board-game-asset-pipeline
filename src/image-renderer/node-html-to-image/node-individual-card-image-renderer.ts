@@ -47,7 +47,12 @@ function sideToImage(
   side: 'front' | 'back',
   copyNumber?: number,
 ): Promise<string> {
-  const output = createImageFileName('', cardInfo.name, side, copyNumber);
+  const output = createImageFileName({
+    outputPath: '',
+    cardName: cardInfo.name,
+    suffix: side,
+    cardNumber: copyNumber,
+  });
   return layoutRenderer
     .toHTML(cardInfo[`${side}Template`], cardInfo)
     .then((html) => toImage(html, output));
