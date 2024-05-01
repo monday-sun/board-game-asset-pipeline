@@ -1,15 +1,9 @@
 import path from 'path';
+import { ImageFileInfo } from '../types';
 
 function dashifyCardName(cardName: string): string {
   return cardName.replace(/ /g, '-').toLowerCase();
 }
-type ImageFileInfo = {
-  outputPath: string;
-  cardName: string;
-  suffix?: string;
-  cardNumber?: number;
-  format?: string;
-};
 
 export function createImageFileName({
   outputPath,

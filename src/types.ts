@@ -6,6 +6,14 @@ export type CardInfo = {
   [key: string]: string; // For unknown values
 };
 
+export type ImageFileInfo = {
+  outputPath: string;
+  cardName: string;
+  suffix?: string;
+  cardNumber?: number;
+  format?: string;
+};
+
 export interface CardsParser {
   parseCards(cardsDataPath: string): Promise<CardInfo[]>;
 }
