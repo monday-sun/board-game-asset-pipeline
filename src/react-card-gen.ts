@@ -8,7 +8,7 @@ const pathToCSV = './src/test-cards.csv';
 let allPromises: Promise<void>[] = [];
 
 parseCsvToCardInfo(pathToCSV).then(async (cardInfos) => {
-  import('./layout-renderer/react-layout-renderer/react-layout-renderer').then(
+  import('./layout-renderer/react/react-layout-renderer').then(
     ({ layoutRenderer }) => {
       allPromises = cardInfos.map((cardInfo) => {
         return Card.from(cardInfo, layoutRenderer)
