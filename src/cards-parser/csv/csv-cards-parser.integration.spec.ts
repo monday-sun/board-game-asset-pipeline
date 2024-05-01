@@ -17,7 +17,7 @@ Card2,2,Front2,Back2,Unknown2`);
   });
 
   it('should parse a CSV file into a list of CardInfo', async () => {
-    const testSubject = createCardsParser();
+    const testSubject = createCardsParser({} as any);
     const cardInfos = await testSubject.parseCards(fakeCSVPath);
     expect(cardInfos).toEqual([
       {
