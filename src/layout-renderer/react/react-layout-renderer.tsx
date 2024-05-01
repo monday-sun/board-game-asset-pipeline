@@ -4,10 +4,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { Arguements, LayoutRenderer } from '../../types';
 
 export class ReactLayoutRenderer implements LayoutRenderer {
-  constructor(
-    private outputPath: string,
-    private debugHtml: boolean = false,
-  ) {}
+  constructor() {}
 
   toHTML(templatePath: string, data: Record<string, string>): Promise<string> {
     return import(`${cwd()}/${templatePath}`).then(({ default: Component }) => {
@@ -17,5 +14,5 @@ export class ReactLayoutRenderer implements LayoutRenderer {
 }
 
 export function createLayoutRenderer(args: Arguements): LayoutRenderer {
-  return new ReactLayoutRenderer(args.outputDir, args.debugHtml);
+  return new ReactLayoutRenderer();
 }
