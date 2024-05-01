@@ -2,6 +2,7 @@
 
 import fs from 'fs';
 import { findCardsParser } from './cards-parser';
+import { findLayoutRenderer } from './layout-renderer';
 const pathToCSV = './src/test-cards.csv';
 const outputDir = 'output';
 
@@ -12,17 +13,13 @@ if (!fs.existsSync(outputDir)) {
 
 Promise.all([
   findCardsParser('csv'),
-  import('./layout-renderer/react/react-layout-renderer'),
+  findLayoutRenderer('react'),
   import(
     './image-renderer/node-html-to-image/node-individual-card-image-renderer'
   ),
 ])
   .then(
-    ([
-      createCardsParser,
-      { createLayoutRenderer },
-      { createImageRenderer },
-    ]) => {
+    ([createCardsParser, createLayoutRenderer, { createImageRenderer }]) => {
       const cardsParser = createCardsParser();
       const layoutRenderer = createLayoutRenderer();
       const imageRenderer = createImageRenderer(outputDir);
