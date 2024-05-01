@@ -36,4 +36,5 @@ export type Arguements = {
   cardsParser: string;
   layoutRenderer: string;
   imageRenderer: string;
+  debugHtml: boolean;
 };

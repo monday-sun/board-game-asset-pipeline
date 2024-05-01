@@ -14,6 +14,7 @@ const args: Arguements = yargs(process.argv.slice(2))
     cardsParser: { type: 'string', default: 'csv' },
     layoutRenderer: { type: 'string', default: 'react' },
     imageRenderer: { type: 'string', default: 'nodeIndividual' },
+    debugHtml: { type: 'boolean', default: false },
   })
   .parseSync();
 
