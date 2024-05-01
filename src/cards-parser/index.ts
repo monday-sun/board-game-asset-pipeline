@@ -1,6 +1,10 @@
 import { CardsParser } from '../types';
 
-const parserTypes = { ['csv']: './csv/cards-parser' };
+type ParserTypes = {
+  csv: string;
+};
+
+const parserTypes: ParserTypes = { csv: './csv/csv-cards-parser' };
 
 export const findCardsParser = (
   type: keyof typeof parserTypes | string,
