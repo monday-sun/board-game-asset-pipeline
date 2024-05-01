@@ -13,3 +13,10 @@ export interface CardsParser {
 export interface LayoutRenderer {
   toHTML(templatePath: string, data: Record<string, string>): Promise<string>;
 }
+
+export interface ImageRenderer {
+  toImages(
+    cardInfos: CardInfo[],
+    layoutRenderer: LayoutRenderer,
+  ): Promise<string[]>;
+}
