@@ -1,12 +1,21 @@
+import { LayoutRenderer } from '../types';
 import { Card } from './card';
 
-jest.mock('../react-to-html/react-to-html', () => ({
-  convertToStaticHtml: jest.fn((template, props) =>
-    Promise.resolve(template + JSON.stringify(props)),
-  ),
-}));
-
 describe('Card', () => {
+  let mockLayoutRenderer: LayoutRenderer;
+
+  beforeEach(() => {
+    mockLayoutRenderer = {
+      toHTML: jest.fn((template, props) =>
+        Promise.resolve(template + JSON.stringify(props)),
+      ),
+    };
+  });
+
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
   it('should create a Card from CardInfo', () => {
     const cardInfo = {
       name: 'Card1',
@@ -15,7 +24,7 @@ describe('Card', () => {
       backTemplate: 'Back1',
       unknown: 'Unknown1',
     };
-    const card = Card.from(cardInfo);
+    const card = Card.from(cardInfo, mockLayoutRenderer);
     expect(card).toBeInstanceOf(Card);
     expect(card.name).toBe('Card1');
     expect(card.count).toBe('1');
@@ -32,7 +41,8 @@ describe('Card', () => {
       backTemplate: 'Back1',
       unknown: 'Unknown1',
     };
-    const card = Card.from(cardInfo);
+
+    const card = Card.from(cardInfo, mockLayoutRenderer);
     const html = await card.toHtml();
     expect(html).toEqual({
       frontHtml: `Front1${JSON.stringify(cardInfo)}`,
