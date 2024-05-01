@@ -1,4 +1,5 @@
 import React from 'react';
+import { localImageToUri } from '../local-image-to-uri';
 
 interface CardProps {
   name: string;
@@ -14,15 +15,15 @@ const Card: React.FC<CardProps> = ({ name, imageUrl, description }) => {
         width: '200px',
         height: '350px',
         padding: '10px',
+        backgroundColor: 'white',
       }}
     >
       <h2>{name}</h2>
       <img
-        src={`${imageUrl}`}
+        src={`${localImageToUri(imageUrl)}`}
         alt={name}
         style={{ width: '100%', height: '50%' }}
       />
-      <p>{`${imageUrl}`}</p>
       <p>{description}</p>
     </body>
   );

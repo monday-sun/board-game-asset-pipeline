@@ -1,2 +1,2 @@
 name,count,frontTemplate,backTemplate,description,imageUrl,backImageUrl
-"Sample Title",1,"build/examples/basic-layout-with-image/basic-layout-with-image.front","build/examples/basic-layout-back/basic-layout.back","This is a sample description.","https://www.w3schools.com/images/picture.jpg","https://www.w3schools.com/images/picture.jpg"
+"Sample Title",1,"build/examples/basic-layout-with-image/basic-layout-with-image.front","build/examples/basic-layout-back/basic-layout.back","This is a sample description.","./examples/assets/screenshot-todo-1.png","./examples/assets/screenshot-todo-2.png"

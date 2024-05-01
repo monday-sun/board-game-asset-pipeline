@@ -1,4 +1,5 @@
 import React from 'react';
+import { localImageToUri } from '../local-image-to-uri';
 
 interface CardBackProps {
   backImageUrl: string;
@@ -6,9 +7,27 @@ interface CardBackProps {
 
 const CardBack: React.FC<CardBackProps> = ({ backImageUrl }) => {
   return (
-    <div style={{ border: '1px solid #000', width: '200px', padding: '10px' }}>
-      <img src={backImageUrl} alt="Card back" style={{ width: '100%' }} />
-    </div>
+    <body
+      style={{
+        border: '1px solid #000',
+        width: '200px',
+        height: '350px',
+        padding: '10px',
+      }}
+    >
+      <div
+        style={{
+          border: '1px solid #000',
+          padding: '10px',
+        }}
+      >
+        <img
+          src={localImageToUri(backImageUrl)}
+          alt="Card back"
+          style={{ width: '100%' }}
+        />
+      </div>
+    </body>
   );
 };
 
