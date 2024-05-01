@@ -5,9 +5,9 @@ jest.mock('fs');
 
 describe('FileContentWatcher', () => {
   let actualWatchCallBack: (eventType: string, filename: string) => void;
-  let actualReadCallback: (err: any, data: string) => void;
-  let readText = 'file content';
   const mockFsWatch = fs.watch as jest.MockedFunction<any>;
+
+  let actualReadCallback: (err: any, data: string) => void;
   const mockFsReadFile = fs.readFile as jest.MockedFunction<any>;
 
   beforeEach(() => {
