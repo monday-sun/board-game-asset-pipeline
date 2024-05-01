@@ -1,7 +1,7 @@
 import { cwd } from 'process';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { LayoutRenderer } from '../types';
+import { LayoutRenderer } from '../../types';
 
 export async function convertToStaticHtml(
   componentPath: string,
