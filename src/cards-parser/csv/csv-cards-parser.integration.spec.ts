@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { parseCsvToCardInfo } from './csv-to-card-info';
+import { createCardsParser } from './csv-cards-parser';
 
 jest.mock('fs');
 
@@ -17,7 +17,8 @@ Card2,2,Front2,Back2,Unknown2`);
   });
 
   it('should parse a CSV file into a list of CardInfo', async () => {
-    const cardInfos = await parseCsvToCardInfo(fakeCSVPath);
+    const testSubject = createCardsParser();
+    const cardInfos = await testSubject.parseCards(fakeCSVPath);
     expect(cardInfos).toEqual([
       {
         name: 'Card1',

@@ -1,8 +1,9 @@
-import { ReactLayoutRenderer } from './react-layout-renderer';
+import { createLayoutRenderer } from './react-layout-renderer';
 
 describe('convertToStaticHtml', () => {
   it('should render a React component to static HTML with properties', async () => {
-    const html = await new ReactLayoutRenderer().toHTML(
+    const testSubject = createLayoutRenderer();
+    const html = await testSubject.toHTML(
       'src/layout-renderer/react/test-component',
       {
         message: 'Hello, world!',
