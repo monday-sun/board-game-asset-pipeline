@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import fs from 'fs';
+import { findCardsParser } from './cards-parser';
 const pathToCSV = './src/test-cards.csv';
 const outputDir = 'output';
 
@@ -10,7 +11,7 @@ if (!fs.existsSync(outputDir)) {
 }
 
 Promise.all([
-  import('./cards-parser/csv/csv-cards-parser'),
+  findCardsParser('csv'),
   import('./layout-renderer/react/react-layout-renderer'),
   import(
     './image-renderer/node-html-to-image/node-individual-card-image-renderer'
@@ -18,7 +19,7 @@ Promise.all([
 ])
   .then(
     ([
-      { createCardsParser },
+      createCardsParser,
       { createLayoutRenderer },
       { createImageRenderer },
     ]) => {
