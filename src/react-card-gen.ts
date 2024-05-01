@@ -7,6 +7,9 @@ import { findLayoutRenderer } from './layout-renderer';
 
 const pathToCSV = './src/test-cards.csv';
 const outputDir = 'output';
+const cardsParser = 'csv';
+const layoutRenderer = 'react';
+const imageRenderer = 'nodeIndividual';
 
 // Ensure the output directory exists
 if (!fs.existsSync(outputDir)) {
@@ -14,9 +17,9 @@ if (!fs.existsSync(outputDir)) {
 }
 
 Promise.all([
-  findCardsParser('csv'),
-  findLayoutRenderer('react'),
-  findImageRenderer('nodeIndividual'),
+  findCardsParser(cardsParser),
+  findLayoutRenderer(layoutRenderer),
+  findImageRenderer(imageRenderer),
 ])
   .then(([createCardsParser, createLayoutRenderer, createImageRenderer]) => {
     const cardsParser = createCardsParser();
