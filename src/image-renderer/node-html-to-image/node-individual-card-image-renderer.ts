@@ -1,6 +1,6 @@
 import { CardInfo, ImageRenderer, LayoutRenderer } from '../../types';
 
-class NodeSingleCardImageRenderer implements ImageRenderer {
+class NodeIndividualCardImageRenderer implements ImageRenderer {
   async toImages(
     cardInfos: CardInfo[],
     layoutRenderer: LayoutRenderer,
@@ -28,5 +28,5 @@ class NodeSingleCardImageRenderer implements ImageRenderer {
 }
 
 export function createImageRenderer(): ImageRenderer {
-  return new NodeSingleCardImageRenderer();
+  return new NodeIndividualCardImageRenderer();
 }
