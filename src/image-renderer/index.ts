@@ -1,4 +1,4 @@
-import { ImageRenderer } from '../types';
+import { Arguements, ImageRenderer } from '../types';
 
 type ImageRenderTypes = { nodeIndividual: string };
 
@@ -8,7 +8,7 @@ const imageRenderTypes: ImageRenderTypes = {
 
 export const findImageRenderer = (
   type: keyof typeof imageRenderTypes | string,
-): Promise<(outputDir: string) => ImageRenderer> => {
+): Promise<(args: Arguements) => ImageRenderer> => {
   return (
     type in imageRenderTypes
       ? import(imageRenderTypes[type as keyof typeof imageRenderTypes])

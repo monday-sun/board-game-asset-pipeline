@@ -1,4 +1,4 @@
-import { LayoutRenderer } from '../types';
+import { Arguements, LayoutRenderer } from '../types';
 
 type LayoutRenderTypes = { react: string };
 
@@ -8,7 +8,7 @@ const layoutRenderTypes: LayoutRenderTypes = {
 
 export const findLayoutRenderer = (
   type: keyof typeof layoutRenderTypes | string,
-): Promise<() => LayoutRenderer> => {
+): Promise<(args: Arguements) => LayoutRenderer> => {
   return (
     type in layoutRenderTypes
       ? import(layoutRenderTypes[type as keyof typeof layoutRenderTypes])

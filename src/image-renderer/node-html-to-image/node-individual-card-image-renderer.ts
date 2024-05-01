@@ -1,5 +1,6 @@
 import nodeHtmlToImage from 'node-html-to-image';
 import {
+  Arguements,
   CardInfo,
   ImageFileInfo,
   ImageRenderer,
@@ -94,6 +95,6 @@ class NodeIndividualCardImageRenderer implements ImageRenderer {
   }
 }
 
-export function createImageRenderer(outputPath: string): ImageRenderer {
-  return new NodeIndividualCardImageRenderer(outputPath);
+export function createImageRenderer(args: Arguements): ImageRenderer {
+  return new NodeIndividualCardImageRenderer(args.outputDir);
 }
