@@ -26,7 +26,7 @@ function cardCopiesToImages(
   }
 
   return Array.from({ length: count }, (_, i) =>
-    cardToImages(cardInfo, layoutRenderer, i),
+    cardToImages(cardInfo, layoutRenderer, i + 1),
   ).flat();
 }
 

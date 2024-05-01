@@ -34,7 +34,12 @@ describe('NodeIndividualCardImageRenderer', () => {
     ];
     const testSubject = createImageRenderer();
     const images = await testSubject.toImages(cardInfos, layoutRenderer);
-    expect(images.length).toBe(4);
+    expect(images).toEqual([
+      'card-1-front.png',
+      'card-1-back.png',
+      'card-2-front.png',
+      'card-2-back.png',
+    ]);
   });
 
   it('should create images for each copy of a card', async () => {
@@ -48,6 +53,11 @@ describe('NodeIndividualCardImageRenderer', () => {
     ];
     const testSubject = createImageRenderer();
     const images = await testSubject.toImages(cardInfos, layoutRenderer);
-    expect(images.length).toBe(4);
+    expect(images).toEqual([
+      'card-1-front-1.png',
+      'card-1-back-1.png',
+      'card-1-front-2.png',
+      'card-1-back-2.png',
+    ]);
   });
 });
