@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { createFileProvider } from './file-content-watcher';
+import { createFileProvider } from './watch-content';
 
 jest.mock('fs');
 

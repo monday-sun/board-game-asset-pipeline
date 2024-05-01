@@ -2,7 +2,7 @@ import fs from 'fs';
 import { Subject } from 'rxjs';
 import { FileProvider } from '../../types';
 
-class FileContentWatcher implements FileProvider {
+class WatchContent implements FileProvider {
   private subject = new Subject<string>();
 
   constructor() {}
@@ -31,7 +31,7 @@ class FileContentWatcher implements FileProvider {
 }
 
 export function createFileProvider(filePath: string) {
-  const fileWatcher = new FileContentWatcher();
+  const fileWatcher = new WatchContent();
   fileWatcher.startWatch(filePath);
   return fileWatcher;
 }

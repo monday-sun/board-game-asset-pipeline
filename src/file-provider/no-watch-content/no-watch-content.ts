@@ -5,7 +5,7 @@ import { FileProvider } from '../../types';
 
 const readFile = util.promisify(fs.readFile);
 
-class ContentNoWatchProvider implements FileProvider {
+class NoWatchContent implements FileProvider {
   constructor(private filePath: string) {}
 
   stream(): Observable<string> {
@@ -14,6 +14,6 @@ class ContentNoWatchProvider implements FileProvider {
 }
 
 export function createFileProvider(filePath: string) {
-  const fileWatcher = new ContentNoWatchProvider(filePath);
+  const fileWatcher = new NoWatchContent(filePath);
   return fileWatcher;
 }
