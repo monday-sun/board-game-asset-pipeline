@@ -1,3 +1,5 @@
+import { Observable } from 'rxjs';
+
 export type CardInfo = {
   name: string;
   count: string;
@@ -38,3 +40,6 @@ export type Arguements = {
   imageRenderer: string;
   debugHtml: boolean;
 };
+export interface FileProvider {
+  stream(): Observable<string>;
+}
