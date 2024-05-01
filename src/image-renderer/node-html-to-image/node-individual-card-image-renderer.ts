@@ -1,29 +1,17 @@
+import nodeHtmlToImage from 'node-html-to-image';
 import { CardInfo, ImageRenderer, LayoutRenderer } from '../../types';
-
 class NodeIndividualCardImageRenderer implements ImageRenderer {
+  constructor() {}
+
   async toImages(
     cardInfos: CardInfo[],
     layoutRenderer: LayoutRenderer,
   ): Promise<string[]> {
-    return Promise.all(
-      cardInfos.map(async (cardInfo) => {
-        const frontHtml = await layoutRenderer.toHTML(
-          cardInfo.frontTemplate,
-          cardInfo,
-        );
-        const backHtml = await layoutRenderer.toHTML(
-          cardInfo.backTemplate,
-          cardInfo,
-        );
-
-        return this.toImage(frontHtml, backHtml);
-      }),
-    );
+    return Promise.resolve(['todo']);
   }
 
-  private toImage(frontHtml: string, backHtml: string): string {
-    // Render the front and back HTML to a single image
-    return 'image';
+  private toImage(html: string, output: string): Promise<string> {
+    return nodeHtmlToImage({ output, html }).then(() => output);
   }
 }
 
