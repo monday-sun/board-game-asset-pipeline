@@ -81,19 +81,19 @@ function renderImages(
 }
 
 class NodeIndividualCardImageRenderer implements ImageRenderer {
-  constructor() {}
+  constructor(private outputPath: string) {}
 
   async toImages(
     cardInfos: CardInfo[],
     layoutRenderer: LayoutRenderer,
   ): Promise<string[]> {
-    const renderInfo = cardsToRenderInfo(cardInfos, '');
+    const renderInfo = cardsToRenderInfo(cardInfos, this.outputPath);
     return Promise.all(renderImages(renderInfo, layoutRenderer)).then(
       (images) => images.flat(),
     );
   }
 }
 
-export function createImageRenderer(): ImageRenderer {
-  return new NodeIndividualCardImageRenderer();
+export function createImageRenderer(outputPath: string): ImageRenderer {
+  return new NodeIndividualCardImageRenderer(outputPath);
 }

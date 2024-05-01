@@ -1,6 +1,13 @@
 #!/usr/bin/env node
 
+import fs from 'fs';
 const pathToCSV = './src/test-cards.csv';
+const outputDir = 'output';
+
+// Ensure the output directory exists
+if (!fs.existsSync(outputDir)) {
+  fs.mkdirSync(outputDir);
+}
 
 Promise.all([
   import('./cards-parser/csv/csv-cards-parser'),
@@ -17,7 +24,7 @@ Promise.all([
     ]) => {
       const cardsParser = createCardsParser();
       const layoutRenderer = createLayoutRenderer();
-      const imageRenderer = createImageRenderer();
+      const imageRenderer = createImageRenderer(outputDir);
 
       return cardsParser.parseCards(pathToCSV).then((cardInfos) => {
         return imageRenderer.toImages(cardInfos, layoutRenderer);

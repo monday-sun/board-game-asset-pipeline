@@ -32,13 +32,13 @@ describe('NodeIndividualCardImageRenderer', () => {
         backTemplate: 'Back',
       },
     ];
-    const testSubject = createImageRenderer();
+    const testSubject = createImageRenderer('output');
     const images = await testSubject.toImages(cardInfos, layoutRenderer);
     expect(images).toEqual([
-      'card-1-front.png',
-      'card-1-back.png',
-      'card-2-front.png',
-      'card-2-back.png',
+      'output/card-1-front.png',
+      'output/card-1-back.png',
+      'output/card-2-front.png',
+      'output/card-2-back.png',
     ]);
   });
 
@@ -51,13 +51,13 @@ describe('NodeIndividualCardImageRenderer', () => {
         backTemplate: 'Back',
       },
     ];
-    const testSubject = createImageRenderer();
+    const testSubject = createImageRenderer('output-path');
     const images = await testSubject.toImages(cardInfos, layoutRenderer);
     expect(images).toEqual([
-      'card-1-front-1.png',
-      'card-1-front-2.png',
-      'card-1-back-1.png',
-      'card-1-back-2.png',
+      'output-path/card-1-front-1.png',
+      'output-path/card-1-front-2.png',
+      'output-path/card-1-back-1.png',
+      'output-path/card-1-back-2.png',
     ]);
   });
 });
