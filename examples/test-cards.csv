@@ -1,0 +1,3 @@
+name,count,frontTemplate,backTemplate,bonus,development,test,architecture,design
+a,2,build/examples/test-component,build/examples/test-component,hello,1,2,3,4
+b,1,build/examples/test-component,build/examples/test-component,goobye,4,0,0,1

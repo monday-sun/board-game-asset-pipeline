@@ -28,3 +28,13 @@ export interface ImageRenderer {
     layoutRenderer: LayoutRenderer,
   ): Promise<string[]>;
 }
+
+export type Arguements = {
+  [x: string]: unknown;
+  cardList: string;
+  outputDir: string;
+  cardsParser: string;
+  layoutRenderer: string;
+  imageRenderer: string;
+  debugHtml: boolean;
+};

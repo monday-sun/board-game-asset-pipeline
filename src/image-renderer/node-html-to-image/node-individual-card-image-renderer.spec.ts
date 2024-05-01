@@ -32,7 +32,7 @@ describe('NodeIndividualCardImageRenderer', () => {
         backTemplate: 'Back',
       },
     ];
-    const testSubject = createImageRenderer('output');
+    const testSubject = createImageRenderer({ outputDir: 'output' } as any);
     const images = await testSubject.toImages(cardInfos, layoutRenderer);
     expect(images).toEqual([
       'output/card-1-front.png',
@@ -51,7 +51,9 @@ describe('NodeIndividualCardImageRenderer', () => {
         backTemplate: 'Back',
       },
     ];
-    const testSubject = createImageRenderer('output-path');
+    const testSubject = createImageRenderer({
+      outputDir: 'output-path',
+    } as any);
     const images = await testSubject.toImages(cardInfos, layoutRenderer);
     expect(images).toEqual([
       'output-path/card-1-front-1.png',

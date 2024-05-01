@@ -1,3 +1,0 @@
-name,count,frontTemplate,backTemplate,message
-a,2,build/test-component,build/test-component,hello
-b,1,build/test-component,build/test-component,goobye

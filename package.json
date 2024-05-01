@@ -7,10 +7,10 @@
   "author": "Monday Romelfanger <monday.romelfanger@gmail.com>",
   "license": "MIT",
   "bin": {
-    "react-card-gen": "./build/react-card-gen.js"
+    "react-card-gen": "./build/src/react-card-gen.js"
   },
   "scripts": {
-    "react-card-gen": "node ./build/react-card-gen.js",
+    "react-card-gen": "node ./build/src/react-card-gen.js",
     "clean": "rm -rf ./build",
     "lint": "eslint",
     "format": "prettier --write .",
@@ -20,6 +20,8 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.1.1",
+    "@testing-library/jest-dom": "^6.4.2",
+    "@testing-library/react": "^15.0.5",
     "@types/jest": "^29.5.12",
     "@types/node": "^20.12.7",
     "@types/papaparse": "^5.3.14",

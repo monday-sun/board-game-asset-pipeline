@@ -5,17 +5,21 @@ import yargs from 'yargs';
 import { findCardsParser } from './cards-parser';
 import { findImageRenderer } from './image-renderer';
 import { findLayoutRenderer } from './layout-renderer';
+import { Arguements } from './types';
+
+const args: Arguements = yargs(process.argv.slice(2))
+  .options({
+    cardList: { type: 'string', demandOption: true },
+    outputDir: { type: 'string', default: 'output' },
+    cardsParser: { type: 'string', default: 'csv' },
+    layoutRenderer: { type: 'string', default: 'react' },
+    imageRenderer: { type: 'string', default: 'nodeIndividual' },
+    debugHtml: { type: 'boolean', default: false },
+  })
+  .parseSync();
 
 const { cardList, outputDir, cardsParser, layoutRenderer, imageRenderer } =
-  yargs(process.argv.slice(2))
-    .options({
-      cardList: { type: 'string', demandOption: true },
-      outputDir: { type: 'string', default: 'output' },
-      cardsParser: { type: 'string', default: 'csv' },
-      layoutRenderer: { type: 'string', default: 'react' },
-      imageRenderer: { type: 'string', default: 'nodeIndividual' },
-    })
-    .parseSync();
+  args;
 
 // Ensure the output directory exists
 if (!fs.existsSync(outputDir)) {
@@ -28,9 +32,9 @@ Promise.all([
   findImageRenderer(imageRenderer),
 ])
   .then(([createCardsParser, createLayoutRenderer, createImageRenderer]) => {
-    const cardsParser = createCardsParser();
-    const layoutRenderer = createLayoutRenderer();
-    const imageRenderer = createImageRenderer(outputDir);
+    const cardsParser = createCardsParser(args);
+    const layoutRenderer = createLayoutRenderer(args);
+    const imageRenderer = createImageRenderer(args);
 
     return cardsParser.parseCards(cardList).then((cardInfos) => {
       return imageRenderer.toImages(cardInfos, layoutRenderer);
