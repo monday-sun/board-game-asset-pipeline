@@ -11,4 +11,6 @@ export class ReactLayoutRenderer implements LayoutRenderer {
   }
 }
 
-export const layoutRenderer = new ReactLayoutRenderer();
+export function createLayoutRenderer(): LayoutRenderer {
+  return new ReactLayoutRenderer();
+}

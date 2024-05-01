@@ -11,7 +11,8 @@ import('./cards-parser/csv/csv-cards-parser').then(({ createCardsParser }) => {
     .parseCards(pathToCSV)
     .then(async (cardInfos) => {
       import('./layout-renderer/react/react-layout-renderer').then(
-        ({ layoutRenderer }) => {
+        ({ createLayoutRenderer }) => {
+          const layoutRenderer = createLayoutRenderer();
           allPromises = cardInfos.map((cardInfo) => {
             return Card.from(cardInfo, layoutRenderer)
               .toHtml()
