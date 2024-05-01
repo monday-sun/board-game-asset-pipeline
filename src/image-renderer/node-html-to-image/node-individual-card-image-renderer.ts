@@ -54,7 +54,10 @@ function sideToImage(
 }
 
 function toImage(html: string, output: string): Promise<string> {
-  return nodeHtmlToImage({ output, html }).then(() => output);
+  return nodeHtmlToImage({ output, html }).then(() => {
+    console.log('Rendered ', output);
+    return output;
+  });
 }
 class NodeIndividualCardImageRenderer implements ImageRenderer {
   constructor() {}

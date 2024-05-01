@@ -1,31 +1,29 @@
 #!/usr/bin/env node
 
-import { Card } from './card/card';
-
 const pathToCSV = './src/test-cards.csv';
 
-let allPromises: Promise<void>[] = [];
+Promise.all([
+  import('./cards-parser/csv/csv-cards-parser'),
+  import('./layout-renderer/react/react-layout-renderer'),
+  import(
+    './image-renderer/node-html-to-image/node-individual-card-image-renderer'
+  ),
+])
+  .then(
+    ([
+      { createCardsParser },
+      { createLayoutRenderer },
+      { createImageRenderer },
+    ]) => {
+      const cardsParser = createCardsParser();
+      const layoutRenderer = createLayoutRenderer();
+      const imageRenderer = createImageRenderer();
 
-import('./cards-parser/csv/csv-cards-parser').then(({ createCardsParser }) => {
-  createCardsParser()
-    .parseCards(pathToCSV)
-    .then(async (cardInfos) => {
-      import('./layout-renderer/react/react-layout-renderer').then(
-        ({ createLayoutRenderer }) => {
-          const layoutRenderer = createLayoutRenderer();
-          allPromises = cardInfos.map((cardInfo) => {
-            return Card.from(cardInfo, layoutRenderer)
-              .toHtml()
-              .then(({ frontHtml, backHtml }) => {
-                console.log('Front HTML: ', frontHtml);
-                console.log('Back HTML: ', backHtml);
-              });
-          });
-        },
-      );
-    });
-});
-
-Promise.all(allPromises).then(() => {
-  console.log('All cards have been processed!');
-});
+      return cardsParser.parseCards(pathToCSV).then((cardInfos) => {
+        return imageRenderer.toImages(cardInfos, layoutRenderer);
+      });
+    },
+  )
+  .then((files) => {
+    console.log(`Rendered ${files.length} cards.`);
+  });
