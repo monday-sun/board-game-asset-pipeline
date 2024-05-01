@@ -2,7 +2,9 @@
 
 import fs from 'fs';
 import { findCardsParser } from './cards-parser';
+import { findImageRenderer } from './image-renderer';
 import { findLayoutRenderer } from './layout-renderer';
+
 const pathToCSV = './src/test-cards.csv';
 const outputDir = 'output';
 
@@ -14,21 +16,17 @@ if (!fs.existsSync(outputDir)) {
 Promise.all([
   findCardsParser('csv'),
   findLayoutRenderer('react'),
-  import(
-    './image-renderer/node-html-to-image/node-individual-card-image-renderer'
-  ),
+  findImageRenderer('nodeIndividual'),
 ])
-  .then(
-    ([createCardsParser, createLayoutRenderer, { createImageRenderer }]) => {
-      const cardsParser = createCardsParser();
-      const layoutRenderer = createLayoutRenderer();
-      const imageRenderer = createImageRenderer(outputDir);
+  .then(([createCardsParser, createLayoutRenderer, createImageRenderer]) => {
+    const cardsParser = createCardsParser();
+    const layoutRenderer = createLayoutRenderer();
+    const imageRenderer = createImageRenderer(outputDir);
 
-      return cardsParser.parseCards(pathToCSV).then((cardInfos) => {
-        return imageRenderer.toImages(cardInfos, layoutRenderer);
-      });
-    },
-  )
+    return cardsParser.parseCards(pathToCSV).then((cardInfos) => {
+      return imageRenderer.toImages(cardInfos, layoutRenderer);
+    });
+  })
   .then((files) => {
     console.log(`Rendered ${files.length} cards.`);
   });
