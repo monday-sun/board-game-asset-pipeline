@@ -2,7 +2,7 @@ import fs from 'fs';
 import * as Papa from 'papaparse';
 import { CardInfo, CardsParser } from '../types';
 
-export async function parseCsvToCardInfo(path: string): Promise<CardInfo[]> {
+async function parseCsvToCardInfo(path: string): Promise<CardInfo[]> {
   const csvFile = fs.readFileSync(path, 'utf8');
 
   return new Promise((resolve, reject) => {
@@ -19,8 +19,12 @@ export async function parseCsvToCardInfo(path: string): Promise<CardInfo[]> {
   });
 }
 
-export class CSVCardsParser implements CardsParser {
+class CSVCardsParser implements CardsParser {
   parseCards(cardsDataPath: string): Promise<CardInfo[]> {
     return parseCsvToCardInfo(cardsDataPath);
   }
+}
+
+export function createCardsParser(): CardsParser {
+  return new CSVCardsParser();
 }
