@@ -1,7 +1,7 @@
 import React from 'react';
 
 const TestComponent = ({ message }: { message: string }) => (
-  <div>Hey, {message}</div>
+  <div style={{ color: 'blue' }}>Huh, {message}?</div>
 );
 
 export default TestComponent;
