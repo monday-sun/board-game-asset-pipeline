@@ -39,6 +39,7 @@ export type Arguements = {
   layoutRenderer: string;
   imageRenderer: string;
   debugHtml: boolean;
+  watch: boolean;
 };
 export interface FileProvider {
   stream(): Observable<string>;

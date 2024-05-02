@@ -16,6 +16,7 @@ const args: Arguements = yargs(process.argv.slice(2))
     layoutRenderer: { type: 'string', default: 'react' },
     imageRenderer: { type: 'string', default: 'nodeIndividual' },
     debugHtml: { type: 'boolean', default: false },
+    watch: { type: 'boolean', default: false },
   })
   .parseSync();
 
@@ -28,7 +29,7 @@ if (!fs.existsSync(outputDir)) {
 }
 
 Promise.all([
-  findFileProvider('noWatchContent'),
+  findFileProvider(args.watch ? 'watchContent' : 'noWatchContent'),
   findCardsParser(cardsParser),
   findLayoutRenderer(layoutRenderer),
   findImageRenderer(imageRenderer),
