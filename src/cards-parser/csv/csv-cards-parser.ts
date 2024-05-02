@@ -1,12 +1,10 @@
-import fs from 'fs';
 import * as Papa from 'papaparse';
-import { Arguements, CardInfo, CardsParser } from '../../types';
+import { Observable, from, switchMap } from 'rxjs';
+import { Arguements, CardInfo, CardsParser, FileProvider } from '../../types';
 
-async function parseCsvToCardInfo(path: string): Promise<CardInfo[]> {
-  const csvFile = fs.readFileSync(path, 'utf8');
-
+function parseCsv(content: string): Promise<CardInfo[]> {
   return new Promise((resolve, reject) => {
-    Papa.parse<CardInfo>(csvFile, {
+    Papa.parse<CardInfo>(content, {
       header: true,
       complete: (results) => {
         if (results.errors.length > 0) {
@@ -20,8 +18,10 @@ async function parseCsvToCardInfo(path: string): Promise<CardInfo[]> {
 }
 
 class CSVCardsParser implements CardsParser {
-  parseCards(cardsDataPath: string): Promise<CardInfo[]> {
-    return parseCsvToCardInfo(cardsDataPath);
+  parseCards(csvProvider: FileProvider): Observable<CardInfo[]> {
+    return csvProvider
+      .stream()
+      .pipe(switchMap((content) => from(parseCsv(content))));
   }
 }
 

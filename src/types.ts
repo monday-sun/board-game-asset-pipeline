@@ -17,7 +17,7 @@ export type ImageFileInfo = {
 };
 
 export interface CardsParser {
-  parseCards(cardsDataPath: string): Promise<CardInfo[]>;
+  parseCards(fileProvider: FileProvider): Observable<CardInfo[]>;
 }
 
 export interface LayoutRenderer {

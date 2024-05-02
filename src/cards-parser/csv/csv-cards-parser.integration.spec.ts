@@ -1,25 +1,18 @@
-import fs from 'fs';
+import { of } from 'rxjs';
+import { FileProvider } from '../../types';
 import { createCardsParser } from './csv-cards-parser';
 
-jest.mock('fs');
-
-describe('parseCsvToCardInfo', () => {
-  const fakeCSVPath = 'path/to/file.csv';
-  beforeEach(() => {
-    (fs.readFileSync as jest.Mock)
-      .mockReturnValue(`name,count,frontTemplate,backTemplate,customOption
+describe('CSVCardsParser', () => {
+  it('parses cards from a CSV file', (done) => {
+    const csvContent = `name,count,frontTemplate,backTemplate,customOption
 Card1,1,Front1,Back1,Unknown1
-Card2,2,Front2,Back2,Unknown2`);
-  });
-
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
-  it('should parse a CSV file into a list of CardInfo', async () => {
+Card2,2,Front2,Back2,Unknown2`;
+    const fileProvider: FileProvider = {
+      stream: () => of(csvContent),
+    };
     const testSubject = createCardsParser({} as any);
-    const cardInfos = await testSubject.parseCards(fakeCSVPath);
-    expect(cardInfos).toEqual([
+
+    const expectedCards = [
       {
         name: 'Card1',
         count: '1',
@@ -34,6 +27,11 @@ Card2,2,Front2,Back2,Unknown2`);
         backTemplate: 'Back2',
         customOption: 'Unknown2',
       },
-    ]);
+    ];
+
+    testSubject.parseCards(fileProvider).subscribe((cards) => {
+      expect(cards).toEqual(expectedCards);
+      done();
+    });
   });
 });
