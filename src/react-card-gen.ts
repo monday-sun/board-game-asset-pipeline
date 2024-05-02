@@ -3,6 +3,7 @@
 import fs from 'fs';
 import yargs from 'yargs';
 import { findCardsParser } from './cards-parser';
+import { findFileProvider } from './file-provider';
 import { findImageRenderer } from './image-renderer';
 import { findLayoutRenderer } from './layout-renderer';
 import { Arguements } from './types';
@@ -15,6 +16,7 @@ const args: Arguements = yargs(process.argv.slice(2))
     layoutRenderer: { type: 'string', default: 'react' },
     imageRenderer: { type: 'string', default: 'nodeIndividual' },
     debugHtml: { type: 'boolean', default: false },
+    watch: { type: 'boolean', default: false },
   })
   .parseSync();
 
@@ -27,19 +29,26 @@ if (!fs.existsSync(outputDir)) {
 }
 
 Promise.all([
+  findFileProvider(args.watch ? 'watchContent' : 'noWatchContent'),
   findCardsParser(cardsParser),
   findLayoutRenderer(layoutRenderer),
   findImageRenderer(imageRenderer),
-])
-  .then(([createCardsParser, createLayoutRenderer, createImageRenderer]) => {
+]).then(
+  ([
+    createContentProvider,
+    createCardsParser,
+    createLayoutRenderer,
+    createImageRenderer,
+  ]) => {
+    const contentProvider = createContentProvider(args.cardList);
     const cardsParser = createCardsParser(args);
     const layoutRenderer = createLayoutRenderer(args);
     const imageRenderer = createImageRenderer(args);
 
-    return cardsParser.parseCards(cardList).then((cardInfos) => {
-      return imageRenderer.toImages(cardInfos, layoutRenderer);
+    return cardsParser.parseCards(contentProvider).subscribe((cardInfos) => {
+      return imageRenderer.toImages(cardInfos, layoutRenderer).then((files) => {
+        console.log(`Rendered ${files.length} cards.`);
+      });
     });
-  })
-  .then((files) => {
-    console.log(`Rendered ${files.length} cards.`);
-  });
+  },
+);
