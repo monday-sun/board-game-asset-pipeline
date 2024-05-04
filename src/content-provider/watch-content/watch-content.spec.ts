@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { createFileProvider } from './watch-content';
+import { createContentProvider } from './watch-content';
 
 jest.mock('fs');
 
@@ -29,13 +29,13 @@ describe('FileContentWatcher', () => {
   });
 
   it('watches the file', () => {
-    const testSubjest = createFileProvider('test.txt');
+    const testSubjest = createContentProvider('test.txt');
     expect(mockFsWatch).toHaveBeenCalledTimes(1);
     expect(mockFsWatch).toHaveBeenCalledWith('test.txt', expect.any(Function));
   });
 
   it('reads the file when it changes', () => {
-    const testSubjest = createFileProvider('test.txt');
+    const testSubjest = createContentProvider('test.txt');
     actualWatchCallBack('change', 'test.txt');
     expect(mockFsReadFile).toHaveBeenCalledTimes(1);
     expect(mockFsReadFile).toHaveBeenCalledWith(
@@ -46,7 +46,7 @@ describe('FileContentWatcher', () => {
   });
 
   it('updates stream with new file contents', (done) => {
-    const testSubjest = createFileProvider('test.txt');
+    const testSubjest = createContentProvider('test.txt');
 
     testSubjest.content().subscribe({
       next: (data) => {
