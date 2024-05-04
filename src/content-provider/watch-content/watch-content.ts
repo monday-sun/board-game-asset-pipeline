@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { Subject } from 'rxjs';
-import { ContentProvider } from '../../types';
+import { ContentProvider } from '..';
 
 class WatchContent implements ContentProvider {
   private subject = new Subject<string>();

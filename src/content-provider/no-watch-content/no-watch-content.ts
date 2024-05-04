@@ -1,7 +1,7 @@
 import fs from 'fs';
 import { Observable, from } from 'rxjs';
 import util from 'util';
-import { ContentProvider } from '../../types';
+import { ContentProvider } from '..';
 
 const readFile = util.promisify(fs.readFile);
 
