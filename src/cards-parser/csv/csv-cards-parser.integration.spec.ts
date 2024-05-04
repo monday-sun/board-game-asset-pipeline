@@ -10,7 +10,7 @@ Card2,2,Front2,Back2,Unknown2`;
     const fileProvider: ContentProvider = {
       content: () => of(csvContent),
     };
-    const testSubject = createCardsParser({} as any);
+    const testSubject = createCardsParser({} as any, fileProvider);
 
     const expectedCards = [
       {
@@ -29,7 +29,7 @@ Card2,2,Front2,Back2,Unknown2`;
       },
     ];
 
-    testSubject.parseCards(fileProvider).subscribe((cards) => {
+    testSubject.cards$.subscribe((cards) => {
       expect(cards).toEqual(expectedCards);
       done();
     });

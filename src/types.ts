@@ -17,7 +17,7 @@ export type ImageFileInfo = {
 };
 
 export interface CardsParser {
-  parseCards(fileProvider: ContentProvider): Observable<CardInfo[]>;
+  cards$: Observable<CardInfo[]>;
 }
 
 export interface LayoutRenderer {

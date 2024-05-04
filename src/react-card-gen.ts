@@ -41,11 +41,11 @@ Promise.all([
     createImageRenderer,
   ]) => {
     const contentProvider = createContentProvider(args.cardList);
-    const cardsParser = createCardsParser(args);
+    const cardsParser = createCardsParser(args, contentProvider);
     const layoutRenderer = createLayoutRenderer(args);
     const imageRenderer = createImageRenderer(args);
 
-    return cardsParser.parseCards(contentProvider).subscribe((cardInfos) => {
+    return cardsParser.cards$.subscribe((cardInfos) => {
       return imageRenderer.toImages(cardInfos, layoutRenderer).then((files) => {
         console.log(`Rendered ${files.length} cards.`);
       });
