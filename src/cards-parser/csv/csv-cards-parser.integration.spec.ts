@@ -7,10 +7,10 @@ describe('CSVCardsParser', () => {
     const csvContent = `name,count,frontTemplate,backTemplate,customOption
 Card1,1,Front1,Back1,Unknown1
 Card2,2,Front2,Back2,Unknown2`;
-    const fileProvider: ContentProvider = {
+    const contentProvider: ContentProvider = {
       content: () => of(csvContent),
     };
-    const testSubject = createCardsParser({} as any, fileProvider);
+    const testSubject = createCardsParser({} as any, contentProvider);
 
     const expectedCards = [
       {
