@@ -1,4 +1,5 @@
-import { Arguements, CardsParser, FileProvider } from '../types';
+import { ContentProvider } from '../content-provider';
+import { Arguements, CardsParser } from '../types';
 
 type ParserTypes = {
   csv: string;
@@ -9,7 +10,7 @@ const parserTypes: ParserTypes = { csv: './csv/csv-cards-parser' };
 export const findCardsParser = (
   type: keyof typeof parserTypes | string,
 ): Promise<
-  (args: Arguements, contentProvider: FileProvider) => CardsParser
+  (args: Arguements, contentProvider: ContentProvider) => CardsParser
 > => {
   return (
     type in parserTypes
