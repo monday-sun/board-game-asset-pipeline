@@ -48,7 +48,7 @@ describe('FileContentWatcher', () => {
   it('updates stream with new file contents', (done) => {
     const testSubjest = createFileProvider('test.txt');
 
-    testSubjest.stream().subscribe({
+    testSubjest.content().subscribe({
       next: (data) => {
         expect(data).toBe('file content');
         done();

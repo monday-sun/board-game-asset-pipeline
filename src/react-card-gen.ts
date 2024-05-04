@@ -3,7 +3,7 @@
 import fs from 'fs';
 import yargs from 'yargs';
 import { findCardsParser } from './cards-parser';
-import { findFileProvider } from './file-provider';
+import { findContentProvider } from './content-provider';
 import { findImageRenderer } from './image-renderer';
 import { findLayoutRenderer } from './layout-renderer';
 import { Arguements } from './types';
@@ -29,7 +29,7 @@ if (!fs.existsSync(outputDir)) {
 }
 
 Promise.all([
-  findFileProvider(args.watch ? 'watchContent' : 'noWatchContent'),
+  findContentProvider(args.watch ? 'watchContent' : 'noWatchContent'),
   findCardsParser(cardsParser),
   findLayoutRenderer(layoutRenderer),
   findImageRenderer(imageRenderer),

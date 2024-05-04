@@ -17,7 +17,7 @@ export type ImageFileInfo = {
 };
 
 export interface CardsParser {
-  parseCards(fileProvider: FileProvider): Observable<CardInfo[]>;
+  parseCards(fileProvider: ContentProvider): Observable<CardInfo[]>;
 }
 
 export interface LayoutRenderer {
@@ -41,6 +41,6 @@ export type Arguements = {
   debugHtml: boolean;
   watch: boolean;
 };
-export interface FileProvider {
-  stream(): Observable<string>;
+export interface ContentProvider {
+  content(): Observable<string>;
 }

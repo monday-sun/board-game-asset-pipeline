@@ -1,8 +1,8 @@
 import fs from 'fs';
 import { Subject } from 'rxjs';
-import { FileProvider } from '../../types';
+import { ContentProvider } from '../../types';
 
-class WatchContent implements FileProvider {
+class WatchContent implements ContentProvider {
   private subject = new Subject<string>();
 
   constructor() {}
@@ -10,12 +10,12 @@ class WatchContent implements FileProvider {
   startWatch(filePath: string) {
     fs.watch(filePath, (eventType, filename) => {
       if (eventType === 'change') {
-        this.updateStream(filePath);
+        this.updateContent(filePath);
       }
     });
   }
 
-  private updateStream(filePath: string) {
+  private updateContent(filePath: string) {
     fs.readFile(filePath, 'utf8', (err, data) => {
       if (err) {
         console.error(err);
@@ -25,7 +25,7 @@ class WatchContent implements FileProvider {
     });
   }
 
-  stream() {
+  content() {
     return this.subject.asObservable();
   }
 }

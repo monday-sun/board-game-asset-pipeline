@@ -18,7 +18,7 @@ describe('ContentNoWatchProvider', () => {
   it('reads the file once and emits the file content', (done) => {
     const testSubject = createFileProvider('test.txt');
 
-    testSubject.stream().subscribe({
+    testSubject.content().subscribe({
       next: (data) => {
         expect(data).toBe('file content');
         done();
