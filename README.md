@@ -1,2 +1,4 @@
-# react-card-gen
-Tool that uses CSV, React, and html-to-image for Board Game Card generation
+# board-game-card-gen
+
+A plugin pipeline for generating custom cards for board games.
+
