@@ -13,6 +13,7 @@ class WatchContent implements ContentProvider {
         this.updateContent(filePath);
       }
     });
+    this.updateContent(filePath);
   }
 
   private updateContent(filePath: string) {
