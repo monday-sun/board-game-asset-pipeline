@@ -29,7 +29,7 @@ if (!fs.existsSync(outputDir)) {
 }
 
 Promise.all([
-  findContentProvider(args.watch ? 'watchContent' : 'noWatchContent'),
+  findContentProvider(args.watch ? 'watch' : 'noWatch'),
   findCardsParser(cardsParser),
   findLayoutRenderer(layoutRenderer),
   findImageRenderer(imageRenderer),
