@@ -1,4 +1,8 @@
-import { ContentProvider } from '../types';
+import { Observable } from 'rxjs';
+
+export interface ContentProvider {
+  content(): Observable<string>;
+}
 
 type ContentProviderTypes = { watch: string; noWatch: string };
 

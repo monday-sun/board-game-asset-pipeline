@@ -1,11 +1,7 @@
 import * as Papa from 'papaparse';
 import { Observable, from, switchMap } from 'rxjs';
-import {
-  Arguements,
-  CardInfo,
-  CardsParser,
-  ContentProvider,
-} from '../../types';
+import { ContentProvider } from '../../content-provider';
+import { Arguements, CardInfo, CardsParser } from '../../types';
 
 function parseCsv(content: string): Promise<CardInfo[]> {
   return new Promise((resolve, reject) => {

@@ -41,6 +41,3 @@ export type Arguements = {
   debugHtml: boolean;
   watch: boolean;
 };
-export interface ContentProvider {
-  content(): Observable<string>;
-}

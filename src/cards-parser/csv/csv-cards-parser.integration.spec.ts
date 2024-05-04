@@ -1,5 +1,5 @@
 import { of } from 'rxjs';
-import { ContentProvider } from '../../types';
+import { ContentProvider } from '../../content-provider';
 import { createCardsParser } from './csv-cards-parser';
 
 describe('CSVCardsParser', () => {
