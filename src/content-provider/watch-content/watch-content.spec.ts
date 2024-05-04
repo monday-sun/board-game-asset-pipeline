@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { createFileProvider } from './watch-content';
+import { createContentProvider } from './watch-content';
 
 jest.mock('fs');
 
@@ -29,15 +29,27 @@ describe('FileContentWatcher', () => {
   });
 
   it('watches the file', () => {
-    const testSubjest = createFileProvider('test.txt');
+    const testSubjest = createContentProvider('test.txt');
     expect(mockFsWatch).toHaveBeenCalledTimes(1);
     expect(mockFsWatch).toHaveBeenCalledWith('test.txt', expect.any(Function));
   });
 
+  it('updates stream with initial file contents', (done) => {
+    const testSubjest = createContentProvider('test.txt');
+
+    testSubjest.content().subscribe({
+      next: (data) => {
+        expect(data).toBe('file content');
+        done();
+      },
+    });
+    actualReadCallback(null, 'file content');
+  });
+
   it('reads the file when it changes', () => {
-    const testSubjest = createFileProvider('test.txt');
+    const testSubjest = createContentProvider('test.txt');
     actualWatchCallBack('change', 'test.txt');
-    expect(mockFsReadFile).toHaveBeenCalledTimes(1);
+    expect(mockFsReadFile).toHaveBeenCalledTimes(2);
     expect(mockFsReadFile).toHaveBeenCalledWith(
       'test.txt',
       'utf8',
@@ -46,9 +58,9 @@ describe('FileContentWatcher', () => {
   });
 
   it('updates stream with new file contents', (done) => {
-    const testSubjest = createFileProvider('test.txt');
+    const testSubjest = createContentProvider('test.txt');
 
-    testSubjest.stream().subscribe({
+    testSubjest.content().subscribe({
       next: (data) => {
         expect(data).toBe('file content');
         done();
