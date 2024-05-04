@@ -1,5 +1,3 @@
-import { Observable } from 'rxjs';
-
 export type CardInfo = {
   name: string;
   count: string;
@@ -15,10 +13,6 @@ export type ImageFileInfo = {
   cardNumber?: number;
   format?: string;
 };
-
-export interface CardsParser {
-  cards$: Observable<CardInfo[]>;
-}
 
 export interface LayoutRenderer {
   toHTML(templatePath: string, data: Record<string, string>): Promise<string>;

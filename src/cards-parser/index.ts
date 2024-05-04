@@ -1,5 +1,10 @@
+import { Observable } from 'rxjs';
 import { ContentProvider } from '../content-provider';
-import { Arguements, CardsParser } from '../types';
+import { Arguements, CardInfo } from '../types';
+
+export interface CardsParser {
+  cards$: Observable<CardInfo[]>;
+}
 
 type ParserTypes = {
   csv: string;
