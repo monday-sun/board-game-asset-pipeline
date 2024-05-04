@@ -15,3 +15,7 @@ A plugin pipeline for generating custom cards for board games.
 ### To Image
 
 - Individual cards with [node-html-to-image](https://www.npmjs.com/package/node-html-to-image)
+
+## Inspired by
+
+- [CIDEr](https://github.com/oatear/cider)
