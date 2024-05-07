@@ -4,7 +4,7 @@ import fs from 'fs';
 import yargs from 'yargs';
 import { Cards } from './cards';
 import { findImageRenderer } from './image-renderer';
-import { findLayoutFactory } from './layout-renderer';
+import { findLayoutFactory } from './layout';
 import { Arguements } from './types';
 
 const args: Arguements = yargs(process.argv.slice(2))

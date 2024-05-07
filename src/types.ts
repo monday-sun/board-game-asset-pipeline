@@ -1,5 +1,5 @@
 import { Card } from './cards';
-import { Layout } from './layout-renderer';
+import { Layout } from './layout';
 
 export type ImageFileInfo = {
   outputPath: string;
