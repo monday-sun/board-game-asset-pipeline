@@ -6,11 +6,14 @@ export interface FileContent {
 }
 
 export namespace FileContent {
-  export const factory = (args: Arguements): Promise<FileContent> => {
+  export function factory(
+    args: Arguements,
+    filePath: string,
+  ): Promise<FileContent> {
     return (
       args.watch
         ? import('./watch-content/watch-content')
         : import('./no-watch-content/no-watch-content')
-    ).then(({ create }) => create(args.cardList));
-  };
+    ).then(({ create }) => create(filePath));
+  }
 }

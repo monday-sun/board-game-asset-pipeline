@@ -29,7 +29,7 @@ if (!fs.existsSync(outputDir)) {
 }
 
 Promise.all([
-  FileContent.factory(args),
+  FileContent.factory(args, args.cardList),
   Cards.findCardsParser(cardsParser),
   findLayoutRenderer(layoutRenderer),
   findImageRenderer(imageRenderer),
