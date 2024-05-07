@@ -2,12 +2,8 @@ import path from 'path';
 import { cwd } from 'process';
 import { Observable } from 'rxjs';
 import { Card } from '../cards';
+import { NeedsLayout } from '../templates';
 import { Arguements } from '../types';
-
-export type NeedsLayout = {
-  templatePath: string;
-  card: Card;
-};
 
 export type LayoutResult = {
   templatePath: string;

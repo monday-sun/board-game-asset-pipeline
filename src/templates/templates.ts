@@ -1,7 +1,7 @@
 import { Observable, map, mergeAll, withLatestFrom } from 'rxjs';
+import { NeedsLayout } from '.';
 import { Card, Cards } from '../cards';
 import { FileFactory } from '../file/file';
-import { NeedsLayout } from '../layout';
 import { Arguements } from '../types';
 
 function addCardToTemplate(
