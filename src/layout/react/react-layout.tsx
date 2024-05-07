@@ -1,6 +1,6 @@
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { Observable, from, switchMap } from 'rxjs';
+import { Observable, from, map, mergeAll } from 'rxjs';
 import { Layout, LayoutFactory, LayoutResult } from '..';
 import { Templates } from '../../templates';
 import { Arguements } from '../../types';
@@ -19,9 +19,9 @@ export class ReactLayout implements Layout {
 
   constructor(templates: Templates) {
     this.layout$ = templates.needsLayout$.pipe(
-      switchMap(({ templatePaths, card }) =>
-        from(
-          toHTML(templatePaths.relativePath, card).then((layout) => ({
+      map(({ templatePaths, card }) =>
+        from(toHTML(templatePaths.relativePath, card)).pipe(
+          map((layout) => ({
             templatePaths,
             card,
             layout,
@@ -29,6 +29,7 @@ export class ReactLayout implements Layout {
           })),
         ),
       ),
+      mergeAll(),
     );
   }
 }

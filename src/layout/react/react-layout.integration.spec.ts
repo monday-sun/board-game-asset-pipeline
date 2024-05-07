@@ -4,21 +4,34 @@ import { NeedsLayout } from '../../templates';
 import { factory } from './react-layout';
 
 describe('ReactLayout', () => {
-  it('should render a React component to static HTML with properties', (done) => {
+  it('should render all requested layouts', (done) => {
     const testSubject = factory({} as any, {
-      needsLayout$: of(<NeedsLayout>{
-        templatePaths: <Paths>{
-          filePath: './test-component',
-          relativePath: './test-component',
-        },
-        card: {
-          message: 'Hello, world!',
-        } as any,
-      }),
+      needsLayout$: of(
+        ...[
+          <NeedsLayout>{
+            templatePaths: <Paths>{
+              filePath: './test-component',
+              relativePath: './test-component',
+            },
+            card: {
+              message: 'Hello, world!',
+            } as any,
+          },
+          <NeedsLayout>{
+            templatePaths: <Paths>{
+              filePath: './test-component',
+              relativePath: './test-component',
+            },
+            card: {
+              message: 'Hello there!',
+            } as any,
+          },
+        ],
+      ),
     });
 
-    testSubject.layout$.subscribe((layout) => {
-      expect(layout).toEqual({
+    const expectedLayouts = [
+      {
         templatePaths: <Paths>{
           filePath: './test-component',
           relativePath: './test-component',
@@ -28,8 +41,25 @@ describe('ReactLayout', () => {
         },
         layout: '<div>Hello, world!</div>',
         format: 'html',
-      });
-      done();
+      },
+      {
+        templatePaths: <Paths>{
+          filePath: './test-component',
+          relativePath: './test-component',
+        },
+        card: {
+          message: 'Hello there!',
+        },
+        layout: '<div>Hello there!</div>',
+        format: 'html',
+      },
+    ];
+
+    testSubject.layout$.subscribe((layout) => {
+      expect(layout).toEqual(expectedLayouts.shift());
+      if (expectedLayouts.length === 0) {
+        done();
+      }
     });
   });
 });
