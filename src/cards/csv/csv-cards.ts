@@ -1,31 +1,27 @@
 import * as Papa from 'papaparse';
-import { Observable, from, switchMap } from 'rxjs';
+import { Observable, Subject, map } from 'rxjs';
 import { Card, Cards } from '..';
 import { FileContent } from '../../file-content';
 import { Arguements } from '../../types';
 
-function parseCsv(content: string): Promise<Card[]> {
-  return new Promise((resolve, reject) => {
-    Papa.parse<Card>(content, {
-      header: true,
-      complete: (results) => {
-        if (results.errors.length > 0) {
-          reject(results.errors);
-        } else {
-          resolve(results.data);
-        }
-      },
-    });
-  });
-}
-
 class CSVCards implements Cards {
   cards$: Observable<Card[]>;
 
+  private errorsSubject = new Subject<string>();
+  errors$ = this.errorsSubject;
+
   constructor(csv: FileContent) {
-    this.cards$ = csv.content$.pipe(
-      switchMap((content) => from(parseCsv(content))),
-    );
+    this.cards$ = csv.content$.pipe(map((content) => this.parseCsv(content)));
+  }
+
+  private parseCsv(content: string) {
+    const results = Papa.parse<Card>(content, {
+      header: true,
+    });
+    results.errors.forEach((error) => {
+      this.errorsSubject.next(error.message);
+    });
+    return results.data;
   }
 }
 

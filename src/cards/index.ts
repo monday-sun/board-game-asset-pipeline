@@ -12,6 +12,7 @@ export type Card = {
 
 export interface Cards {
   cards$: Observable<Card[]>;
+  errors$: Observable<string>;
 }
 
 export namespace Cards {
