@@ -1,6 +1,6 @@
 import { of } from 'rxjs';
 import { FileContent } from '../../file-content';
-import { createCardsParser } from './csv-cards';
+import { create } from './csv-cards';
 
 describe('CSVCards', () => {
   it('parses cards from a CSV file', (done) => {
@@ -10,7 +10,7 @@ Card2,2,Front2,Back2,Unknown2`;
     const contentProvider: FileContent = {
       content$: of(csvContent),
     };
-    const testSubject = createCardsParser({} as any, contentProvider);
+    const testSubject = create({} as any, contentProvider);
 
     const expectedCards = [
       {

@@ -28,7 +28,7 @@ export namespace Cards {
       type in parserTypes
         ? import(parserTypes[type as keyof typeof parserTypes])
         : import(type)
-    ).then(({ createCardsParser }) => createCardsParser);
+    ).then(({ create }) => create);
   };
 
   export function factory(args: Arguements): Promise<Cards> {

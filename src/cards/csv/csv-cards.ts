@@ -22,16 +22,13 @@ function parseCsv(content: string): Promise<Card[]> {
 class CSVCards implements Cards {
   cards$: Observable<Card[]>;
 
-  constructor(csvProvider: FileContent) {
-    this.cards$ = csvProvider
-      .content$
-      .pipe(switchMap((content) => from(parseCsv(content))));
+  constructor(csv: FileContent) {
+    this.cards$ = csv.content$.pipe(
+      switchMap((content) => from(parseCsv(content))),
+    );
   }
 }
 
-export function createCardsParser(
-  args: Arguements,
-  contentProvider: FileContent,
-): Cards {
+export function create(args: Arguements, contentProvider: FileContent): Cards {
   return new CSVCards(contentProvider);
 }
