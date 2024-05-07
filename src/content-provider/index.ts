@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 
-export interface ContentProvider {
+export interface FileContent {
   content(): Observable<string>;
 }
 
@@ -13,7 +13,7 @@ const contentProviderTypes: ContentProviderTypes = {
 
 export const findContentProvider = (
   type: keyof ContentProviderTypes | string,
-): Promise<(filePath: string) => ContentProvider> => {
+): Promise<(filePath: string) => FileContent> => {
   return (
     type in contentProviderTypes
       ? import(contentProviderTypes[type as keyof ContentProviderTypes])

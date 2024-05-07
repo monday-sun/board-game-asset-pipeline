@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { ContentProvider } from '../content-provider';
+import { FileContent } from '../content-provider';
 import { Arguements } from '../types';
 
 export type Card = {
@@ -23,7 +23,7 @@ export namespace Cards {
 
   export const findCardsParser = (
     type: keyof ParserTypes | string,
-  ): Promise<(args: Arguements, contentProvider: ContentProvider) => Cards> => {
+  ): Promise<(args: Arguements, contentProvider: FileContent) => Cards> => {
     return (
       type in parserTypes
         ? import(parserTypes[type as keyof typeof parserTypes])
