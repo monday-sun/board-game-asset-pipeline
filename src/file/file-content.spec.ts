@@ -15,7 +15,7 @@ describe('FileContent', () => {
     const mockReadFile = fsPromises.readFile as jest.Mock;
     mockReadFile.mockResolvedValueOnce('file content');
 
-    const fileContent = FileContent.factory(<Arguements>{}, 'file1');
+    const fileContent = FileContent.observe(<Arguements>{}, 'file1');
     fileContent.content$.subscribe((content) => {
       expect(content).toEqual({ filePath: 'file1', content: 'file content' });
       done();
@@ -26,7 +26,7 @@ describe('FileContent', () => {
     const mockObserve = File.observe as jest.Mock;
     mockObserve.mockReturnValueOnce(throwError(() => 'test error'));
 
-    const fileContent = FileContent.factory(<Arguements>{}, 'file1');
+    const fileContent = FileContent.observe(<Arguements>{}, 'file1');
 
     fileContent.content$.subscribe({
       error: (error) => {

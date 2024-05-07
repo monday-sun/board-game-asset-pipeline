@@ -8,7 +8,7 @@ export interface FileContent {
 }
 
 export namespace FileContent {
-  export function factory(args: Arguements, filePath: string): FileContent {
+  export function observe(args: Arguements, filePath: string): FileContent {
     const content$ = File.observe(args, filePath).pipe(
       mergeMap((file) => from(fsPromises.readFile(file.filePath, 'utf8'))),
       map((content) => ({ filePath, content })),

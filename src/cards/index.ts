@@ -37,7 +37,7 @@ export namespace Cards {
 
   export function factory(args: Arguements): Promise<Cards> {
     return Promise.all([
-      FileContent.factory(args, args.cardList),
+      FileContent.observe(args, args.cardList),
       findCardsParser(args.cardsParser),
     ]).then(([content, parser]) => {
       return parser(args, content);
