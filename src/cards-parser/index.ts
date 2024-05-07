@@ -1,25 +1,33 @@
 import { Observable } from 'rxjs';
 import { ContentProvider } from '../content-provider';
-import { Arguements, CardInfo } from '../types';
+import { Arguements } from '../types';
 
 export interface Cards {
-  cards$: Observable<CardInfo[]>;
+  cards$: Observable<Cards.Info[]>;
 }
 
-type ParserTypes = {
-  csv: string;
-};
+export namespace Cards {
+  export type Info = {
+    name: string;
+    count: string;
+    frontTemplate: string;
+    backTemplate: string;
+    [key: string]: string; // For unknown values
+  };
 
-const parserTypes: ParserTypes = { csv: './csv/csv-cards-parser' };
+  type ParserTypes = {
+    csv: string;
+  };
 
-export const findCardsParser = (
-  type: keyof typeof parserTypes | string,
-): Promise<
-  (args: Arguements, contentProvider: ContentProvider) => Cards
-> => {
-  return (
-    type in parserTypes
-      ? import(parserTypes[type as keyof typeof parserTypes])
-      : import(type)
-  ).then(({ createCardsParser }) => createCardsParser);
-};
+  const parserTypes: ParserTypes = { csv: './csv/csv-cards-parser' };
+
+  export const findCardsParser = (
+    type: keyof ParserTypes | string,
+  ): Promise<(args: Arguements, contentProvider: ContentProvider) => Cards> => {
+    return (
+      type in parserTypes
+        ? import(parserTypes[type as keyof typeof parserTypes])
+        : import(type)
+    ).then(({ createCardsParser }) => createCardsParser);
+  };
+}

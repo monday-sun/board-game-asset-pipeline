@@ -2,11 +2,11 @@ import * as Papa from 'papaparse';
 import { Observable, from, switchMap } from 'rxjs';
 import { Cards } from '..';
 import { ContentProvider } from '../../content-provider';
-import { Arguements, CardInfo } from '../../types';
+import { Arguements } from '../../types';
 
-function parseCsv(content: string): Promise<CardInfo[]> {
+function parseCsv(content: string): Promise<Cards.Info[]> {
   return new Promise((resolve, reject) => {
-    Papa.parse<CardInfo>(content, {
+    Papa.parse<Cards.Info>(content, {
       header: true,
       complete: (results) => {
         if (results.errors.length > 0) {
@@ -20,7 +20,7 @@ function parseCsv(content: string): Promise<CardInfo[]> {
 }
 
 class CSVCardsParser implements Cards {
-  cards$: Observable<CardInfo[]>;
+  cards$: Observable<Cards.Info[]>;
 
   constructor(csvProvider: ContentProvider) {
     this.cards$ = csvProvider
