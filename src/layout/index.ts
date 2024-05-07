@@ -4,14 +4,25 @@ import { Observable } from 'rxjs';
 import { Card } from '../cards';
 import { Arguements } from '../types';
 
+export type NeedsLayout = {
+  templatePath: string;
+  card: Card;
+};
+
+export type LayoutResult = {
+  templatePath: string;
+  card: Card;
+  layout: string;
+};
+
 export interface Layout {
-  layout$: Observable<{ templatePath: string; card: Card; layout: string }>;
+  layout$: Observable<LayoutResult>;
   getFormat(): string;
 }
 
 export type LayoutFactory = (
   args: Arguements,
-  trigger: Observable<{ templatePath: string; card: Card }>,
+  trigger: Observable<NeedsLayout>,
 ) => Layout;
 
 export namespace Layout {
