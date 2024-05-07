@@ -8,7 +8,7 @@ import { Arguements } from '../../types';
 import { createOutputFileName } from '../file-name/output-file-name';
 
 export class RawLayout implements Output {
-  generated$: Observable<string>;
+  generated$: Observable<string[]>;
 
   constructor(outputDir: string, layout: Layout) {
     const outputPath = path.join(outputDir, 'raw-layout');
@@ -32,7 +32,7 @@ export class RawLayout implements Output {
       })),
       map(({ outputPath, layout }) =>
         from(fsPromises.writeFile(outputPath, layout)).pipe(
-          map(() => outputPath),
+          map(() => [outputPath]),
         ),
       ),
       mergeAll(),

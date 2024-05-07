@@ -35,7 +35,7 @@ describe('RawLayout', () => {
 
     testSubject.generated$.subscribe((outputPath) => {
       const expectedOutputPath = expectedOutputPaths.shift();
-      expect(outputPath).toEqual(expectedOutputPath);
+      expect(outputPath).toEqual([expectedOutputPath]);
       expect(fsPromises.writeFile).toHaveBeenCalledWith(
         expectedOutputPath,
         'testLayout',
