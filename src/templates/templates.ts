@@ -30,7 +30,7 @@ function mapTemplatesToCards(cards: Card[]) {
   return templatesToCards;
 }
 
-export class Layouts {
+export class Templates {
   needsLayout$: Observable<NeedsLayout>;
 
   constructor(
@@ -64,12 +64,12 @@ export class Layouts {
   }
 }
 
-export namespace Layouts {
+export namespace Templates {
   export function factory(
     args: Arguements,
     cards: Cards,
     fileFactory: FileFactory,
-  ): Layouts {
-    return new Layouts(args, cards, fileFactory);
+  ): Templates {
+    return new Templates(args, cards, fileFactory);
   }
 }

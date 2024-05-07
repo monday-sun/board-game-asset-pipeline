@@ -1,12 +1,12 @@
 import { Observable } from 'rxjs';
-import { Layouts } from '../layouts/layouts';
+import { Templates } from '../templates/templates';
 import { Arguements } from '../types';
 
 export interface Output {
   generated$: Observable<string>;
 }
 
-export type OutputFactory = (args: Arguements, layouts: Layouts) => Output;
+export type OutputFactory = (args: Arguements, layouts: Templates) => Output;
 
 export namespace Output {
   type OutputTypes = { nodeIndividual: string };
