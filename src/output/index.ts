@@ -1,17 +1,28 @@
-import { Arguements, ImageRenderer } from '../types';
+import { Observable } from 'rxjs';
+import { Layouts } from '../layouts/layouts';
+import { Arguements } from '../types';
 
-type ImageRenderTypes = { nodeIndividual: string };
+export interface Output {
+  generated$: Observable<string>;
+}
 
-const imageRenderTypes: ImageRenderTypes = {
-  nodeIndividual: './node-html-to-image/node-individual-card-image-renderer',
-};
+export type OutputFactory = (args: Arguements, layouts: Layouts) => Output;
 
-export const findImageRenderer = (
-  type: keyof typeof imageRenderTypes | string,
-): Promise<(args: Arguements) => ImageRenderer> => {
-  return (
-    type in imageRenderTypes
-      ? import(imageRenderTypes[type as keyof typeof imageRenderTypes])
-      : import(type)
-  ).then(({ createImageRenderer }) => createImageRenderer);
-};
+export namespace Output {
+  type OutputTypes = { nodeIndividual: string };
+
+  const outputTypes: OutputTypes = {
+    nodeIndividual: './node-html-to-image/node-individual-card-image-renderer',
+  };
+
+  export const findOutputFactory = (
+    args: Arguements,
+  ): Promise<OutputFactory> => {
+    const type = args.imageRenderer;
+    return (
+      type in outputTypes
+        ? import(outputTypes[type as keyof OutputTypes])
+        : import(type)
+    ).then(({ createImageRenderer }) => createImageRenderer);
+  };
+}
