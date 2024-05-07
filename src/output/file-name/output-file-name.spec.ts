@@ -1,4 +1,4 @@
-import { createImageFileName } from './image-file-name';
+import { createImageFileName } from './output-file-name';
 
 describe('createImageFileName', () => {
   it('should create a file name from a card name', () => {
