@@ -4,7 +4,8 @@ import { Card, Cards } from '..';
 import { FileContent } from '../../file-content';
 import { Arguements } from '../../types';
 
-class CSVCards implements Cards {
+// https://www.papaparse.com/
+class PapaParseCards implements Cards {
   cards$: Observable<Card[]>;
 
   private errorsSubject = new Subject<string>();
@@ -19,12 +20,12 @@ class CSVCards implements Cards {
       header: true,
     });
     results.errors.forEach((error) => {
-      this.errorsSubject.next(error.message);
+      this.errorsSubject.next(`${error.message} at ${error.row}`);
     });
     return results.data;
   }
 }
 
 export function create(args: Arguements, contentProvider: FileContent): Cards {
-  return new CSVCards(contentProvider);
+  return new PapaParseCards(contentProvider);
 }

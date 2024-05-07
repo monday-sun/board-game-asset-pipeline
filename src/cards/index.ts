@@ -18,9 +18,13 @@ export interface Cards {
 export namespace Cards {
   type ParserTypes = {
     csv: string;
+    papaParse: string;
   };
 
-  const parserTypes: ParserTypes = { csv: './csv/csv-cards-parser' };
+  const parserTypes: ParserTypes = {
+    csv: './papa-parse/papa-parse-cards',
+    papaParse: './papa-parse/papa-parse-cards',
+  };
 
   const findCardsParser = (
     type: keyof ParserTypes | string,

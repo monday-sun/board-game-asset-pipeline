@@ -1,8 +1,8 @@
 import { of } from 'rxjs';
 import { FileContent } from '../../file-content';
-import { create } from './csv-cards';
+import { create } from './papa-parse-cards';
 
-describe('CSVCards', () => {
+describe('PapaParseCards', () => {
   it('parses cards from a CSV file', (done) => {
     const csvContent = `name,count,frontTemplate,backTemplate,customOption
 Card1,1,Front1,Back1,Unknown1
