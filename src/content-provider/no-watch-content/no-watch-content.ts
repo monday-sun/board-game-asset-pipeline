@@ -1,16 +1,13 @@
 import fs from 'fs';
-import { Observable, from } from 'rxjs';
+import { from } from 'rxjs';
 import util from 'util';
-import { ContentProvider } from '..';
+import { FileContent } from '..';
 
 const readFile = util.promisify(fs.readFile);
 
-class NoWatchContent implements ContentProvider {
+class NoWatchContent implements FileContent {
+  content$ = from(readFile(this.filePath, 'utf8'));
   constructor(private filePath: string) {}
-
-  content(): Observable<string> {
-    return from(readFile(this.filePath, 'utf8'));
-  }
 }
 
 export function createContentProvider(filePath: string) {

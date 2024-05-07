@@ -1,9 +1,10 @@
 import fs from 'fs';
 import { Subject } from 'rxjs';
-import { ContentProvider } from '..';
+import { FileContent } from '..';
 
-class WatchContent implements ContentProvider {
-  private subject = new Subject<string>();
+class WatchContent implements FileContent {
+  private contentSubject = new Subject<string>();
+  content$ = this.contentSubject.asObservable();
 
   constructor() {}
 
@@ -21,13 +22,9 @@ class WatchContent implements ContentProvider {
       if (err) {
         console.error(err);
       } else {
-        this.subject.next(data);
+        this.contentSubject.next(data);
       }
     });
-  }
-
-  content() {
-    return this.subject.asObservable();
   }
 }
 

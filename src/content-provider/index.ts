@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs';
 
 export interface FileContent {
-  content(): Observable<string>;
+  content$: Observable<string>;
 }
 
 type ContentProviderTypes = { watch: string; noWatch: string };

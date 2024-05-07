@@ -8,7 +8,7 @@ describe('CSVCards', () => {
 Card1,1,Front1,Back1,Unknown1
 Card2,2,Front2,Back2,Unknown2`;
     const contentProvider: FileContent = {
-      content: () => of(csvContent),
+      content$: of(csvContent),
     };
     const testSubject = createCardsParser({} as any, contentProvider);
 

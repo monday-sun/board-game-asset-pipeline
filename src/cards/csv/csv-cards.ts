@@ -24,7 +24,7 @@ class CSVCards implements Cards {
 
   constructor(csvProvider: FileContent) {
     this.cards$ = csvProvider
-      .content()
+      .content$
       .pipe(switchMap((content) => from(parseCsv(content))));
   }
 }
