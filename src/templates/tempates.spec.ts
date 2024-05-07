@@ -1,6 +1,6 @@
 import { of } from 'rxjs';
 import { Cards } from '../cards';
-import { Templates } from './templates';
+import { factory } from './templates';
 
 describe('Layouts', () => {
   it('should map templates to cards', (done) => {
@@ -28,7 +28,7 @@ describe('Layouts', () => {
       },
     ];
 
-    const testSubject = Templates.factory(
+    const testSubject = factory(
       {} as any,
       <Cards>{
         cards$: of(cards),

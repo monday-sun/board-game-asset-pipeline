@@ -1,5 +1,5 @@
 import { Observable, map, mergeAll, withLatestFrom } from 'rxjs';
-import { NeedsLayout } from '.';
+import { NeedsLayout, TemplatesFactory } from '.';
 import { Card, Cards } from '../cards';
 import { FileFactory } from '../file/file';
 import { Arguements } from '../types';
@@ -64,12 +64,10 @@ export class Templates {
   }
 }
 
-export namespace Templates {
-  export function factory(
-    args: Arguements,
-    cards: Cards,
-    fileFactory: FileFactory,
-  ): Templates {
-    return new Templates(args, cards, fileFactory);
-  }
-}
+export const factory: TemplatesFactory = (
+  args: Arguements,
+  cards: Cards,
+  fileFactory: FileFactory,
+): Templates => {
+  return new Templates(args, cards, fileFactory);
+};
