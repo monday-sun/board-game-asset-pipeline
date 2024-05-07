@@ -10,7 +10,7 @@ class NoWatchContent implements FileContent {
   constructor(private filePath: string) {}
 }
 
-export function createContentProvider(filePath: string) {
+export function create(filePath: string) {
   const fileWatcher = new NoWatchContent(filePath);
   return fileWatcher;
 }

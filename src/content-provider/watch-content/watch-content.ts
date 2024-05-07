@@ -28,7 +28,7 @@ class WatchContent implements FileContent {
   }
 }
 
-export function createContentProvider(filePath: string) {
+export function create(filePath: string) {
   const fileWatcher = new WatchContent();
   fileWatcher.startWatch(filePath);
   return fileWatcher;

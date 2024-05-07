@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { createContentProvider } from './no-watch-content';
+import { create } from './no-watch-content';
 
 jest.mock('fs');
 
@@ -16,7 +16,7 @@ describe('ContentNoWatchProvider', () => {
   });
 
   it('reads the file once and emits the file content', (done) => {
-    const testSubject = createContentProvider('test.txt');
+    const testSubject = create('test.txt');
 
     testSubject.content$.subscribe({
       next: (data) => {

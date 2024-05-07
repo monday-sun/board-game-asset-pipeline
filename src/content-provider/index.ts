@@ -18,5 +18,5 @@ export const findContentProvider = (
     type in contentProviderTypes
       ? import(contentProviderTypes[type as keyof ContentProviderTypes])
       : import(type)
-  ).then(({ createContentProvider }) => createContentProvider);
+  ).then(({ create }) => create);
 };
