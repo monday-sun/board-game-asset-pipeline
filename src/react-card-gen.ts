@@ -4,7 +4,7 @@ import fs from 'fs';
 import yargs from 'yargs';
 import { Cards } from './cards';
 import { findImageRenderer } from './image-renderer';
-import { findLayoutFactory } from './layout';
+import { Layout } from './layout';
 import { Arguements } from './types';
 
 const args: Arguements = yargs(process.argv.slice(2))
@@ -27,10 +27,10 @@ if (!fs.existsSync(outputDir)) {
 }
 
 Promise.all([
-  Cards.factory(args),
-  findLayoutFactory(layoutRenderer),
+  Cards.findFactory(args),
+  Layout.findFactory(args),
   findImageRenderer(imageRenderer),
-]).then(([cards, createLayoutRenderer, createImageRenderer]) => {
+]).then(([cardsFactory, layoutFactory, createImageRenderer]) => {
   //   const layoutRenderer = createLayoutRenderer(args);
   //   const imageRenderer = createImageRenderer(args);
   //   return cards.cards$.subscribe((cardInfos) => {
