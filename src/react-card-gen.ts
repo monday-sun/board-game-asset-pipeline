@@ -3,7 +3,7 @@
 import fs from 'fs';
 import yargs from 'yargs';
 import { Cards } from './cards';
-import { FileContent } from './content-provider';
+import { FileContent } from './file-content';
 import { findImageRenderer } from './image-renderer';
 import { findLayoutRenderer } from './layout-renderer';
 import { Arguements } from './types';
