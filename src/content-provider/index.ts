@@ -1,22 +1,16 @@
 import { Observable } from 'rxjs';
+import { Arguements } from '../types';
 
 export interface FileContent {
   content$: Observable<string>;
 }
 
-type ContentProviderTypes = { watch: string; noWatch: string };
-
-const contentProviderTypes: ContentProviderTypes = {
-  watch: './watch-content/watch-content',
-  noWatch: './no-watch-content/no-watch-content',
-};
-
-export const findContentProvider = (
-  type: keyof ContentProviderTypes | string,
-): Promise<(filePath: string) => FileContent> => {
-  return (
-    type in contentProviderTypes
-      ? import(contentProviderTypes[type as keyof ContentProviderTypes])
-      : import(type)
-  ).then(({ create }) => create);
-};
+export namespace FileContent {
+  export const factory = (args: Arguements): Promise<FileContent> => {
+    return (
+      args.watch
+        ? import('./watch-content/watch-content')
+        : import('./no-watch-content/no-watch-content')
+    ).then(({ create }) => create(args.cardList));
+  };
+}
