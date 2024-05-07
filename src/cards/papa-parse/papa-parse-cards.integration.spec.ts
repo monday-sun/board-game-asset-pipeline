@@ -1,16 +1,16 @@
 import { of } from 'rxjs';
 import { FileContent } from '../../file/file-content';
-import { create } from './papa-parse-cards';
+import { factory } from './papa-parse-cards';
 
 describe('PapaParseCards', () => {
   it('parses cards from a CSV file', (done) => {
     const csvContent = `name,count,frontTemplate,backTemplate,customOption
 Card1,1,Front1,Back1,Unknown1
 Card2,2,Front2,Back2,Unknown2`;
-    const contentProvider: FileContent = {
+    const content: FileContent = {
       content$: of({ filePath: '', content: csvContent }),
     };
-    const testSubject = create({} as any, contentProvider);
+    const testSubject = factory({} as any, content);
 
     const expectedCards = [
       {
@@ -32,6 +32,21 @@ Card2,2,Front2,Back2,Unknown2`;
     testSubject.cards$.subscribe((cards) => {
       expect(cards).toEqual(expectedCards);
       done();
+    });
+  });
+
+  it('throws error if no cards are parsed', (done) => {
+    const csvContent = `name,count,frontTemplate,backTemplate,customOption`;
+    const content: FileContent = {
+      content$: of({ filePath: '', content: csvContent }),
+    };
+    const testSubject = factory({} as any, content);
+
+    testSubject.cards$.subscribe({
+      error: (error) => {
+        expect(error.message).toEqual('No cards parsed from CSV file.');
+        done();
+      },
     });
   });
 });

@@ -14,33 +14,28 @@ export interface Cards {
   cards$: Observable<Card[]>;
 }
 
+export type CardsFactory = (
+  args: Arguements,
+  contentProvider: FileContent,
+) => Cards;
+
 export namespace Cards {
   type ParserTypes = {
     csv: string;
-    papaParse: string;
+    papaparse: string;
   };
 
   const parserTypes: ParserTypes = {
     csv: './papa-parse/papa-parse-cards', // Default csv to papaParse
-    papaParse: './papa-parse/papa-parse-cards',
+    papaparse: './papa-parse/papa-parse-cards',
   };
 
-  const findCardsParser = (
-    type: keyof ParserTypes | string,
-  ): Promise<(args: Arguements, contentProvider: FileContent) => Cards> => {
+  export const findFactory = (args: Arguements): Promise<CardsFactory> => {
+    const type = args.cardsParser;
     return (
       type in parserTypes
-        ? import(parserTypes[type as keyof typeof parserTypes])
+        ? import(parserTypes[type as keyof ParserTypes])
         : import(type)
-    ).then(({ create }) => create);
+    ).then(({ factory }) => factory);
   };
-
-  export function factory(args: Arguements): Promise<Cards> {
-    return Promise.all([
-      FileContent.factory(args, args.cardList),
-      findCardsParser(args.cardsParser),
-    ]).then(([content, parser]) => {
-      return parser(args, content);
-    });
-  }
 }

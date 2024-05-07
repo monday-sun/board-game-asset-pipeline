@@ -4,7 +4,7 @@ import fs from 'fs';
 import yargs from 'yargs';
 import { Cards } from './cards';
 import { findImageRenderer } from './image-renderer';
-import { findLayoutRenderer } from './layout-renderer';
+import { Layout } from './layout';
 import { Arguements } from './types';
 
 const args: Arguements = yargs(process.argv.slice(2))
@@ -12,15 +12,14 @@ const args: Arguements = yargs(process.argv.slice(2))
     cardList: { type: 'string', demandOption: true },
     outputDir: { type: 'string', default: 'output' },
     cardsParser: { type: 'string', default: 'csv' },
-    layoutRenderer: { type: 'string', default: 'react' },
+    layout: { type: 'string', default: 'react' },
     imageRenderer: { type: 'string', default: 'nodeIndividual' },
     debugHtml: { type: 'boolean', default: false },
     watch: { type: 'boolean', default: false },
   })
   .parseSync();
 
-const { cardList, outputDir, cardsParser, layoutRenderer, imageRenderer } =
-  args;
+const { cardList, outputDir, cardsParser, layout, imageRenderer } = args;
 
 // Ensure the output directory exists
 if (!fs.existsSync(outputDir)) {
@@ -28,16 +27,15 @@ if (!fs.existsSync(outputDir)) {
 }
 
 Promise.all([
-  Cards.factory(args),
-  findLayoutRenderer(layoutRenderer),
+  Cards.findFactory(args),
+  Layout.findFactory(args),
   findImageRenderer(imageRenderer),
-]).then(([cards, createLayoutRenderer, createImageRenderer]) => {
-  const layoutRenderer = createLayoutRenderer(args);
-  const imageRenderer = createImageRenderer(args);
-
-  return cards.cards$.subscribe((cardInfos) => {
-    return imageRenderer.toImages(cardInfos, layoutRenderer).then((files) => {
-      console.log(`Rendered ${files.length} cards.`);
-    });
-  });
+]).then(([cardsFactory, layoutFactory, createImageRenderer]) => {
+  //   const layoutRenderer = createLayoutRenderer(args);
+  //   const imageRenderer = createImageRenderer(args);
+  //   return cards.cards$.subscribe((cardInfos) => {
+  //     return imageRenderer.toImages(cardInfos, layoutRenderer).then((files) => {
+  //       console.log(`Rendered ${files.length} cards.`);
+  //     });
+  //   });
 });

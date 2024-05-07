@@ -1,4 +1,5 @@
 import { Card } from './cards';
+import { Layout } from './layout';
 
 export type ImageFileInfo = {
   outputPath: string;
@@ -8,15 +9,8 @@ export type ImageFileInfo = {
   format?: string;
 };
 
-export interface LayoutRenderer {
-  toHTML(templatePath: string, data: Record<string, string>): Promise<string>;
-}
-
 export interface ImageRenderer {
-  toImages(
-    cardInfos: Card[],
-    layoutRenderer: LayoutRenderer,
-  ): Promise<string[]>;
+  toImages(cardInfos: Card[], layoutRenderer: Layout): Promise<string[]>;
 }
 
 export type Arguements = {
@@ -24,7 +18,7 @@ export type Arguements = {
   cardList: string;
   outputDir: string;
   cardsParser: string;
-  layoutRenderer: string;
+  layout: string;
   imageRenderer: string;
   debugHtml: boolean;
   watch: boolean;

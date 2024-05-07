@@ -3,22 +3,23 @@ import { Observable, from, map, merge, of } from 'rxjs';
 import { Arguements } from '../types';
 
 export interface File {
-  filePath: string;
+  path$: Observable<string>;
 }
 
+export type FileFactory = (args: Arguements, filePath: string) => File;
+
 export namespace File {
-  export function observe(
+  export const factory: FileFactory = (
     args: Arguements,
     filePath: string,
-  ): Observable<File> {
-    const file = <File>{ filePath };
-    let observable = of(file);
+  ): File => {
+    let path$ = of(filePath);
     if (args.watch) {
-      observable = merge(
-        observable,
-        from(fsPromises.watch(filePath)).pipe(map((event) => file)),
+      path$ = merge(
+        path$,
+        from(fsPromises.watch(filePath)).pipe(map((event) => filePath)),
       );
     }
-    return observable;
-  }
+    return <File>{ path$ };
+  };
 }

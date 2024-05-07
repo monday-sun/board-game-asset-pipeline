@@ -1,6 +1,6 @@
 import * as Papa from 'papaparse';
 import { Observable, map } from 'rxjs';
-import { Card, Cards } from '..';
+import { Card, Cards, CardsFactory } from '..';
 import { FileContent } from '../../file/file-content';
 import { Arguements } from '../../types';
 
@@ -19,8 +19,8 @@ class PapaParseCards implements Cards {
         for (const error of results.errors) {
           console.warn(`${error.message} at ${error.row}`);
         }
-        if (!results.data) {
-          throw new Error('Unable to parse CSV');
+        if (!results.data || results.data.length === 0) {
+          throw new Error('No cards parsed from CSV file.');
         }
         return results.data;
       }),
@@ -28,6 +28,9 @@ class PapaParseCards implements Cards {
   }
 }
 
-export function create(args: Arguements, contentProvider: FileContent): Cards {
-  return new PapaParseCards(contentProvider);
-}
+export const factory: CardsFactory = (
+  args: Arguements,
+  fileContent: FileContent,
+): Cards => {
+  return new PapaParseCards(fileContent);
+};
