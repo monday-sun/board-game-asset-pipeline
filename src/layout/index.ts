@@ -15,7 +15,7 @@ export type LayoutFactory = (
 type LayoutRenderTypes = { react: string };
 
 const layoutRenderTypes: LayoutRenderTypes = {
-  react: './react/react-layout-renderer',
+  react: './react/react-layout',
 };
 
 export const findLayoutFactory = (

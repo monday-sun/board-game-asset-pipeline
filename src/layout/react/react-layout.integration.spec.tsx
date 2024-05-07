@@ -1,5 +1,5 @@
 import { of } from 'rxjs';
-import { factory } from './react-layout-renderer';
+import { factory } from './react-layout';
 
 describe('ReactLayout', () => {
   it('should render a React component to static HTML with properties', (done) => {
