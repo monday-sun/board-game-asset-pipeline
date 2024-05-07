@@ -1,5 +1,5 @@
 import { of } from 'rxjs';
-import { FileContent } from '../../file-content';
+import { FileContent } from '../../file/file-content';
 import { create } from './papa-parse-cards';
 
 describe('PapaParseCards', () => {
@@ -8,7 +8,7 @@ describe('PapaParseCards', () => {
 Card1,1,Front1,Back1,Unknown1
 Card2,2,Front2,Back2,Unknown2`;
     const contentProvider: FileContent = {
-      content$: of(csvContent),
+      content$: of({ filePath: '', content: csvContent }),
     };
     const testSubject = create({} as any, contentProvider);
 
