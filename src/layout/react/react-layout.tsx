@@ -1,8 +1,7 @@
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { Observable, from, switchMap } from 'rxjs';
-import { Layout, LayoutFactory } from '..';
-import { Card } from '../../cards';
+import { Layout, LayoutFactory, LayoutResult } from '..';
 import { Templates } from '../../templates';
 import { Arguements } from '../../types';
 
@@ -16,7 +15,7 @@ function toHTML(
 }
 
 export class ReactLayout implements Layout {
-  layout$: Observable<{ templatePath: string; card: Card; layout: string }>;
+  layout$: Observable<LayoutResult>;
 
   constructor(templates: Templates) {
     this.layout$ = templates.needsLayout$.pipe(
@@ -26,14 +25,11 @@ export class ReactLayout implements Layout {
             templatePath,
             card,
             layout,
+            format: 'html',
           })),
         ),
       ),
     );
-  }
-
-  getFormat(): string {
-    return 'html';
   }
 }
 

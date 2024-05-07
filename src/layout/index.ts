@@ -9,11 +9,11 @@ export type LayoutResult = {
   templatePath: string;
   card: Card;
   layout: string;
+  format:string;
 };
 
 export interface Layout {
   layout$: Observable<LayoutResult>;
-  getFormat(): string;
 }
 
 export type LayoutFactory = (args: Arguements, templates: Templates) => Layout;
