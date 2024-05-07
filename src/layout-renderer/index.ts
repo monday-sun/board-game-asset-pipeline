@@ -1,6 +1,6 @@
 import { Arguements } from '../types';
 
-export interface LayoutRenderer {
+export interface Layout {
   toHTML(templatePath: string, data: Record<string, string>): Promise<string>;
 }
 
@@ -10,9 +10,9 @@ const layoutRenderTypes: LayoutRenderTypes = {
   react: './react/react-layout-renderer',
 };
 
-export const findLayoutRenderer = (
+export const findLayoutFactory = (
   type: keyof typeof layoutRenderTypes | string,
-): Promise<(args: Arguements) => LayoutRenderer> => {
+): Promise<(args: Arguements) => Layout> => {
   return (
     type in layoutRenderTypes
       ? import(layoutRenderTypes[type as keyof typeof layoutRenderTypes])
