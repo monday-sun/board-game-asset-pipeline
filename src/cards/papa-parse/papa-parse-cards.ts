@@ -17,7 +17,7 @@ class PapaParseCards implements Cards {
       ),
       map((results) => {
         for (const error of results.errors) {
-          console.error(`${error.message} at ${error.row}`);
+          console.warn(`${error.message} at ${error.row}`);
         }
         if (!results.data) {
           throw new Error('Unable to parse CSV');
