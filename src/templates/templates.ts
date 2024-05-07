@@ -49,20 +49,6 @@ export class Templates {
       mergeAll(),
     );
 
-    templateUpdate$
-      .pipe(
-        withLatestFrom(templateToCards$),
-        map(
-          ([templatePaths, templateToCards]) =>
-            templateToCards[templatePaths.filePath],
-        ),
-      )
-      .subscribe({
-        next: (out) => console.log('out', out),
-        error: (err) => console.log('err', err),
-        complete: () => console.log('complete'),
-      });
-
     this.needsLayout$ = templateUpdate$.pipe(
       withLatestFrom(templateToCards$),
       map(([templatePaths, templateToCards]) =>
