@@ -1,4 +1,5 @@
 import { Card } from './cards';
+import { LayoutRenderer } from './layout-renderer';
 
 export type ImageFileInfo = {
   outputPath: string;
@@ -7,10 +8,6 @@ export type ImageFileInfo = {
   cardNumber?: number;
   format?: string;
 };
-
-export interface LayoutRenderer {
-  toHTML(templatePath: string, data: Record<string, string>): Promise<string>;
-}
 
 export interface ImageRenderer {
   toImages(

@@ -1,4 +1,8 @@
-import { Arguements, LayoutRenderer } from '../types';
+import { Arguements } from '../types';
+
+export interface LayoutRenderer {
+  toHTML(templatePath: string, data: Record<string, string>): Promise<string>;
+}
 
 type LayoutRenderTypes = { react: string };
 
