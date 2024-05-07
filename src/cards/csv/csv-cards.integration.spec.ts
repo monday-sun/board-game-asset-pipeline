@@ -1,8 +1,8 @@
 import { of } from 'rxjs';
 import { ContentProvider } from '../../content-provider';
-import { createCardsParser } from './csv-cards-parser';
+import { createCardsParser } from './csv-cards';
 
-describe('CSVCardsParser', () => {
+describe('CSVCards', () => {
   it('parses cards from a CSV file', (done) => {
     const csvContent = `name,count,frontTemplate,backTemplate,customOption
 Card1,1,Front1,Back1,Unknown1
