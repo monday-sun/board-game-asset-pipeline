@@ -1,7 +1,7 @@
 import * as Papa from 'papaparse';
 import { Observable, Subject, map } from 'rxjs';
 import { Card, Cards } from '..';
-import { FileContent } from '../../file-content';
+import { FileContent } from '../../file/file-content';
 import { Arguements } from '../../types';
 
 // https://www.papaparse.com/
@@ -12,7 +12,9 @@ class PapaParseCards implements Cards {
   errors$ = this.errorsSubject;
 
   constructor(csv: FileContent) {
-    this.cards$ = csv.content$.pipe(map((content) => this.parseCsv(content)));
+    this.cards$ = csv.content$.pipe(
+      map(({ content }) => this.parseCsv(content)),
+    );
   }
 
   private parseCsv(content: string) {

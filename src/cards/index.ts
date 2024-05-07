@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { FileContent } from '../file-content';
+import { FileContent } from '../file/file-content';
 import { Arguements } from '../types';
 
 export type Card = {
