@@ -19,7 +19,7 @@ export namespace Output {
   export const findOutputFactory = (
     args: Arguements,
   ): Promise<OutputFactory> => {
-    const type = args.imageRenderer;
+    const type = args.output;
     return (
       type in outputTypes
         ? import(outputTypes[type as keyof OutputTypes])
