@@ -19,7 +19,7 @@ function parseCsv(content: string): Promise<Card[]> {
   });
 }
 
-class CSVCardsParser implements Cards {
+class CSVCards implements Cards {
   cards$: Observable<Card[]>;
 
   constructor(csvProvider: ContentProvider) {
@@ -33,5 +33,5 @@ export function createCardsParser(
   args: Arguements,
   contentProvider: ContentProvider,
 ): Cards {
-  return new CSVCardsParser(contentProvider);
+  return new CSVCards(contentProvider);
 }

@@ -1,4 +1,4 @@
-import { Card } from './cards-parser';
+import { Card } from './cards';
 
 export type ImageFileInfo = {
   outputPath: string;

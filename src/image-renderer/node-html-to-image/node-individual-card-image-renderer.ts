@@ -1,7 +1,7 @@
 import fs from 'fs';
 import nodeHtmlToImage from 'node-html-to-image';
 import path from 'path';
-import { Card } from '../../cards-parser';
+import { Card } from '../../cards';
 import {
   Arguements,
   ImageFileInfo,
