@@ -1,7 +1,7 @@
 import { Observable, map, mergeAll, withLatestFrom } from 'rxjs';
 import { Card, Cards } from '../cards';
 import { FileFactory } from '../file/file';
-import { LayoutFactory } from '../layout';
+import { NeedsLayout } from '../layout';
 import { Arguements } from '../types';
 
 function addCardToTemplate(
@@ -31,13 +31,12 @@ function mapTemplatesToCards(cards: Card[]) {
 }
 
 export class Layouts {
-  layout$: Observable<{ templatePath: string; layout: string; card: Card }>;
+  needsLayout$: Observable<NeedsLayout>;
 
   constructor(
     private args: Arguements,
     cards: Cards,
     fileFactory: FileFactory,
-    layoutFactory: LayoutFactory,
   ) {
     const templateToCards$ = cards.cards$.pipe(
       map((cards) => mapTemplatesToCards(cards)),
@@ -50,7 +49,7 @@ export class Layouts {
       mergeAll(),
     );
 
-    const needsLayout$ = templateUpdate$.pipe(
+    this.needsLayout$ = templateUpdate$.pipe(
       withLatestFrom(templateToCards$),
       map(([template, templateToCards]) =>
         templateToCards[template].map((card) => ({
@@ -61,7 +60,7 @@ export class Layouts {
       mergeAll(),
     );
 
-    this.layout$ = layoutFactory(this.args, needsLayout$).layout$;
+    //    this.layout$ = layoutFactory(this.args, this.needsLayout$).layout$;
   }
 }
 
@@ -70,8 +69,7 @@ export namespace Layouts {
     args: Arguements,
     cards: Cards,
     fileFactory: FileFactory,
-    layoutFactory: LayoutFactory,
   ): Layouts {
-    return new Layouts(args, cards, fileFactory, layoutFactory);
+    return new Layouts(args, cards, fileFactory);
   }
 }

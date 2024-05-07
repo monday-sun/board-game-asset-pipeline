@@ -1,7 +1,6 @@
 import { of } from 'rxjs';
 import { Cards } from '../cards';
 import { Layouts } from './layouts';
-import { factory as testLayoutFactory } from './test-layout';
 
 describe('Layouts', () => {
   it('should map templates to cards', (done) => {
@@ -14,22 +13,18 @@ describe('Layouts', () => {
       {
         templatePath: 'template1',
         card: cards[0],
-        layout: 'test',
       },
       {
         templatePath: 'template1',
         card: cards[1],
-        layout: 'test',
       },
       {
         templatePath: 'template2',
         card: cards[0],
-        layout: 'test',
       },
       {
         templatePath: 'template3',
         card: cards[1],
-        layout: 'test',
       },
     ];
 
@@ -41,11 +36,10 @@ describe('Layouts', () => {
       (_: any, filePath: string) => ({
         path$: of(filePath),
       }),
-      testLayoutFactory,
     );
 
-    testSubject.layout$.subscribe((layout) => {
-      expect(layout).toEqual(expectedLayouts.shift());
+    testSubject.needsLayout$.subscribe((needsLayout) => {
+      expect(needsLayout).toEqual(expectedLayouts.shift());
       if (expectedLayouts.length === 0) {
         done();
       }
