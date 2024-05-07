@@ -3,7 +3,6 @@
 import fs from 'fs';
 import yargs from 'yargs';
 import { Cards } from './cards';
-import { FileContent } from './file-content';
 import { findImageRenderer } from './image-renderer';
 import { findLayoutRenderer } from './layout-renderer';
 import { Arguements } from './types';
@@ -29,25 +28,16 @@ if (!fs.existsSync(outputDir)) {
 }
 
 Promise.all([
-  FileContent.factory(args, args.cardList),
-  Cards.findCardsParser(cardsParser),
+  Cards.factory(args),
   findLayoutRenderer(layoutRenderer),
   findImageRenderer(imageRenderer),
-]).then(
-  ([
-    fileContent,
-    createCardsParser,
-    createLayoutRenderer,
-    createImageRenderer,
-  ]) => {
-    const cardsParser = createCardsParser(args, fileContent);
-    const layoutRenderer = createLayoutRenderer(args);
-    const imageRenderer = createImageRenderer(args);
+]).then(([cards, createLayoutRenderer, createImageRenderer]) => {
+  const layoutRenderer = createLayoutRenderer(args);
+  const imageRenderer = createImageRenderer(args);
 
-    return cardsParser.cards$.subscribe((cardInfos) => {
-      return imageRenderer.toImages(cardInfos, layoutRenderer).then((files) => {
-        console.log(`Rendered ${files.length} cards.`);
-      });
+  return cards.cards$.subscribe((cardInfos) => {
+    return imageRenderer.toImages(cardInfos, layoutRenderer).then((files) => {
+      console.log(`Rendered ${files.length} cards.`);
     });
-  },
-);
+  });
+});

@@ -21,7 +21,7 @@ export namespace Cards {
 
   const parserTypes: ParserTypes = { csv: './csv/csv-cards-parser' };
 
-  export const findCardsParser = (
+  const findCardsParser = (
     type: keyof ParserTypes | string,
   ): Promise<(args: Arguements, contentProvider: FileContent) => Cards> => {
     return (
@@ -30,4 +30,13 @@ export namespace Cards {
         : import(type)
     ).then(({ createCardsParser }) => createCardsParser);
   };
+
+  export function factory(args: Arguements): Promise<Cards> {
+    return Promise.all([
+      FileContent.factory(args, args.cardList),
+      findCardsParser(args.cardsParser),
+    ]).then(([content, parser]) => {
+      return parser(args, content);
+    });
+  }
 }
