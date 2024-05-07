@@ -22,7 +22,7 @@ export namespace Cards {
   };
 
   const parserTypes: ParserTypes = {
-    csv: './papa-parse/papa-parse-cards',
+    csv: './papa-parse/papa-parse-cards', // Default csv to papaParse
     papaParse: './papa-parse/papa-parse-cards',
   };
 
