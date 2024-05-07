@@ -1,10 +1,10 @@
 import { Observable } from 'rxjs';
 import { Card, Cards } from '../cards';
-import { FileFactory } from '../file/file';
+import { FileFactory, Paths } from '../file/file';
 import { Arguements } from '../types';
 
 export type NeedsLayout = {
-  templatePath: string;
+  templatePaths: Paths;
   card: Card;
 };
 

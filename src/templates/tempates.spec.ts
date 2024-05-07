@@ -1,7 +1,7 @@
 import { of } from 'rxjs';
 import { Cards } from '../cards';
+import { Paths } from '../file/file';
 import { factory } from './templates';
-
 describe('Layouts', () => {
   it('should map templates to cards', (done) => {
     const cards = [
@@ -11,19 +11,31 @@ describe('Layouts', () => {
 
     const expectedLayouts = [
       {
-        templatePath: 'template1',
+        templatePaths: <Paths>{
+          filePath: 'template1',
+          relativePath: 'rel/template1',
+        },
         card: cards[0],
       },
       {
-        templatePath: 'template1',
+        templatePaths: <Paths>{
+          filePath: 'template1',
+          relativePath: 'rel/template1',
+        },
         card: cards[1],
       },
       {
-        templatePath: 'template2',
+        templatePaths: <Paths>{
+          filePath: 'template2',
+          relativePath: 'rel/template2',
+        },
         card: cards[0],
       },
       {
-        templatePath: 'template3',
+        templatePaths: <Paths>{
+          filePath: 'template3',
+          relativePath: 'rel/template3',
+        },
         card: cards[1],
       },
     ];
@@ -34,7 +46,7 @@ describe('Layouts', () => {
         cards$: of(cards),
       },
       (_: any, filePath: string) => ({
-        path$: of(filePath),
+        path$: of({ filePath, relativePath: `rel/${filePath}` }),
       }),
     );
 

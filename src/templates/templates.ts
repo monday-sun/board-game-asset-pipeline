@@ -14,7 +14,7 @@ function addCardToTemplate(
   templatesToCards[template] = cards;
 }
 
-function mapTemplatesToCards(cards: Card[]) {
+function gatherTemplates(cards: Card[]) {
   const templatesToCards: { [key: string]: Card[] } = {};
 
   cards.forEach((card) => {
@@ -39,7 +39,7 @@ export class Templates {
     fileFactory: FileFactory,
   ) {
     const templateToCards$ = cards.cards$.pipe(
-      map((cards) => mapTemplatesToCards(cards)),
+      map((cards) => gatherTemplates(cards)),
     );
 
     const templateUpdate$ = templateToCards$.pipe(
@@ -49,18 +49,30 @@ export class Templates {
       mergeAll(),
     );
 
+    templateUpdate$
+      .pipe(
+        withLatestFrom(templateToCards$),
+        map(
+          ([templatePaths, templateToCards]) =>
+            templateToCards[templatePaths.filePath],
+        ),
+      )
+      .subscribe({
+        next: (out) => console.log('out', out),
+        error: (err) => console.log('err', err),
+        complete: () => console.log('complete'),
+      });
+
     this.needsLayout$ = templateUpdate$.pipe(
       withLatestFrom(templateToCards$),
-      map(([template, templateToCards]) =>
-        templateToCards[template].map((card) => ({
-          templatePath: template,
+      map(([templatePaths, templateToCards]) =>
+        templateToCards[templatePaths.filePath].map((card) => ({
+          templatePaths,
           card,
         })),
       ),
       mergeAll(),
     );
-
-    //    this.layout$ = layoutFactory(this.args, this.needsLayout$).layout$;
   }
 }
 
