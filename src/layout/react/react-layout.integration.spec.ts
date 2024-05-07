@@ -1,11 +1,16 @@
 import { of } from 'rxjs';
+import { Paths } from '../../file/file';
+import { NeedsLayout } from '../../templates';
 import { factory } from './react-layout';
 
 describe('ReactLayout', () => {
   it('should render a React component to static HTML with properties', (done) => {
     const testSubject = factory({} as any, {
-      needsLayout$: of({
-        templatePath: './test-component',
+      needsLayout$: of(<NeedsLayout>{
+        templatePaths: <Paths>{
+          filePath: './test-component',
+          relativePath: './test-component',
+        },
         card: {
           message: 'Hello, world!',
         } as any,
@@ -14,7 +19,10 @@ describe('ReactLayout', () => {
 
     testSubject.layout$.subscribe((layout) => {
       expect(layout).toEqual({
-        templatePath: './test-component',
+        templatePaths: <Paths>{
+          filePath: './test-component',
+          relativePath: './test-component',
+        },
         card: {
           message: 'Hello, world!',
         },

@@ -19,10 +19,10 @@ export class ReactLayout implements Layout {
 
   constructor(templates: Templates) {
     this.layout$ = templates.needsLayout$.pipe(
-      switchMap(({ templatePath, card }) =>
+      switchMap(({ templatePaths, card }) =>
         from(
-          toHTML(templatePath, card).then((layout) => ({
-            templatePath,
+          toHTML(templatePaths.relativePath, card).then((layout) => ({
+            templatePaths,
             card,
             layout,
             format: 'html',

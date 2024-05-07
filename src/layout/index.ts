@@ -2,14 +2,15 @@ import path from 'path';
 import { cwd } from 'process';
 import { Observable } from 'rxjs';
 import { Card } from '../cards';
+import { Paths } from '../file/file';
 import { Templates } from '../templates';
 import { Arguements } from '../types';
 
 export type LayoutResult = {
-  templatePath: string;
+  templatePaths: Paths;
   card: Card;
   layout: string;
-  format:string;
+  format: string;
 };
 
 export interface Layout {
@@ -27,10 +28,11 @@ export namespace Layout {
 
   export const findFactory = (args: Arguements): Promise<LayoutFactory> => {
     const type = args.layout;
-    return (
+    const importPath =
       type in layoutRenderTypes
-        ? import(layoutRenderTypes[type as keyof typeof layoutRenderTypes])
-        : import(path.join(cwd(), type))
-    ).then(({ factory }) => factory);
+        ? layoutRenderTypes[type as keyof LayoutRenderTypes]
+        : path.join(cwd(), type);
+    console.log('Rendering layouts with', importPath);
+    return import(importPath).then(({ factory }) => factory);
   };
 }
