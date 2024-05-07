@@ -1,8 +1,8 @@
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { Observable, from, switchMap } from 'rxjs';
-import { Layout, LayoutFactory } from '..';
-import { Card } from '../../cards';
+import { Observable, from, map, mergeAll } from 'rxjs';
+import { Layout, LayoutFactory, LayoutResult } from '..';
+import { Templates } from '../../templates';
 import { Arguements } from '../../types';
 
 function toHTML(
@@ -15,30 +15,28 @@ function toHTML(
 }
 
 export class ReactLayout implements Layout {
-  layout$: Observable<{ templatePath: string; card: Card; layout: string }>;
+  layout$: Observable<LayoutResult>;
 
-  constructor(trigger: Observable<{ templatePath: string; card: Card }>) {
-    this.layout$ = trigger.pipe(
-      switchMap(({ templatePath, card }) =>
-        from(
-          toHTML(templatePath, card).then((layout) => ({
-            templatePath,
+  constructor(templates: Templates) {
+    this.layout$ = templates.needsLayout$.pipe(
+      map(({ templatePaths, card }) =>
+        from(toHTML(templatePaths.relativePath, card)).pipe(
+          map((layout) => ({
+            templatePaths,
             card,
             layout,
+            format: 'html',
           })),
         ),
       ),
+      mergeAll(),
     );
-  }
-
-  getFormat(): string {
-    return 'html';
   }
 }
 
 export const factory: LayoutFactory = (
   args: Arguements,
-  trigger: Observable<{ templatePath: string; card: Card }>,
+  templates: Templates,
 ): Layout => {
-  return new ReactLayout(trigger);
+  return new ReactLayout(templates);
 };

@@ -1,7 +1,7 @@
 import { Observable, map, mergeAll, withLatestFrom } from 'rxjs';
+import { NeedsLayout, TemplatesFactory } from '.';
 import { Card, Cards } from '../cards';
 import { FileFactory } from '../file/file';
-import { LayoutFactory } from '../layout';
 import { Arguements } from '../types';
 
 function addCardToTemplate(
@@ -14,7 +14,7 @@ function addCardToTemplate(
   templatesToCards[template] = cards;
 }
 
-function mapTemplatesToCards(cards: Card[]) {
+function gatherTemplates(cards: Card[]) {
   const templatesToCards: { [key: string]: Card[] } = {};
 
   cards.forEach((card) => {
@@ -30,17 +30,16 @@ function mapTemplatesToCards(cards: Card[]) {
   return templatesToCards;
 }
 
-export class Layouts {
-  layout$: Observable<{ templatePath: string; layout: string; card: Card }>;
+export class Templates {
+  needsLayout$: Observable<NeedsLayout>;
 
   constructor(
     private args: Arguements,
     cards: Cards,
     fileFactory: FileFactory,
-    layoutFactory: LayoutFactory,
   ) {
     const templateToCards$ = cards.cards$.pipe(
-      map((cards) => mapTemplatesToCards(cards)),
+      map((cards) => gatherTemplates(cards)),
     );
 
     const templateUpdate$ = templateToCards$.pipe(
@@ -50,28 +49,23 @@ export class Layouts {
       mergeAll(),
     );
 
-    const needsLayout$ = templateUpdate$.pipe(
+    this.needsLayout$ = templateUpdate$.pipe(
       withLatestFrom(templateToCards$),
-      map(([template, templateToCards]) =>
-        templateToCards[template].map((card) => ({
-          templatePath: template,
+      map(([templatePaths, templateToCards]) =>
+        templateToCards[templatePaths.filePath].map((card) => ({
+          templatePaths,
           card,
         })),
       ),
       mergeAll(),
     );
-
-    this.layout$ = layoutFactory(this.args, needsLayout$).layout$;
   }
 }
 
-export namespace Layouts {
-  export function factory(
-    args: Arguements,
-    cards: Cards,
-    fileFactory: FileFactory,
-    layoutFactory: LayoutFactory,
-  ): Layouts {
-    return new Layouts(args, cards, fileFactory, layoutFactory);
-  }
-}
+export const factory: TemplatesFactory = (
+  args: Arguements,
+  cards: Cards,
+  fileFactory: FileFactory,
+): Templates => {
+  return new Templates(args, cards, fileFactory);
+};

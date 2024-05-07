@@ -18,8 +18,8 @@ export namespace FileContent {
       switchMap((filePath) =>
         from(
           fsPromises
-            .readFile(filePath, 'utf8')
-            .then((content) => ({ filePath, content })),
+            .readFile(filePath.relativePath, 'utf8')
+            .then((content) => ({ filePath: filePath.filePath, content })),
         ),
       ),
     );

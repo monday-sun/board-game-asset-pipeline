@@ -17,9 +17,8 @@ export type Arguements = {
   [x: string]: unknown;
   cardList: string;
   outputDir: string;
-  cardsParser: string;
+  cards: string;
   layout: string;
-  imageRenderer: string;
-  debugHtml: boolean;
+  output: string;
   watch: boolean;
 };

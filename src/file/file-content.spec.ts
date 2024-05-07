@@ -11,9 +11,10 @@ describe('FileContent', () => {
     mockReadFile.mockResolvedValueOnce('file content');
 
     const fileContent = FileContent.factory(<Arguements>{}, {
-      path$: of('file1'),
+      path$: of({ filePath: 'file1', relativePath: 'rel/file1' }),
     });
     fileContent.content$.subscribe((content) => {
+      expect(mockReadFile).toHaveBeenCalledWith('rel/file1', 'utf8');
       expect(content).toEqual({ filePath: 'file1', content: 'file content' });
       done();
     });

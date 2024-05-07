@@ -1,3 +1,5 @@
+import path from 'path';
+import { cwd } from 'process';
 import { Observable } from 'rxjs';
 import { FileContent } from '../file/file-content';
 import { Arguements } from '../types';
@@ -31,11 +33,13 @@ export namespace Cards {
   };
 
   export const findFactory = (args: Arguements): Promise<CardsFactory> => {
-    const type = args.cardsParser;
-    return (
+    const type = args.cards;
+    const importPath =
       type in parserTypes
-        ? import(parserTypes[type as keyof ParserTypes])
-        : import(type)
-    ).then(({ factory }) => factory);
+        ? parserTypes[type as keyof ParserTypes]
+        : path.join(cwd(), type);
+
+    console.log('Loading cards with', importPath);
+    return import(importPath).then(({ factory }) => factory);
   };
 }
