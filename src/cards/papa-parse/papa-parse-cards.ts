@@ -28,6 +28,6 @@ class PapaParseCards implements Cards {
   }
 }
 
-export function create(args: Arguements, contentProvider: FileContent): Cards {
-  return new PapaParseCards(contentProvider);
+export function create(args: Arguements, fileContent: FileContent): Cards {
+  return new PapaParseCards(fileContent);
 }
