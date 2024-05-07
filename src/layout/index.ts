@@ -2,7 +2,7 @@ import path from 'path';
 import { cwd } from 'process';
 import { Observable } from 'rxjs';
 import { Card } from '../cards';
-import { NeedsLayout } from '../templates';
+import { Templates } from '../templates';
 import { Arguements } from '../types';
 
 export type LayoutResult = {
@@ -16,10 +16,7 @@ export interface Layout {
   getFormat(): string;
 }
 
-export type LayoutFactory = (
-  args: Arguements,
-  trigger: Observable<NeedsLayout>,
-) => Layout;
+export type LayoutFactory = (args: Arguements, templates: Templates) => Layout;
 
 export namespace Layout {
   type LayoutRenderTypes = { react: string };

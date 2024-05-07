@@ -3,6 +3,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { Observable, from, switchMap } from 'rxjs';
 import { Layout, LayoutFactory } from '..';
 import { Card } from '../../cards';
+import { Templates } from '../../templates';
 import { Arguements } from '../../types';
 
 function toHTML(
@@ -17,8 +18,8 @@ function toHTML(
 export class ReactLayout implements Layout {
   layout$: Observable<{ templatePath: string; card: Card; layout: string }>;
 
-  constructor(trigger: Observable<{ templatePath: string; card: Card }>) {
-    this.layout$ = trigger.pipe(
+  constructor(templates: Templates) {
+    this.layout$ = templates.needsLayout$.pipe(
       switchMap(({ templatePath, card }) =>
         from(
           toHTML(templatePath, card).then((layout) => ({
@@ -38,7 +39,7 @@ export class ReactLayout implements Layout {
 
 export const factory: LayoutFactory = (
   args: Arguements,
-  trigger: Observable<{ templatePath: string; card: Card }>,
+  templates: Templates,
 ): Layout => {
-  return new ReactLayout(trigger);
+  return new ReactLayout(templates);
 };
