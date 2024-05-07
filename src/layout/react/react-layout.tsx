@@ -1,6 +1,6 @@
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { Observable, from, mergeMap } from 'rxjs';
+import { Observable, from, switchMap } from 'rxjs';
 import { Layout, LayoutFactory } from '..';
 import { Card } from '../../cards';
 import { Arguements } from '../../types';
@@ -15,12 +15,18 @@ function toHTML(
 }
 
 export class ReactLayout implements Layout {
-  layout$: Observable<{ card: Card; layout: string }>;
+  layout$: Observable<{ templatePath: string; card: Card; layout: string }>;
 
   constructor(trigger: Observable<{ templatePath: string; card: Card }>) {
     this.layout$ = trigger.pipe(
-      mergeMap(({ templatePath, card }) =>
-        from(toHTML(templatePath, card).then((layout) => ({ card, layout }))),
+      switchMap(({ templatePath, card }) =>
+        from(
+          toHTML(templatePath, card).then((layout) => ({
+            templatePath,
+            card,
+            layout,
+          })),
+        ),
       ),
     );
   }

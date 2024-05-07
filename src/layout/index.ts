@@ -5,7 +5,7 @@ import { Card } from '../cards';
 import { Arguements } from '../types';
 
 export interface Layout {
-  layout$: Observable<{ card: Card; layout: string }>;
+  layout$: Observable<{ templatePath: string; card: Card; layout: string }>;
   getFormat(): string;
 }
 

@@ -15,6 +15,7 @@ describe('ReactLayout', () => {
 
     testSubject.layout$.subscribe((layout) => {
       expect(layout).toEqual({
+        templatePath: './test-component',
         layout: '<div>Hello, world!</div>',
         card: {
           message: 'Hello, world!',
