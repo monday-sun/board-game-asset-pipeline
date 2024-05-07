@@ -2,7 +2,7 @@ import { Observable } from 'rxjs';
 import { ContentProvider } from '../content-provider';
 import { Arguements, CardInfo } from '../types';
 
-export interface CardsParser {
+export interface Cards {
   cards$: Observable<CardInfo[]>;
 }
 
@@ -15,7 +15,7 @@ const parserTypes: ParserTypes = { csv: './csv/csv-cards-parser' };
 export const findCardsParser = (
   type: keyof typeof parserTypes | string,
 ): Promise<
-  (args: Arguements, contentProvider: ContentProvider) => CardsParser
+  (args: Arguements, contentProvider: ContentProvider) => Cards
 > => {
   return (
     type in parserTypes
