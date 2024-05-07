@@ -2,19 +2,19 @@ import { Observable } from 'rxjs';
 import { ContentProvider } from '../content-provider';
 import { Arguements } from '../types';
 
+export type Card = {
+  name: string;
+  count: string;
+  frontTemplate: string;
+  backTemplate: string;
+  [key: string]: string; // For unknown values
+};
+
 export interface Cards {
-  cards$: Observable<Cards.Info[]>;
+  cards$: Observable<Card[]>;
 }
 
 export namespace Cards {
-  export type Info = {
-    name: string;
-    count: string;
-    frontTemplate: string;
-    backTemplate: string;
-    [key: string]: string; // For unknown values
-  };
-
   type ParserTypes = {
     csv: string;
   };

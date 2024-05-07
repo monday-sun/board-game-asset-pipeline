@@ -1,4 +1,4 @@
-import { Cards } from './cards-parser';
+import { Card } from './cards-parser';
 
 export type ImageFileInfo = {
   outputPath: string;
@@ -14,7 +14,7 @@ export interface LayoutRenderer {
 
 export interface ImageRenderer {
   toImages(
-    cardInfos: Cards.Info[],
+    cardInfos: Card[],
     layoutRenderer: LayoutRenderer,
   ): Promise<string[]>;
 }

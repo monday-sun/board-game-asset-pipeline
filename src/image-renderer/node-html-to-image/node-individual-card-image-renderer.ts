@@ -1,7 +1,7 @@
 import fs from 'fs';
 import nodeHtmlToImage from 'node-html-to-image';
 import path from 'path';
-import { Cards } from '../../cards-parser';
+import { Card } from '../../cards-parser';
 import {
   Arguements,
   ImageFileInfo,
@@ -31,7 +31,7 @@ function createOutputList(info: ImageFileInfo, count: number) {
 }
 
 function cardsToRenderInfo(
-  cardInfos: Cards.Info[],
+  cardInfos: Card[],
   outputPath: string,
   debugHtml: boolean,
 ): ImageRenderInfo[] {
@@ -115,7 +115,7 @@ class NodeIndividualCardImageRenderer implements ImageRenderer {
   ) {}
 
   async toImages(
-    cardInfos: Cards.Info[],
+    cardInfos: Card[],
     layoutRenderer: LayoutRenderer,
   ): Promise<string[]> {
     const renderInfo = cardsToRenderInfo(
