@@ -32,12 +32,11 @@ Promise.all([
   findLayoutFactory(layoutRenderer),
   findImageRenderer(imageRenderer),
 ]).then(([cards, createLayoutRenderer, createImageRenderer]) => {
-  const layoutRenderer = createLayoutRenderer(args);
-  const imageRenderer = createImageRenderer(args);
-
-  return cards.cards$.subscribe((cardInfos) => {
-    return imageRenderer.toImages(cardInfos, layoutRenderer).then((files) => {
-      console.log(`Rendered ${files.length} cards.`);
-    });
-  });
+  //   const layoutRenderer = createLayoutRenderer(args);
+  //   const imageRenderer = createImageRenderer(args);
+  //   return cards.cards$.subscribe((cardInfos) => {
+  //     return imageRenderer.toImages(cardInfos, layoutRenderer).then((files) => {
+  //       console.log(`Rendered ${files.length} cards.`);
+  //     });
+  //   });
 });

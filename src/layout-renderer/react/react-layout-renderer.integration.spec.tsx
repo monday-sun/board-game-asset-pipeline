@@ -1,14 +1,26 @@
-import { createLayoutRenderer } from './react-layout-renderer';
+import { of } from 'rxjs';
+import { factory } from './react-layout-renderer';
 
-describe('convertToStaticHtml', () => {
-  it('should render a React component to static HTML with properties', async () => {
-    const testSubject = createLayoutRenderer({} as any);
-    const html = await testSubject.toHTML(
-      'src/layout-renderer/react/test-component',
-      {
-        message: 'Hello, world!',
-      },
+describe('ReactLayout', () => {
+  it('should render a React component to static HTML with properties', (done) => {
+    const testSubject = factory(
+      {} as any,
+      of({
+        templatePath: './test-component',
+        card: {
+          message: 'Hello, world!',
+        } as any,
+      }),
     );
-    expect(html).toBe('<div>Hello, world!</div>');
+
+    testSubject.layout$.subscribe((layout) => {
+      expect(layout).toEqual({
+        layout: '<div>Hello, world!</div>',
+        card: {
+          message: 'Hello, world!',
+        },
+      });
+      done();
+    });
   });
 });

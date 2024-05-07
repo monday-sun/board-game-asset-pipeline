@@ -1,8 +1,16 @@
+import { Observable } from 'rxjs';
+import { Card } from '../cards';
 import { Arguements } from '../types';
 
 export interface Layout {
-  toHTML(templatePath: string, data: Record<string, string>): Promise<string>;
+  layout$: Observable<{ card: Card; layout: string }>;
+  getFormat(): string;
 }
+
+export type LayoutFactory = (
+  args: Arguements,
+  trigger: Observable<{ templatePath: string; card: Card }>,
+) => Layout;
 
 type LayoutRenderTypes = { react: string };
 
@@ -12,10 +20,10 @@ const layoutRenderTypes: LayoutRenderTypes = {
 
 export const findLayoutFactory = (
   type: keyof typeof layoutRenderTypes | string,
-): Promise<(args: Arguements) => Layout> => {
+): Promise<LayoutFactory> => {
   return (
     type in layoutRenderTypes
       ? import(layoutRenderTypes[type as keyof typeof layoutRenderTypes])
       : import(type)
-  ).then(({ createLayoutRenderer }) => createLayoutRenderer);
+  ).then(({ factory }) => factory);
 };
