@@ -1,3 +1,5 @@
+import path from 'path';
+import { cwd } from 'process';
 import { Observable } from 'rxjs';
 import { Card } from '../cards';
 import { Arguements } from '../types';
@@ -27,7 +29,7 @@ export namespace Layout {
     return (
       type in layoutRenderTypes
         ? import(layoutRenderTypes[type as keyof typeof layoutRenderTypes])
-        : import(type)
+        : import(path.join(cwd(), type))
     ).then(({ factory }) => factory(args, trigger));
   };
 }
