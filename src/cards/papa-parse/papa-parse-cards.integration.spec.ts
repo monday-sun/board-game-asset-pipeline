@@ -1,6 +1,7 @@
 import { of } from 'rxjs';
+import { Cards } from '..';
 import { FileContent } from '../../file/file-content';
-import { factory } from './papa-parse-cards';
+import { Arguements } from '../../types';
 
 describe('PapaParseCards', () => {
   it('parses cards from a CSV file', (done) => {
@@ -10,8 +11,6 @@ Card2,2,Front2,Back2,Unknown2`;
     const content: FileContent = {
       content$: of({ filePath: '', content: csvContent }),
     };
-    const testSubject = factory({} as any, content);
-
     const expectedCards = [
       {
         name: 'Card1',
@@ -28,11 +27,14 @@ Card2,2,Front2,Back2,Unknown2`;
         customOption: 'Unknown2',
       },
     ];
-
-    testSubject.cards$.subscribe((cards) => {
-      expect(cards).toEqual(expectedCards);
-      done();
-    });
+    Cards.findFactory(<Arguements>{ cards: 'papaparse' })
+      .then((factory) => factory({} as any, content))
+      .then((testSubject) => {
+        testSubject.cards$.subscribe((cards) => {
+          expect(cards).toEqual(expectedCards);
+          done();
+        });
+      });
   });
 
   it('throws error if no cards are parsed', (done) => {
@@ -40,13 +42,15 @@ Card2,2,Front2,Back2,Unknown2`;
     const content: FileContent = {
       content$: of({ filePath: '', content: csvContent }),
     };
-    const testSubject = factory({} as any, content);
-
-    testSubject.cards$.subscribe({
-      error: (error) => {
-        expect(error.message).toEqual('No cards parsed from CSV file.');
-        done();
-      },
-    });
+    Cards.findFactory(<Arguements>{ cards: 'papaparse' })
+      .then((factory) => factory({} as any, content))
+      .then((testSubject) => {
+        testSubject.cards$.subscribe({
+          error: (error) => {
+            expect(error.message).toEqual('No cards parsed from CSV file.');
+            done();
+          },
+        });
+      });
   });
 });
