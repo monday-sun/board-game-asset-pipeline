@@ -1,6 +1,6 @@
 import { of } from 'rxjs';
 import { FileContent } from '../../file/file-content';
-import { create } from './papa-parse-cards';
+import { factory } from './papa-parse-cards';
 
 describe('PapaParseCards', () => {
   it('parses cards from a CSV file', (done) => {
@@ -10,7 +10,7 @@ Card2,2,Front2,Back2,Unknown2`;
     const content: FileContent = {
       content$: of({ filePath: '', content: csvContent }),
     };
-    const testSubject = create({} as any, content);
+    const testSubject = factory({} as any, content);
 
     const expectedCards = [
       {
@@ -40,7 +40,7 @@ Card2,2,Front2,Back2,Unknown2`;
     const content: FileContent = {
       content$: of({ filePath: '', content: csvContent }),
     };
-    const testSubject = create({} as any, content);
+    const testSubject = factory({} as any, content);
 
     testSubject.cards$.subscribe({
       error: (error) => {
