@@ -1,4 +1,4 @@
-import { LayoutRenderer } from '../../types';
+import { Layout } from '../../layout';
 import { createImageRenderer } from './node-individual-card-image-renderer';
 
 jest.mock('node-html-to-image', () =>
@@ -6,7 +6,7 @@ jest.mock('node-html-to-image', () =>
 );
 
 describe('NodeIndividualCardImageRenderer', () => {
-  let layoutRenderer: LayoutRenderer;
+  let layoutRenderer: Layout;
 
   beforeEach(() => {
     layoutRenderer = {
