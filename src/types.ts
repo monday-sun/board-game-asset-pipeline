@@ -1,10 +1,4 @@
-export type CardInfo = {
-  name: string;
-  count: string;
-  frontTemplate: string;
-  backTemplate: string;
-  [key: string]: string; // For unknown values
-};
+import { Card } from './cards';
 
 export type ImageFileInfo = {
   outputPath: string;
@@ -20,7 +14,7 @@ export interface LayoutRenderer {
 
 export interface ImageRenderer {
   toImages(
-    cardInfos: CardInfo[],
+    cardInfos: Card[],
     layoutRenderer: LayoutRenderer,
   ): Promise<string[]>;
 }
