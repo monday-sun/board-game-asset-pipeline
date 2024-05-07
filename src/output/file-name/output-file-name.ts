@@ -5,7 +5,7 @@ function dashifyCardName(cardName: string): string {
   return cardName.replace(/ /g, '-').toLowerCase();
 }
 
-export function createImageFileName({
+export function createOutputFileName({
   outputPath,
   cardName,
   suffix,

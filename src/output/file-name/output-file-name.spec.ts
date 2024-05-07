@@ -1,8 +1,8 @@
-import { createImageFileName } from './output-file-name';
+import { createOutputFileName } from './output-file-name';
 
 describe('createImageFileName', () => {
   it('should create a file name from a card name', () => {
-    const fileName = createImageFileName({
+    const fileName = createOutputFileName({
       outputPath: '/output',
       cardName: 'Card Name',
     });
@@ -10,7 +10,7 @@ describe('createImageFileName', () => {
   });
 
   it('should create a file name with a card number', () => {
-    const fileName = createImageFileName({
+    const fileName = createOutputFileName({
       outputPath: '/output',
       cardName: 'Card Name',
       cardNumber: 1,
@@ -19,7 +19,7 @@ describe('createImageFileName', () => {
   });
 
   it('should create a file name with a different format', () => {
-    const fileName = createImageFileName({
+    const fileName = createOutputFileName({
       outputPath: '/output',
       cardName: 'Card Name',
       format: 'jpg',
@@ -28,7 +28,7 @@ describe('createImageFileName', () => {
   });
 
   it('should create a file name with a suffix', () => {
-    const fileName = createImageFileName({
+    const fileName = createOutputFileName({
       outputPath: '/output',
       cardName: 'Card Name',
       suffix: 'suffix',
@@ -37,7 +37,7 @@ describe('createImageFileName', () => {
   });
 
   it('should create a file name with a card number and a suffix', () => {
-    const fileName = createImageFileName({
+    const fileName = createOutputFileName({
       outputPath: '/output',
       cardName: 'Card Name',
       suffix: 'suffix',
