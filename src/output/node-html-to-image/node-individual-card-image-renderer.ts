@@ -1,127 +1,83 @@
-// import fs from 'fs';
-// import nodeHtmlToImage from 'node-html-to-image';
-// import path from 'path';
-// import { Card } from '../../cards';
-// import { Arguements, ImageFileInfo, ImageRenderer } from '../../types';
-// import { createImageFileName } from '../../util/image-file-name';
-// import { Layout } from '../../layout';
+import fs from 'fs';
+import nodeHtmlToImage from 'node-html-to-image';
+import path from 'path';
+import { Observable, from, map, mergeAll } from 'rxjs';
+import { Output, OutputFactory } from '..';
+import { Layout, LayoutResult } from '../../layout';
+import { Arguements, ImageFileInfo } from '../../types';
+import { createOutputFileName } from '../file-name/output-file-name';
 
-// type ImageRenderInfo = {
-//   template: string;
-//   data: Record<string, string>;
-//   content: { output: string }[];
-//   debugHtml?: string;
-// };
+type ImageRenderInfo = {
+  html: string;
+  content: { output: string }[];
+};
 
-// function createOutputList(info: ImageFileInfo, count: number) {
-//   if (count === 1) {
-//     return [{ output: createImageFileName(info) }];
-//   }
+function createOutputList(info: ImageFileInfo, count: number) {
+  if (count === 1) {
+    return [{ output: createOutputFileName(info) }];
+  }
 
-//   return Array.from({ length: count }, (_, i) => ({
-//     output: createImageFileName({
-//       ...info,
-//       cardNumber: i + 1,
-//     }),
-//   }));
-// }
+  return Array.from({ length: count }, (_, i) => ({
+    output: createOutputFileName({
+      ...info,
+      cardNumber: i + 1,
+    }),
+  }));
+}
 
-// function cardsToRenderInfo(
-//   cardInfos: Card[],
-//   outputPath: string,
-//   debugHtml: boolean,
-// ): ImageRenderInfo[] {
-//   return cardInfos
-//     .map((cardInfo) => {
-//       const fileInfo = {
-//         outputPath,
-//         cardName: cardInfo.name,
-//       };
-//       return [
-//         {
-//           template: cardInfo.frontTemplate,
-//           data: cardInfo,
-//           content: createOutputList(
-//             { ...fileInfo, suffix: 'front' },
-//             parseInt(cardInfo.count) || 0,
-//           ),
-//           debugHtml: debugHtml
-//             ? createImageFileName({
-//                 ...fileInfo,
-//                 suffix: 'front',
-//                 outputPath: path.join(fileInfo.outputPath, 'html'),
-//                 format: 'html',
-//               })
-//             : undefined,
-//         },
-//         {
-//           template: cardInfo.backTemplate,
-//           data: cardInfo,
-//           content: createOutputList(
-//             { ...fileInfo, suffix: 'back' },
-//             parseInt(cardInfo.count) || 0,
-//           ),
-//           debugHtml: debugHtml
-//             ? createImageFileName({
-//                 ...fileInfo,
-//                 suffix: 'back',
-//                 outputPath: path.join(fileInfo.outputPath, 'html'),
-//                 format: 'html',
-//               })
-//             : undefined,
-//         },
-//       ];
-//     })
-//     .flat();
-// }
+function toRenderInfo(
+  outputPath: string,
+  layoutResult: LayoutResult,
+): ImageRenderInfo {
+  return {
+    html: layoutResult.layout,
+    content: createOutputList(
+      {
+        outputPath,
+        cardName: layoutResult.card.name,
+        suffix:
+          layoutResult.card.frontTemplate ===
+          layoutResult.templatePaths.filePath
+            ? 'front'
+            : 'back',
+      },
+      parseInt(layoutResult.card.count) || 0,
+    ),
+  };
+}
 
-// function saveHtml(html: string, renderInfo: ImageRenderInfo) {
-//   if (renderInfo.debugHtml) {
-//     return fs.writeFileSync(renderInfo.debugHtml, html);
-//   }
-// }
+function toImages(
+  html: string,
+  content: { output: string }[],
+): Promise<string[]> {
+  return nodeHtmlToImage({ content, html }).then(() =>
+    content.map((c) => c.output),
+  );
+}
 
-// function toImages(
-//   html: string,
-//   content: { output: string }[],
-// ): Promise<string[]> {
-//   return nodeHtmlToImage({ content, html }).then(() =>
-//     content.map((c) => c.output),
-//   );
-// }
+class NodeIndividualCardImageOutput implements Output {
+  generated$: Observable<string[]>;
 
-// function renderImages(
-//   renderInfo: ImageRenderInfo[],
-//   layoutRenderer: Layout,
-// ): Promise<string[]>[] {
-//   return renderInfo.map((info) =>
-//     info.content.length < 1
-//       ? Promise.resolve([])
-//       : layoutRenderer.toHTML(info.template, info.data).then((html) => {
-//           saveHtml(html, info);
-//           return toImages(html, info.content);
-//         }),
-//   );
-// }
+  constructor(outputPath: string, layout: Layout) {
+    this.generated$ = layout.layout$.pipe(
+      map((result) => toRenderInfo(outputPath, result)),
+      map(({ html, content }) =>
+        from(toImages(html, content)).pipe(
+          map(() => content.map((c) => c.output)),
+        ),
+      ),
+      mergeAll(),
+    );
+  }
+}
 
-// class NodeIndividualCardImageRenderer implements ImageRenderer {
-//   constructor(
-//     private outputPath: string,
-//     private debugHtml: boolean = false,
-//   ) {}
-
-//   async toImages(cardInfos: Card[], layoutRenderer: Layout): Promise<string[]> {
-//     const renderInfo = cardsToRenderInfo(
-//       cardInfos,
-//       this.outputPath,
-//       this.debugHtml,
-//     );
-//     return Promise.all(renderImages(renderInfo, layoutRenderer)).then(
-//       (images) => images.flat(),
-//     );
-//   }
-// }
-
-// export function createImageRenderer(args: Arguements): ImageRenderer {
-//   return new NodeIndividualCardImageRenderer(args.outputDir, args.debugHtml);
-// }
+export const factory: OutputFactory = (
+  args: Arguements,
+  layout: Layout,
+): Output => {
+  const outputPath = path.join(args.outputDir, 'individual-card-images');
+  if (!fs.existsSync(outputPath)) {
+    fs.mkdirSync(outputPath);
+  }
+  return new NodeIndividualCardImageOutput(outputPath, layout);
+};
