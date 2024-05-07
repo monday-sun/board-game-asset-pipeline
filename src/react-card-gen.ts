@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-import fs from 'fs';
 import yargs from 'yargs';
 import { Cards } from './cards';
 import { File } from './file/file';
@@ -33,7 +32,7 @@ Promise.all([
   const cardsContent = FileContent.factory(args, cardsFile);
 
   const cards = cardsFactory(args, cardsContent);
-  cards.cards$.subscribe(() => console.log('Loaded cards from cardList'));
+  cards.cards$.subscribe(() => console.log('Loaded cards from', cardList));
 
   const templates = templatesFactory(args, cards, File.factory);
   templates.needsLayout$.subscribe(({ templatePaths }) =>
@@ -52,6 +51,6 @@ Promise.all([
 
   const output = outputFactory(args, layout);
   output.generated$.subscribe((outputPath) => {
-    console.log(`Generated ${outputPath}`);
+    console.log(`Generated output ${outputPath}`);
   });
 });
