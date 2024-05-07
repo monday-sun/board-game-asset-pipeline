@@ -30,9 +30,8 @@ export namespace Cards {
     papaparse: './papa-parse/papa-parse-cards',
   };
 
-  export const findFactory = (
-    type: keyof ParserTypes | string,
-  ): Promise<CardsFactory> => {
+  export const findFactory = (args: Arguements): Promise<CardsFactory> => {
+    const type = args.cardsParser;
     return (
       type in parserTypes
         ? import(parserTypes[type as keyof ParserTypes])
