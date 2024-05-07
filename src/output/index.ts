@@ -1,3 +1,4 @@
+import path from 'path';
 import { Observable } from 'rxjs';
 import { Layout } from '../layout';
 import { Arguements } from '../types';
@@ -20,10 +21,12 @@ export namespace Output {
     args: Arguements,
   ): Promise<OutputFactory> => {
     const type = args.output;
-    return (
+    const importPath =
       type in outputTypes
-        ? import(outputTypes[type as keyof OutputTypes])
-        : import(type)
-    ).then(({ factory }) => factory);
+        ? outputTypes[type as keyof OutputTypes]
+        : path.join(process.cwd(), type);
+
+    console.log('Saving output with', importPath);
+    return import(importPath).then(({ factory }) => factory);
   };
 }

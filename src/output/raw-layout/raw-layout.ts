@@ -15,7 +15,7 @@ export class RawLayout implements Output {
         outputPath: createOutputFileName({
           outputPath: path.join(outputDir, 'raw-layout'),
           cardName: result.card.name,
-          suffix: result.card.count,
+          suffix: result.card.frontTemplate === result.templatePaths.filePath ? 'front' : 'back',
           format: result.format,
         }),
         layout: result.layout,

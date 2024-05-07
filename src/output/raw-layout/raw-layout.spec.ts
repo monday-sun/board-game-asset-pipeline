@@ -14,7 +14,7 @@ describe('RawLayout', () => {
     const layout$ = of(
       ...[
         <LayoutResult>{
-          templatePath: 'testCard',
+          templatePaths: { filePath: 'testCard' },
           card: {
             name: 'testCard',
             count: '1',
