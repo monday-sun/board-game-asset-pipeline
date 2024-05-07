@@ -6,6 +6,7 @@ import { factory } from './raw-layout';
 jest.mock('fs/promises', () => ({
   writeFile: jest.fn().mockResolvedValue(''),
 }));
+jest.mock('fs', () => ({ existsSync: jest.fn().mockReturnValue(true) }));
 
 describe('RawLayout', () => {
   beforeEach(() => {});
@@ -29,7 +30,7 @@ describe('RawLayout', () => {
       layout$,
     });
     const expectedOutputPaths = [
-      'test-output/raw-layout/testcard-1.testFormat',
+      'test-output/raw-layout/testcard-back.testFormat',
     ];
 
     testSubject.generated$.subscribe((outputPath) => {
