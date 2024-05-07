@@ -7,7 +7,7 @@ export interface File {
 }
 
 export namespace File {
-  export function factory(
+  export function observe(
     args: Arguements,
     filePath: string,
   ): Observable<File> {
