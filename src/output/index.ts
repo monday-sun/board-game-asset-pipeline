@@ -1,3 +1,4 @@
+import fs from 'fs';
 import path from 'path';
 import { Observable } from 'rxjs';
 import { Layout } from '../layout';
@@ -25,6 +26,11 @@ export namespace Output {
       type in outputTypes
         ? outputTypes[type as keyof OutputTypes]
         : path.join(process.cwd(), type);
+
+    // Ensure the output directory exists
+    if (!fs.existsSync(args.outputDir)) {
+      fs.mkdirSync(args.outputDir);
+    }
 
     console.log('Saving output with', importPath);
     return import(importPath).then(({ factory }) => factory);
