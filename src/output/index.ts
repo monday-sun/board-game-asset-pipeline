@@ -1,18 +1,19 @@
 import { Observable } from 'rxjs';
-import { Templates } from '../templates/templates';
+import { Layout } from '../layout';
 import { Arguements } from '../types';
 
 export interface Output {
   generated$: Observable<string>;
 }
 
-export type OutputFactory = (args: Arguements, layouts: Templates) => Output;
+export type OutputFactory = (args: Arguements, layout: Layout) => Output;
 
 export namespace Output {
-  type OutputTypes = { nodeIndividual: string };
+  type OutputTypes = { nodeIndividual: string; raw: string };
 
   const outputTypes: OutputTypes = {
     nodeIndividual: './node-html-to-image/node-individual-card-image-renderer',
+    raw: './raw-layout/raw-layout',
   };
 
   export const findOutputFactory = (
@@ -23,6 +24,6 @@ export namespace Output {
       type in outputTypes
         ? import(outputTypes[type as keyof OutputTypes])
         : import(type)
-    ).then(({ createImageRenderer }) => createImageRenderer);
+    ).then(({ factory }) => factory);
   };
 }
