@@ -7,9 +7,9 @@ describe('File', () => {
   it('should emit once when watch is false and not call watch', (done) => {
     const mockWatch = fsPromises.watch as jest.Mock;
 
-    const expectedEmits = [{ filePath: 'file1' }];
-    const file$ = File.observe({ watch: false } as any, 'file1');
-    file$.subscribe((file) => {
+    const expectedEmits = ['file1'];
+    const file = File.factory({ watch: false } as any, 'file1');
+    file.path$.subscribe((file) => {
       expect(mockWatch).not.toHaveBeenCalled();
       expect(file).toEqual(expectedEmits.shift());
       if (expectedEmits.length === 0) {
@@ -22,9 +22,9 @@ describe('File', () => {
     const mockWatch = fsPromises.watch as jest.Mock;
     mockWatch.mockReturnValue(new Promise(() => {}));
 
-    const expectedEmits = [{ filePath: 'file1' }];
-    const file$ = File.observe({ watch: true } as any, 'file1');
-    file$.subscribe((file) => {
+    const expectedEmits = ['file1'];
+    const file = File.factory({ watch: true } as any, 'file1');
+    file.path$.subscribe((file) => {
       expect(file).toEqual(expectedEmits.shift());
       if (expectedEmits.length === 0) {
         done();
@@ -36,9 +36,9 @@ describe('File', () => {
     const mockWatch = fsPromises.watch as jest.Mock;
     mockWatch.mockReturnValue(Promise.resolve('change'));
 
-    const expectedEmits = [{ filePath: 'file1' }, { filePath: 'file1' }];
-    const file$ = File.observe({ watch: true } as any, 'file1');
-    file$.subscribe((file) => {
+    const expectedEmits = ['file1', 'file1'];
+    const file = File.factory({ watch: true } as any, 'file1');
+    file.path$.subscribe((file) => {
       expect(file).toEqual(expectedEmits.shift());
       if (expectedEmits.length === 0) {
         done();
