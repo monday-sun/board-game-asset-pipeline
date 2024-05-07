@@ -21,15 +21,12 @@ export namespace Layout {
     react: './react/react-layout',
   };
 
-  export const factory = (
-    args: Arguements,
-    trigger: Observable<{ templatePath: string; card: Card }>,
-  ): Promise<Layout> => {
+  export const findFactory = (args: Arguements): Promise<LayoutFactory> => {
     const type = args.layout;
     return (
       type in layoutRenderTypes
         ? import(layoutRenderTypes[type as keyof typeof layoutRenderTypes])
         : import(path.join(cwd(), type))
-    ).then(({ factory }) => factory(args, trigger));
+    ).then(({ factory }) => factory);
   };
 }

@@ -30,7 +30,7 @@ export namespace Cards {
     papaparse: './papa-parse/papa-parse-cards',
   };
 
-  const findCardsFactory = (
+  export const findFactory = (
     type: keyof ParserTypes | string,
   ): Promise<CardsFactory> => {
     return (
@@ -39,10 +39,4 @@ export namespace Cards {
         : import(type)
     ).then(({ factory }) => factory);
   };
-
-  export function factory(args: Arguements): Promise<Cards> {
-    return findCardsFactory(args.cardsParser).then((parser) => {
-      return parser(args, FileContent.observe(args, args.cardList));
-    });
-  }
 }
