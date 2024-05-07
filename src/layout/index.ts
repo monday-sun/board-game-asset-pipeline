@@ -12,18 +12,22 @@ export type LayoutFactory = (
   trigger: Observable<{ templatePath: string; card: Card }>,
 ) => Layout;
 
-type LayoutRenderTypes = { react: string };
+export namespace Layout {
+  type LayoutRenderTypes = { react: string };
 
-const layoutRenderTypes: LayoutRenderTypes = {
-  react: './react/react-layout',
-};
+  const layoutRenderTypes: LayoutRenderTypes = {
+    react: './react/react-layout',
+  };
 
-export const findLayoutFactory = (
-  type: keyof typeof layoutRenderTypes | string,
-): Promise<LayoutFactory> => {
-  return (
-    type in layoutRenderTypes
-      ? import(layoutRenderTypes[type as keyof typeof layoutRenderTypes])
-      : import(type)
-  ).then(({ factory }) => factory);
-};
+  export const factory = (
+    args: Arguements,
+    trigger: Observable<{ templatePath: string; card: Card }>,
+  ): Promise<Layout> => {
+    const type = args.layout;
+    return (
+      type in layoutRenderTypes
+        ? import(layoutRenderTypes[type as keyof typeof layoutRenderTypes])
+        : import(type)
+    ).then(({ factory }) => factory(args, trigger));
+  };
+}

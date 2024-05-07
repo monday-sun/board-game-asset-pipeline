@@ -12,15 +12,14 @@ const args: Arguements = yargs(process.argv.slice(2))
     cardList: { type: 'string', demandOption: true },
     outputDir: { type: 'string', default: 'output' },
     cardsParser: { type: 'string', default: 'csv' },
-    layoutRenderer: { type: 'string', default: 'react' },
+    layout: { type: 'string', default: 'react' },
     imageRenderer: { type: 'string', default: 'nodeIndividual' },
     debugHtml: { type: 'boolean', default: false },
     watch: { type: 'boolean', default: false },
   })
   .parseSync();
 
-const { cardList, outputDir, cardsParser, layoutRenderer, imageRenderer } =
-  args;
+const { cardList, outputDir, cardsParser, layout, imageRenderer } = args;
 
 // Ensure the output directory exists
 if (!fs.existsSync(outputDir)) {
