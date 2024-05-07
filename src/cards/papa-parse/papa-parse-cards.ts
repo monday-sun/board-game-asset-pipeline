@@ -19,8 +19,8 @@ class PapaParseCards implements Cards {
         for (const error of results.errors) {
           console.warn(`${error.message} at ${error.row}`);
         }
-        if (!results.data) {
-          throw new Error('Unable to parse CSV');
+        if (!results.data || results.data.length === 0) {
+          throw new Error('No cards parsed from CSV file.');
         }
         return results.data;
       }),
