@@ -5,7 +5,7 @@ import { Layout } from '../layout';
 import { Arguements } from '../types';
 
 export interface Output {
-  generated$: Observable<string>;
+  generated$: Observable<string[]>;
 }
 
 export type OutputFactory = (args: Arguements, layout: Layout) => Output;
