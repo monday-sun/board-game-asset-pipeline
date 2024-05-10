@@ -16,9 +16,6 @@ function executeInChildProcess(
   data: Record<string, string>,
 ): Promise<string> {
   const { execFile } = require('child_process');
-  const util = require('util');
-
-  const exec = util.promisify(execFile);
 
   return new Promise((resolve, reject) =>
     execFile(

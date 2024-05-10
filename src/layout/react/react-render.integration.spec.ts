@@ -3,14 +3,14 @@ import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
 jest.spyOn(process.stdout, 'write').mockImplementation();
 jest.spyOn(process.stderr, 'write').mockImplementation();
 
-describe('render-worker', () => {
+describe('react-render', () => {
   describe('when rendering a valid react component', () => {
     let child: ChildProcessWithoutNullStreams;
     let output: string;
     let error: string;
     beforeEach(() => {
       child = spawn('ts-node', [
-        './src/layout/react/render-worker.ts',
+        './src/layout/react/react-render.ts',
         './test/test-component',
         JSON.stringify({ message: 'Hello!' }),
       ]);
@@ -54,7 +54,7 @@ describe('render-worker', () => {
 
     beforeEach(() => {
       child = spawn('ts-node', [
-        './src/layout/react/render-worker.ts',
+        './src/layout/react/react-render.ts',
         './does-not-exist-component',
         JSON.stringify({ message: 'Hello!' }),
       ]);
@@ -101,7 +101,7 @@ describe('render-worker', () => {
 
     beforeEach(() => {
       child = spawn('ts-node', [
-        './src/layout/react/render-worker.ts',
+        './src/layout/react/react-render.ts',
         './test/invalid-component',
         JSON.stringify({ message: 'Hello!' }),
       ]);
