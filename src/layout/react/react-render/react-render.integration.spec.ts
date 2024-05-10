@@ -4,13 +4,7 @@ import * as util from 'util';
 const exec = util.promisify(execFile);
 
 describe('react-render', () => {
-  const testCases: {
-    file: string;
-    data: any;
-    stdout: string;
-    stderr: string;
-    errorMessage: string;
-  }[] = [
+  it.each([
     {
       file: './test/test-component',
       data: { message: 'Hello!' },
@@ -25,18 +19,16 @@ describe('react-render', () => {
       stderr: '',
       errorMessage: "Cannot find module './does-not-exist-component'",
     },
-  ];
-  it.each(testCases)(
+  ])(
     'should load %p',
     ({ file, data, stdout, stderr, errorMessage }, done: jest.DoneCallback) => {
-      const testSubject = exec('node', [
-        './build/src/layout/react/react-render/react-render',
+      const fakeSubject = exec('node', [
+        './build/src/layout/react/react-render/test/fake-react-render',
         file,
         JSON.stringify(data),
       ]);
-
-      const fakeSubject = exec('node', [
-        './build/src/layout/react/react-render/test/fake-react-render',
+      const testSubject = exec('node', [
+        './build/src/layout/react/react-render/react-render',
         file,
         JSON.stringify(data),
       ]);
