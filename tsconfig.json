@@ -107,5 +107,10 @@
     "skipLibCheck": true /* Skip type checking all .d.ts files. */
   },
   "include": ["src", "examples", "typings.d.ts"],
-  "exclude": ["node_modules", "jest.setup.ts", "**/*.spec.*"]
+  "exclude": [
+    "node_modules",
+    "jest.setup.ts",
+    "**/*.spec.*",
+    "src/layout/react/test/invalid-component.tsx"
+  ]
 }
