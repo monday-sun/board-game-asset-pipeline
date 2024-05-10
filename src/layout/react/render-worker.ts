@@ -1,10 +1,15 @@
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
+if (require.main === module) {
+  const [templatePath, dataString] = process.argv.slice(2);
+  const data = JSON.parse(dataString);
+  render(templatePath, data).then((html) => {
+    process.stdout.write(html);
+  });
+}
 
-const [templatePath, dataString] = process.argv.slice(2);
-const data = JSON.parse(dataString);
-
-import(`${templatePath}`).then(({ default: Component }) => {
-  const html = renderToStaticMarkup(React.createElement(Component, data));
-  process.stdout.write(html);
-});
+export function render(templatePath: string, data: any) {
+  return import(`${templatePath}`).then(({ default: Component }) => {
+    return renderToStaticMarkup(React.createElement(Component, data));
+  });
+}
