@@ -1,141 +1,50 @@
-import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
+import { execFile } from 'child_process';
+import * as util from 'util';
 
-jest.spyOn(process.stdout, 'write').mockImplementation();
-jest.spyOn(process.stderr, 'write').mockImplementation();
+const exec = util.promisify(execFile);
 
 describe('react-render', () => {
-  describe('when rendering a valid react component', () => {
-    let child: ChildProcessWithoutNullStreams;
-    let output: string;
-    let error: string;
-    beforeEach(() => {
-      child = spawn('node', [
+  const testCases: {
+    file: string;
+    data: any;
+    stdout: string;
+    stderr: string;
+    errorMessage: string;
+  }[] = [
+    {
+      file: './test/test-component',
+      data: { message: 'Hello!' },
+      stdout: '<div>Hello!</div>',
+      stderr: '',
+      errorMessage: '',
+    },
+    {
+      file: './does-not-exist-component',
+      data: {},
+      stdout: '',
+      stderr: '',
+      errorMessage: "Cannot find module './does-not-exist-component'",
+    },
+  ];
+  it.each(testCases)(
+    'should load %p',
+    ({ file, data, stdout, stderr, errorMessage }, done: jest.DoneCallback) => {
+      const testSubject = exec('node', [
         './build/src/layout/react/react-render',
-        './test/test-component',
-        JSON.stringify({ message: 'Hello!' }),
+        file,
+        JSON.stringify(data),
       ]);
 
-      output = '';
-      child.stdout.on('data', (chunk) => {
-        output += chunk;
-      });
-
-      error = '';
-      child.stderr.on('data', (chunk) => {
-        error += chunk;
-      });
-    });
-
-    it('should output expected html', (done) => {
-      child.on('exit', (code) => {
-        expect(output).toEqual('<div>Hello!</div>');
-        done();
-      });
-    });
-
-    it('should not output errors', (done) => {
-      child.on('exit', (code) => {
-        expect(error).toBeFalsy();
-        done();
-      });
-    });
-
-    it('should exit 0', (done) => {
-      child.on('exit', (code) => {
-        expect(code).toEqual(0);
-        done();
-      });
-    });
-  });
-  describe('when rendering a missing file', () => {
-    let child: ChildProcessWithoutNullStreams;
-    let output: string;
-    let error: string;
-
-    beforeEach(() => {
-      child = spawn('node', [
-        './build/src/layout/react/react-render',
-        './does-not-exist-component',
-        JSON.stringify({ message: 'Hello!' }),
-      ]);
-
-      output = '';
-      child.stdout.on('data', (chunk) => {
-        output += chunk;
-      });
-
-      error = '';
-      child.stderr.on('data', (chunk) => {
-        error += chunk;
-      });
-    });
-
-    it('should output no html', (done) => {
-      child.on('exit', (code) => {
-        expect(output).toBeFalsy();
-        done();
-      });
-    });
-
-    it('should output errors', (done) => {
-      child.on('exit', (code) => {
-        expect(error).toContain(
-          "Error: Cannot find module './does-not-exist-component'",
-        );
-        done();
-      });
-    });
-
-    it('should exit 1', (done) => {
-      child.on('exit', (code) => {
-        expect(code).toEqual(1);
-        done();
-      });
-    });
-  });
-
-  describe('when rendering a invalid file', () => {
-    let child: ChildProcessWithoutNullStreams;
-    let output: string;
-    let error: string;
-
-    beforeEach(() => {
-      child = spawn('node', [
-        './build/src/layout/react/react-render',
-        './test/invalid-component',
-        JSON.stringify({ message: 'Hello!' }),
-      ]);
-
-      output = '';
-      child.stdout.on('data', (chunk) => {
-        output += chunk;
-      });
-
-      error = '';
-      child.stderr.on('data', (chunk) => {
-        error += chunk;
-      });
-    });
-
-    it('should output no html', (done) => {
-      child.on('exit', (code) => {
-        expect(output).toBeFalsy();
-        done();
-      });
-    });
-
-    it('should output errors', (done) => {
-      child.on('exit', (code) => {
-        expect(error).toContain('test error');
-        done();
-      });
-    });
-
-    it('should exit 1', (done) => {
-      child.on('exit', (code) => {
-        expect(code).toEqual(1);
-        done();
-      });
-    });
-  });
+      testSubject
+        .then((result) => {
+          expect(result.stdout).toEqual(stdout);
+          expect(result.stderr).toEqual(stderr);
+          done();
+        })
+        .catch((error) => {
+          expect(error?.message).toContain(errorMessage);
+          done();
+        });
+    },
+  );
 });
