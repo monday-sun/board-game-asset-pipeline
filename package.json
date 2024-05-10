@@ -1,22 +1,31 @@
 {
-  "name": "react-card-gen",
+  "name": "board-game-card-gen",
   "version": "0.0.1",
-  "description": "Card generation tool using csv, react, and html-to-image",
+  "description": "Card generation pipeline for board games",
   "main": "index.js",
-  "repository": "git@github.com:monday-sun/react-card-gen.git",
+  "repository": "git@github.com:monday-sun/baord-game-card-gen.git",
   "author": "Monday Romelfanger <monday.romelfanger@gmail.com>",
   "license": "MIT",
   "bin": {
-    "react-card-gen": "./build/src/react-card-gen.js"
+    "card-gen": "./build/src/card-gen.js"
   },
   "scripts": {
-    "react-card-gen": "node ./build/src/react-card-gen.js",
+    "card-gen": "node ./build/src/card-gen.js",
     "clean": "rm -rf ./build",
     "lint": "eslint",
     "format": "prettier --write .",
     "build": "yarn clean && tsc",
     "build:watch": "yarn build -w",
     "test": "jest"
+  },
+  "dependencies": {
+    "@types/yargs": "^17.0.32",
+    "node-html-to-image": "^4.0.0",
+    "papaparse": "^5.4.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "rxjs": "^7.8.1",
+    "yargs": "^17.7.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.2.0",
@@ -38,15 +47,6 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5",
     "typescript-eslint": "^7.8.0"
-  },
-  "dependencies": {
-    "@types/yargs": "^17.0.32",
-    "node-html-to-image": "^4.0.0",
-    "papaparse": "^5.4.1",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "rxjs": "^7.8.1",
-    "yargs": "^17.7.2"
   },
   "jest": {
     "preset": "ts-jest",
