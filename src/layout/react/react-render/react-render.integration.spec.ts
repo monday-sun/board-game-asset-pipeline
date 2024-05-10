@@ -29,13 +29,13 @@ describe('react-render', () => {
   ])(
     'should load %p',
     ({ file, data, stdout, stderr, errorMessage }, done: jest.DoneCallback) => {
-      const fakeSubject = exec('node', [
-        './build/src/layout/react/react-render/test/fake-react-render',
+      const fakeSubject = exec('ts-node', [
+        './src/layout/react/react-render/test/fake-react-render',
         file,
         JSON.stringify(data),
       ]);
-      const testSubject = exec('node', [
-        './build/src/layout/react/react-render/react-render',
+      const testSubject = exec('ts-node', [
+        './src/layout/react/react-render/react-render',
         file,
         JSON.stringify(data),
       ]);
