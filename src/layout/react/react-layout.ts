@@ -86,6 +86,6 @@ export const factory: LayoutFactory = (
   return new ReactLayout(
     templates,
     args.watch ? 'child' : 'this',
-    args.test ? 'react-render' : 'test/fake-react-render',
+    args.test ? 'test/fake-react-render' : 'react-render',
   );
 };
