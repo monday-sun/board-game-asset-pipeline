@@ -1,5 +1,5 @@
 import fsPromises from 'fs/promises';
-import { Observable, from, map, mergeMap } from 'rxjs';
+import { Observable, from, switchMap } from 'rxjs';
 import { Arguements } from '../types';
 import { File } from './file';
 
@@ -7,12 +7,22 @@ export interface FileContent {
   content$: Observable<{ filePath: string; content: string }>;
 }
 
+export type FileContentFactory = (args: Arguements, file: File) => FileContent;
+
 export namespace FileContent {
-  export function factory(args: Arguements, filePath: string): FileContent {
-    const content$ = File.observe(args, filePath).pipe(
-      mergeMap((file) => from(fsPromises.readFile(file.filePath, 'utf8'))),
-      map((content) => ({ filePath, content })),
+  export const factory: FileContentFactory = (
+    args: Arguements,
+    file: File,
+  ): FileContent => {
+    const content$ = file.path$.pipe(
+      switchMap((filePath) =>
+        from(
+          fsPromises
+            .readFile(filePath.relativePath, 'utf8')
+            .then((content) => ({ filePath: filePath.filePath, content })),
+        ),
+      ),
     );
-    return { content$ };
-  }
+    return <FileContent>{ content$ };
+  };
 }

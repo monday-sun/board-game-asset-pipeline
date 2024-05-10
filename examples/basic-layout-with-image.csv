@@ -1,2 +1,2 @@
 name,count,frontTemplate,backTemplate,description,imageUrl,backImageUrl
-"Sample Title",2,"build/examples/basic-layout-with-image/basic-layout-with-image.front","build/examples/basic-layout-back/basic-layout.back","This is a sample description.","./examples/assets/screenshot-todo-1.png","./examples/assets/screenshot-todo-2.png"
+"Sample Title",2,"build/examples/basic-layout-with-image/basic-layout-with-image.front.js","build/examples/basic-layout-back/basic-layout.back.js","This is a sample description.","./examples/assets/screenshot-todo-1.png","./examples/assets/screenshot-todo-2.png"

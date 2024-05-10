@@ -1,24 +1,41 @@
 import fsPromises from 'fs/promises';
+import path from 'path';
 import { Observable, from, map, merge, of } from 'rxjs';
 import { Arguements } from '../types';
 
-export interface File {
+export type Paths = {
   filePath: string;
+  relativePath: string;
+};
+export interface File {
+  path$: Observable<Paths>;
 }
 
+export type FileFactory = (args: Arguements, filePath: string) => File;
+
 export namespace File {
-  export function observe(
+  export const factory: FileFactory = (
     args: Arguements,
     filePath: string,
-  ): Observable<File> {
-    const file = <File>{ filePath };
-    let observable = of(file);
+  ): File => {
+    const relativePath = path.join(process.cwd(), filePath);
+
+    let path$ = of({
+      filePath,
+      relativePath,
+    });
+
     if (args.watch) {
-      observable = merge(
-        observable,
-        from(fsPromises.watch(filePath)).pipe(map((event) => file)),
+      path$ = merge(
+        path$,
+        from(fsPromises.watch(relativePath)).pipe(
+          map(() => ({
+            filePath,
+            relativePath,
+          })),
+        ),
       );
     }
-    return observable;
-  }
+    return <File>{ path$ };
+  };
 }

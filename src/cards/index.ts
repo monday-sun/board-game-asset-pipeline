@@ -1,3 +1,5 @@
+import path from 'path';
+import { cwd } from 'process';
 import { Observable } from 'rxjs';
 import { FileContent } from '../file/file-content';
 import { Arguements } from '../types';
@@ -14,33 +16,30 @@ export interface Cards {
   cards$: Observable<Card[]>;
 }
 
+export type CardsFactory = (
+  args: Arguements,
+  contentProvider: FileContent,
+) => Cards;
+
 export namespace Cards {
   type ParserTypes = {
     csv: string;
-    papaParse: string;
+    papaparse: string;
   };
 
   const parserTypes: ParserTypes = {
     csv: './papa-parse/papa-parse-cards', // Default csv to papaParse
-    papaParse: './papa-parse/papa-parse-cards',
+    papaparse: './papa-parse/papa-parse-cards',
   };
 
-  const findCardsParser = (
-    type: keyof ParserTypes | string,
-  ): Promise<(args: Arguements, contentProvider: FileContent) => Cards> => {
-    return (
+  export const findFactory = (args: Arguements): Promise<CardsFactory> => {
+    const type = args.cards;
+    const importPath =
       type in parserTypes
-        ? import(parserTypes[type as keyof typeof parserTypes])
-        : import(type)
-    ).then(({ create }) => create);
-  };
+        ? parserTypes[type as keyof ParserTypes]
+        : path.join(cwd(), type);
 
-  export function factory(args: Arguements): Promise<Cards> {
-    return Promise.all([
-      FileContent.factory(args, args.cardList),
-      findCardsParser(args.cardsParser),
-    ]).then(([content, parser]) => {
-      return parser(args, content);
-    });
-  }
+    console.log('Loading cards with', importPath);
+    return import(importPath).then(({ factory }) => factory);
+  };
 }

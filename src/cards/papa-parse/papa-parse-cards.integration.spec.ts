@@ -1,17 +1,16 @@
 import { of } from 'rxjs';
+import { Cards } from '..';
 import { FileContent } from '../../file/file-content';
-import { create } from './papa-parse-cards';
+import { Arguements } from '../../types';
 
 describe('PapaParseCards', () => {
   it('parses cards from a CSV file', (done) => {
     const csvContent = `name,count,frontTemplate,backTemplate,customOption
 Card1,1,Front1,Back1,Unknown1
 Card2,2,Front2,Back2,Unknown2`;
-    const contentProvider: FileContent = {
+    const content: FileContent = {
       content$: of({ filePath: '', content: csvContent }),
     };
-    const testSubject = create({} as any, contentProvider);
-
     const expectedCards = [
       {
         name: 'Card1',
@@ -28,10 +27,30 @@ Card2,2,Front2,Back2,Unknown2`;
         customOption: 'Unknown2',
       },
     ];
+    Cards.findFactory(<Arguements>{ cards: 'papaparse' })
+      .then((factory) => factory({} as any, content))
+      .then((testSubject) => {
+        testSubject.cards$.subscribe((cards) => {
+          expect(cards).toEqual(expectedCards);
+          done();
+        });
+      });
+  });
 
-    testSubject.cards$.subscribe((cards) => {
-      expect(cards).toEqual(expectedCards);
-      done();
-    });
+  it('throws error if no cards are parsed', (done) => {
+    const csvContent = `name,count,frontTemplate,backTemplate,customOption`;
+    const content: FileContent = {
+      content$: of({ filePath: '', content: csvContent }),
+    };
+    Cards.findFactory(<Arguements>{ cards: 'papaparse' })
+      .then((factory) => factory({} as any, content))
+      .then((testSubject) => {
+        testSubject.cards$.subscribe({
+          error: (error) => {
+            expect(error.message).toEqual('No cards parsed from CSV file.');
+            done();
+          },
+        });
+      });
   });
 });
