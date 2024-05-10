@@ -9,16 +9,19 @@ import { Output } from './output';
 import { Templates } from './templates';
 import { Arguements } from './types';
 
-const args: Arguements = yargs(process.argv.slice(2))
-  .options({
-    cardList: { type: 'string', demandOption: true },
-    outputDir: { type: 'string', default: 'generated' },
-    cards: { type: 'string', default: 'papaparse' },
-    layout: { type: 'string', default: 'react' },
-    output: { type: 'string', default: 'raw' },
-    watch: { type: 'boolean', default: false },
-  })
-  .parseSync();
+const args: Arguements = {
+  ...yargs(process.argv.slice(2))
+    .options({
+      cardList: { type: 'string', demandOption: true },
+      outputDir: { type: 'string', default: 'generated' },
+      cards: { type: 'string', default: 'papaparse' },
+      layout: { type: 'string', default: 'react' },
+      output: { type: 'string', default: 'raw' },
+      watch: { type: 'boolean', default: false },
+    })
+    .parseSync(),
+  test: false,
+};
 
 const { cardList, outputDir, cardsParser, layout, imageRenderer } = args;
 

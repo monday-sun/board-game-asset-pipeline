@@ -21,4 +21,5 @@ export type Arguements = {
   layout: string;
   output: string;
   watch: boolean;
+  test: boolean;
 };

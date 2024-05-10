@@ -5,25 +5,25 @@ import { factory } from './react-layout';
 
 describe('ReactLayout', () => {
   it('should render all requested layouts', (done) => {
-    const testSubject = factory({} as any, {
+    const testSubject = factory({ test: true } as any, {
       needsLayout$: of(
         ...[
           <NeedsLayout>{
             templatePaths: <Paths>{
-              filePath: './test-component',
-              relativePath: './test-component',
+              filePath: './test/test-component',
+              relativePath: './test/test-component',
             },
             card: {
-              message: 'Hello, world!',
+              message: 'Goodbye!',
             } as any,
           },
           <NeedsLayout>{
             templatePaths: <Paths>{
-              filePath: './test-component',
-              relativePath: './test-component',
+              filePath: './test/test-component',
+              relativePath: './test/test-component',
             },
             card: {
-              message: 'Hello there!',
+              message: 'Hello!',
             } as any,
           },
         ],
@@ -33,24 +33,24 @@ describe('ReactLayout', () => {
     const expectedLayouts = [
       {
         templatePaths: <Paths>{
-          filePath: './test-component',
-          relativePath: './test-component',
+          filePath: './test/test-component',
+          relativePath: './test/test-component',
         },
         card: {
-          message: 'Hello, world!',
+          message: 'Goodbye!',
         },
-        layout: '<div>Hello, world!</div>',
+        layout: '<div>Goodbye!</div>',
         format: 'html',
       },
       {
         templatePaths: <Paths>{
-          filePath: './test-component',
-          relativePath: './test-component',
+          filePath: './test/test-component',
+          relativePath: './test/test-component',
         },
         card: {
-          message: 'Hello there!',
+          message: 'Hello!',
         },
-        layout: '<div>Hello there!</div>',
+        layout: '<div>Hello!</div>',
         format: 'html',
       },
     ];

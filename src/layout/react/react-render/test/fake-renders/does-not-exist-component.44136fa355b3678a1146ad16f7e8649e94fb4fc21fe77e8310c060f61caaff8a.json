@@ -1,0 +1,3 @@
+{
+  "errorMessage": "Cannot find module './does-not-exist-component'"
+}
