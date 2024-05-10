@@ -1,11 +1,12 @@
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
+import { ReactRender } from '.';
 
-export function render(templatePath: string, data: any) {
+export const render: ReactRender = (templatePath: string, data: any) => {
   return import(`${templatePath}`).then(({ default: Component }) => {
     return renderToStaticMarkup(React.createElement(Component, data));
   });
-}
+};
 
 if (require.main === module) {
   const [templatePath, dataString] = process.argv.slice(2);

@@ -7,7 +7,7 @@ function executeInThisProcess(
   templatePath: string,
   data: Record<string, string>,
 ): Promise<string> {
-  const { render } = require('./react-render');
+  const { render } = require('./react-render/react-render');
   return render(templatePath, data);
 }
 
@@ -21,7 +21,7 @@ function executeInChildProcess(
     execFile(
       'node',
       [
-        './build/src/layout/react/react-render',
+        './build/src/layout/react/react-render/react-render',
         templatePath,
         JSON.stringify(data),
       ],

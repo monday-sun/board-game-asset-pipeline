@@ -30,7 +30,7 @@ describe('react-render', () => {
     'should load %p',
     ({ file, data, stdout, stderr, errorMessage }, done: jest.DoneCallback) => {
       const testSubject = exec('node', [
-        './build/src/layout/react/react-render',
+        './build/src/layout/react/react-render/react-render',
         file,
         JSON.stringify(data),
       ]);
