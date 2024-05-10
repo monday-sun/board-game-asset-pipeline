@@ -13,6 +13,13 @@ describe('react-render', () => {
       errorMessage: '',
     },
     {
+      file: './test/test-component',
+      data: { message: 'Hello!' },
+      stdout: '<div>Goodbye!</div>',
+      stderr: '',
+      errorMessage: '',
+    },
+    {
       file: './does-not-exist-component',
       data: {},
       stdout: '',
