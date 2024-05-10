@@ -42,10 +42,8 @@ describe('react-render', () => {
 
       fakeSubject
         .then((expectedResult) => {
-          console.log('expected result', expectedResult);
           testSubject
             .then((result) => {
-              console.log('result', result);
               expect(result.stdout).toEqual(expectedResult.stdout);
               expect(result.stderr).toEqual(expectedResult.stderr);
               done();
@@ -58,9 +56,10 @@ describe('react-render', () => {
         })
         .catch((expectedError: Error) => {
           testSubject.catch((error: Error) => {
-            expect(error.message.split('\n')[5]).toContain(
-              expectedError.message.split('\n')[5],
-            );
+            const afterError = expectedError.message.split('Error: ').pop();
+            const errorMessage = afterError?.split(`\n`)[0];
+            expect(errorMessage).toBeTruthy();
+            expect(error.message).toEqual(expect.stringContaining(errorMessage as string));
             done();
           });
         });
