@@ -14,7 +14,7 @@ describe('ReactLayout', () => {
               relativePath: './test/test-component',
             },
             card: {
-              message: 'Hello, world!',
+              message: 'Goodbye!',
             } as any,
           },
           <NeedsLayout>{
@@ -23,7 +23,7 @@ describe('ReactLayout', () => {
               relativePath: './test/test-component',
             },
             card: {
-              message: 'Hello there!',
+              message: 'Hello!',
             } as any,
           },
         ],
@@ -37,9 +37,9 @@ describe('ReactLayout', () => {
           relativePath: './test/test-component',
         },
         card: {
-          message: 'Hello, world!',
+          message: 'Goodbye!',
         },
-        layout: '<div>Hello, world!</div>',
+        layout: '<div>Goodbye!</div>',
         format: 'html',
       },
       {
@@ -48,9 +48,9 @@ describe('ReactLayout', () => {
           relativePath: './test/test-component',
         },
         card: {
-          message: 'Hello there!',
+          message: 'Hello!',
         },
-        layout: '<div>Hello there!</div>',
+        layout: '<div>Hello!</div>',
         format: 'html',
       },
     ];
