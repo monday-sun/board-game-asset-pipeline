@@ -5,7 +5,7 @@ import { factory } from './react-layout';
 
 describe('ReactLayout', () => {
   it('should render all requested layouts', (done) => {
-    const testSubject = factory({} as any, {
+    const testSubject = factory({ test: true } as any, {
       needsLayout$: of(
         ...[
           <NeedsLayout>{
