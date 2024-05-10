@@ -10,8 +10,8 @@ describe('ReactLayout', () => {
         ...[
           <NeedsLayout>{
             templatePaths: <Paths>{
-              filePath: './test-component',
-              relativePath: './test-component',
+              filePath: './test/test-component',
+              relativePath: './test/test-component',
             },
             card: {
               message: 'Hello, world!',
@@ -19,8 +19,8 @@ describe('ReactLayout', () => {
           },
           <NeedsLayout>{
             templatePaths: <Paths>{
-              filePath: './test-component',
-              relativePath: './test-component',
+              filePath: './test/test-component',
+              relativePath: './test/test-component',
             },
             card: {
               message: 'Hello there!',
@@ -33,8 +33,8 @@ describe('ReactLayout', () => {
     const expectedLayouts = [
       {
         templatePaths: <Paths>{
-          filePath: './test-component',
-          relativePath: './test-component',
+          filePath: './test/test-component',
+          relativePath: './test/test-component',
         },
         card: {
           message: 'Hello, world!',
@@ -44,8 +44,8 @@ describe('ReactLayout', () => {
       },
       {
         templatePaths: <Paths>{
-          filePath: './test-component',
-          relativePath: './test-component',
+          filePath: './test/test-component',
+          relativePath: './test/test-component',
         },
         card: {
           message: 'Hello there!',
