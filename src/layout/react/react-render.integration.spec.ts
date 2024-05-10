@@ -9,8 +9,8 @@ describe('react-render', () => {
     let output: string;
     let error: string;
     beforeEach(() => {
-      child = spawn('ts-node', [
-        './src/layout/react/react-render.ts',
+      child = spawn('node', [
+        './build/src/layout/react/react-render',
         './test/test-component',
         JSON.stringify({ message: 'Hello!' }),
       ]);
@@ -53,8 +53,8 @@ describe('react-render', () => {
     let error: string;
 
     beforeEach(() => {
-      child = spawn('ts-node', [
-        './src/layout/react/react-render.ts',
+      child = spawn('node', [
+        './build/src/layout/react/react-render',
         './does-not-exist-component',
         JSON.stringify({ message: 'Hello!' }),
       ]);
@@ -100,8 +100,8 @@ describe('react-render', () => {
     let error: string;
 
     beforeEach(() => {
-      child = spawn('ts-node', [
-        './src/layout/react/react-render.ts',
+      child = spawn('node', [
+        './build/src/layout/react/react-render',
         './test/invalid-component',
         JSON.stringify({ message: 'Hello!' }),
       ]);
@@ -126,7 +126,7 @@ describe('react-render', () => {
 
     it('should output errors', (done) => {
       child.on('exit', (code) => {
-        expect(error).toContain('TSError: ⨯ Unable to compile TypeScript:');
+        expect(error).toContain('test error');
         done();
       });
     });

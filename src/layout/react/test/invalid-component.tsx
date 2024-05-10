@@ -1,7 +1,6 @@
 import React from 'react';
 
-const TestComponent = ({ message }: { message: string }) => (
-  <div>{message}<div>
-);
+throw new Error('test error');
+const TestComponent = () => <div></div>;
 
 export default TestComponent;
