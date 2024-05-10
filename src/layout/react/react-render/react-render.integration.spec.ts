@@ -35,15 +35,35 @@ describe('react-render', () => {
         JSON.stringify(data),
       ]);
 
-      testSubject
-        .then((result) => {
-          expect(result.stdout).toEqual(stdout);
-          expect(result.stderr).toEqual(stderr);
-          done();
+      const fakeSubject = exec('node', [
+        './build/src/layout/react/react-render/test/fake-react-render',
+        file,
+        JSON.stringify(data),
+      ]);
+
+      fakeSubject
+        .then((expectedResult) => {
+          console.log('expected result', expectedResult);
+          testSubject
+            .then((result) => {
+              console.log('result', result);
+              expect(result.stdout).toEqual(expectedResult.stdout);
+              expect(result.stderr).toEqual(expectedResult.stderr);
+              done();
+            })
+            .catch((error) => {
+              // Error should not be thrown if it wasn't expected
+              expect(error).toBeFalsy();
+              done();
+            });
         })
-        .catch((error) => {
-          expect(error?.message).toContain(errorMessage);
-          done();
+        .catch((expectedError: Error) => {
+          testSubject.catch((error: Error) => {
+            expect(error.message.split('\n')[5]).toContain(
+              expectedError.message.split('\n')[5],
+            );
+            done();
+          });
         });
     },
   );

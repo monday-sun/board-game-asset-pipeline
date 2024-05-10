@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 import fs from 'fs';
+import path from 'path';
 import { ReactRender } from '..';
 
 export const render: ReactRender = (
@@ -10,9 +11,15 @@ export const render: ReactRender = (
     try {
       const hash = crypto
         .createHash('sha256')
-        .update(templatePath + data)
+        .update(JSON.stringify(data))
         .digest('hex');
-      const contents = fs.readFileSync(hash, 'utf-8');
+      const contents = fs.readFileSync(
+        path.join(
+          './src/layout/react/react-render/test/fake-renders',
+          templatePath.split('/').pop() + '.' + hash + '.json',
+        ),
+        'utf-8',
+      );
       const jsonData = JSON.parse(contents);
 
       if (jsonData.stderr) {
