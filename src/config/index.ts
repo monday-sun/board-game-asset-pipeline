@@ -13,7 +13,7 @@ export type DeckConfig = {
 };
 
 export interface Config {
-  deck: DeckConfig[];
+  decks: DeckConfig[];
 }
 
 export { ConfigReader } from './yaml/yaml-config';
