@@ -5,7 +5,7 @@ import { Cards } from './cards';
 import { File } from './file/file';
 import { FileContent } from './file/file-content';
 import { Layout } from './layout';
-import { Output } from './output';
+import { Output, OutputFactory } from './output';
 import { Templates } from './templates';
 import { Arguements } from './types';
 
@@ -43,6 +43,7 @@ Promise.all([
   Layout.findFactory(args),
   Output.findOutputFactory(args),
 ]).then(([cardsFactory, templatesFactory, layoutFactory, outputFactory]) => {
+  const deckConfig = config.deck[0];
   const cardsFile = File.factory(args, cardList);
   const cardsContent = FileContent.factory(args, cardsFile);
 
@@ -64,8 +65,18 @@ Promise.all([
     ),
   );
 
-  const output = outputFactory(config.deck[0].output[0], layout);
-  output.generated$.subscribe((outputPath) => {
+  const outputSubscriptions = deckConfig.output.flatMap((outputConfig) =>
+    subscribeOutput(outputFactory, outputConfig, layout),
+  );
+});
+
+function subscribeOutput(
+  outputFactory: OutputFactory,
+  outputConfig: { renderer: string; rootOutputDir: string },
+  layout: Layout,
+) {
+  const output = outputFactory(outputConfig, layout);
+  return output.generated$.subscribe((outputPath) => {
     console.log(`Generated output ${outputPath}`);
   });
-});
+}
