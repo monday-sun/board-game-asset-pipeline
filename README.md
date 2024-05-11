@@ -2,6 +2,9 @@
 
 A plugin pipeline for generating custom cards for board games.
 
+## Examples
+https://github.com/monday-sun/board-game-card-gen-example
+
 ## Current Plugins
 
 ### To CardInfo (CardsParser)
