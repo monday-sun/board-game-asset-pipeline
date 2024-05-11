@@ -39,46 +39,46 @@ const config = {
 
 const { cardList } = args;
 
-Promise.all([
-  Cards.findFactory(args),
-  Templates.findFactory(args),
-  Layout.findFactory(args),
-]).then(([cardsFactory, templatesFactory, layoutFactory, outputFactory]) => {
-  const deckConfig = config.deck[0];
-  const cardsFile = File.factory(args, cardList);
-  const cardsContent = FileContent.factory(args, cardsFile);
+Promise.all([Cards.findFactory(args), Templates.findFactory(args)]).then(
+  ([cardsFactory, templatesFactory]) => {
+    const deckConfig = config.deck[0];
+    const cardsFile = File.factory(args, cardList);
+    const cardsContent = FileContent.factory(args, cardsFile);
 
-  const cards = cardsFactory(args, cardsContent);
-  cards.cards$.subscribe(() => console.log('Loaded cards from', cardList));
+    const cards = cardsFactory(args, cardsContent);
+    cards.cards$.subscribe(() => console.log('Loaded cards from', cardList));
 
-  const templates = templatesFactory(args, cards, File.factory);
-  templates.needsLayout$.subscribe(({ templatePaths }) =>
-    console.log('Requested layout for template', templatePaths.filePath),
-  );
+    const templates = templatesFactory(args, cards, File.factory);
+    templates.needsLayout$.subscribe(({ templatePaths }) =>
+      console.log('Requested layout for template', templatePaths.filePath),
+    );
 
-  const layout = layoutFactory(args, templates);
-  layout.layout$.subscribe(({ templatePaths, card }) =>
-    console.log(
-      'Generated layout for card',
-      card.name,
-      'with template',
-      templatePaths.filePath,
-    ),
-  );
+    const outputSubscriptions: Subscription[] = [];
+    Layout.findFactory(deckConfig).then((layoutFactory) => {
+      const layout = layoutFactory(args, deckConfig, templates);
+      layout.layout$.subscribe(({ templatePaths, card }) =>
+        console.log(
+          'Generated layout for card',
+          card.name,
+          'with template',
+          templatePaths.filePath,
+        ),
+      );
 
-  const outputSubscriptions: Subscription[] = [];
-  Promise.all(
-    deckConfig.output.flatMap((outputConfig) =>
-      subscribeOutput(outputConfig, layout),
-    ),
-  ).then((subscriptions) => {
-    outputSubscriptions.concat(subscriptions);
-  });
-});
+      Promise.all(
+        deckConfig.output.flatMap((outputConfig) =>
+          subscribeOutput(outputConfig, layout),
+        ),
+      ).then((subscriptions) => {
+        outputSubscriptions.concat(subscriptions);
+      });
+    });
+  },
+);
 
 function subscribeOutput(outputConfig: OutputConfig, layout: Layout) {
   return Output.findOutputFactory(outputConfig).then((factory) => {
-    const output = factory(outputConfig, layout);
+    const output = factory(args, outputConfig, layout);
     return output.generated$.subscribe((outputPath) => {
       console.log(`Generated output ${outputPath}`);
     });

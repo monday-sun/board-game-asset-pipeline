@@ -2,6 +2,7 @@ import fsPromises from 'fs/promises';
 import { of } from 'rxjs';
 import { OutputConfig } from '../../config';
 import { LayoutResult } from '../../layout';
+import { Arguements } from '../../types';
 import { factory } from './raw-layout';
 
 jest.mock('fs/promises', () => ({
@@ -28,7 +29,8 @@ describe('RawLayout', () => {
     );
 
     const testSubject = factory(
-      (<OutputConfig>{ rootOutputDir: 'test-output' }),
+      <Arguements>{},
+      <OutputConfig>{ rootOutputDir: 'test-output' },
       {
         layout$,
       },

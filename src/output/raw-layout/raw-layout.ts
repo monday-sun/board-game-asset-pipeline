@@ -5,6 +5,7 @@ import { Observable, from, map, mergeAll } from 'rxjs';
 import { Output, OutputFactory } from '..';
 import { OutputConfig } from '../../config';
 import { Layout } from '../../layout';
+import { Arguements } from '../../types';
 import { createOutputFileName } from '../file-name/output-file-name';
 
 export class RawLayout implements Output {
@@ -35,6 +36,7 @@ export class RawLayout implements Output {
 }
 
 export const factory: OutputFactory = (
+  _: Arguements,
   config: OutputConfig,
   layout: Layout,
 ) => {

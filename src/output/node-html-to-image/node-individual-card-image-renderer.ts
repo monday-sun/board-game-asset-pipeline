@@ -5,7 +5,7 @@ import { Observable, from, map, mergeAll } from 'rxjs';
 import { Output, OutputFactory } from '..';
 import { OutputConfig } from '../../config';
 import { Layout, LayoutResult } from '../../layout';
-import { ImageFileInfo } from '../../types';
+import { Arguements, ImageFileInfo } from '../../types';
 import { createOutputFileName } from '../file-name/output-file-name';
 
 type ImageRenderInfo = {
@@ -73,6 +73,7 @@ class NodeIndividualCardImageOutput implements Output {
 }
 
 export const factory: OutputFactory = (
+  _: Arguements,
   config: OutputConfig,
   layout: Layout,
 ): Output => {

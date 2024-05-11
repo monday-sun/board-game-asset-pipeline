@@ -1,11 +1,13 @@
 import { of } from 'rxjs';
+import { DeckConfig } from '../../config';
 import { Paths } from '../../file/file';
 import { NeedsLayout } from '../../templates';
+import { Arguements } from '../../types';
 import { factory } from './react-layout';
 
 describe('ReactLayout', () => {
   it('should render all requested layouts', (done) => {
-    const testSubject = factory({ test: true } as any, {
+    const testSubject = factory(<Arguements>{ test: true }, <DeckConfig>{}, {
       needsLayout$: of(
         ...[
           <NeedsLayout>{
