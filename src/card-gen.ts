@@ -3,7 +3,6 @@
 import { Subscription } from 'rxjs';
 import yargs from 'yargs';
 import { Cards } from './cards';
-import { OutputConfig } from './config';
 import { File } from './file/file';
 import { FileContent } from './file/file-content';
 import { Layout } from './layout';
@@ -39,9 +38,11 @@ const config = {
 
 const { cardList } = args;
 
+const deckSubscriptions: Subscription[] = [];
+const deckConfig = config.deck[0];
+
 Promise.all([Cards.findFactory(args), Templates.findFactory(args)]).then(
   ([cardsFactory, templatesFactory]) => {
-    const deckConfig = config.deck[0];
     const cardsFile = File.factory(args, cardList);
     const cardsContent = FileContent.factory(args, cardsFile);
 
@@ -53,11 +54,11 @@ Promise.all([Cards.findFactory(args), Templates.findFactory(args)]).then(
       console.log('Requested layout for template', templatePaths.filePath),
     );
 
-    const outputSubscriptions: Subscription[] = [];
     Layout.findFactory(deckConfig)
       .then((layoutFactory) => {
         const layout = layoutFactory(args, deckConfig, templates);
-        outputSubscriptions.push(
+
+        deckSubscriptions.push(
           layout.layout$.subscribe(({ templatePaths, card }) =>
             console.log(
               'Generated layout for card',
@@ -67,25 +68,23 @@ Promise.all([Cards.findFactory(args), Templates.findFactory(args)]).then(
             ),
           ),
         );
+
         return layout;
       })
       .then((layout) => {
-        Promise.all(
-          deckConfig.output.flatMap((outputConfig) =>
-            subscribeOutput(outputConfig, layout),
-          ),
-        ).then((subscriptions) => {
-          outputSubscriptions.concat(subscriptions);
-        });
+        deckConfig.output.forEach((outputConfig) =>
+          Output.findOutputFactory(outputConfig).then((factory) => {
+            const output = factory(args, outputConfig, layout);
+
+            deckSubscriptions.push(
+              output.generated$.subscribe((outputPath) => {
+                console.log(`Generated output ${outputPath}`);
+              }),
+            );
+
+            return output;
+          }),
+        );
       });
   },
 );
-
-function subscribeOutput(outputConfig: OutputConfig, layout: Layout) {
-  return Output.findOutputFactory(outputConfig).then((factory) => {
-    const output = factory(args, outputConfig, layout);
-    return output.generated$.subscribe((outputPath) => {
-      console.log(`Generated output ${outputPath}`);
-    });
-  });
-}
