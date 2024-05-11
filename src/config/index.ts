@@ -1,3 +1,7 @@
+import { Observable } from 'rxjs';
+import { Arguements } from '../types';
+import { factory as configFactory } from './yaml/yaml-config';
+
 export type OutputConfig = {
   renderer: string;
   outputDir?: string;
@@ -13,7 +17,11 @@ export type DeckConfig = {
 };
 
 export interface Config {
-  decks: DeckConfig[];
+  decks: Observable<DeckConfig[]>;
 }
 
-export { ConfigReader } from './yaml/yaml-config';
+export type ConfigFactory = (args: Arguements) => Config;
+
+export namespace Config {
+  export const factory = configFactory;
+}

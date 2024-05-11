@@ -1,32 +1,29 @@
-import * as fs from 'fs';
 import * as yaml from 'js-yaml';
-import { Config } from '..';
+import { Observable, map } from 'rxjs';
+import { ConfigFactory, Config as ConfigType, DeckConfig } from '..';
+import { File } from '../../file/file';
+import { FileContent } from '../../file/file-content';
+import { Arguements } from '../../types';
 
-export class ConfigReader {
-  private configPath: string;
-  private config: Config | null = null;
+export class Config implements ConfigType {
+  decks: Observable<DeckConfig[]>;
 
-  constructor(configPath: string) {
-    this.configPath = configPath;
-  }
-
-  getConfig() {
-    try {
-      const fileContents = fs.readFileSync(this.configPath, 'utf8');
-      const data = yaml.load(fileContents) as Config;
-      data.decks.forEach((deck) => {
-        const outputDir = deck.outputDir;
-        deck.output.forEach((outputConfig) => {
-          outputConfig.rootOutputDir = outputDir;
+  constructor(fileContent: FileContent) {
+    this.decks = fileContent.content$.pipe(
+      map((content) => yaml.load(content.content) as DeckConfig[]),
+      map((decks) => {
+        decks.forEach((deck) => {
+          const outputDir = deck.outputDir;
+          deck.output.forEach((outputConfig) => {
+            outputConfig.rootOutputDir = outputDir;
+          });
         });
-      })
-      this.config = data as Config;
-
-    } catch (e) {
-      console.error(e);
-      this.config = null;
-    } finally {
-      return this.config;
-    }
+        return decks;
+      }),
+    );
   }
 }
+
+export const factory: ConfigFactory = (args: Arguements) => {
+  return new Config(FileContent.factory(args, File.factory(args, args.config)));
+};
