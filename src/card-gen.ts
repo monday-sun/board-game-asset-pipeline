@@ -9,7 +9,7 @@ import { Arguements } from './types';
 const args: Arguements = {
   ...yargs(process.argv.slice(2))
     .options({
-      config: { type: 'string', default: 'config.yaml' },
+      config: { type: 'string', default: 'config.yml' },
       watch: { type: 'boolean', default: false },
     })
     .parseSync(),
