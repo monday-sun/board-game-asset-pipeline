@@ -7,7 +7,8 @@ import { Arguements } from './types';
 const args: Arguements = {
   ...yargs(process.argv.slice(2))
     .options({
-      cardList: { type: 'string', demandOption: true },
+      config: { type: 'string', default: 'config.yaml' },
+      cardList: { type: 'string', default: 'cards.csv' },
       outputDir: { type: 'string', default: 'generated' },
       cards: { type: 'string', default: 'papaparse' },
       layout: { type: 'string', default: 'react' },

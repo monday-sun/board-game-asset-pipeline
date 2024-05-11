@@ -15,6 +15,7 @@ export interface ImageRenderer {
 
 export type Arguements = {
   [x: string]: unknown;
+  config: string;
   cardList: string;
   outputDir: string;
   cards: string;
