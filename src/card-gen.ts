@@ -23,7 +23,20 @@ const args: Arguements = {
   test: false,
 };
 
-const { cardList, outputDir, cardsParser, layout, imageRenderer } = args;
+const config = {
+  deck: [
+    {
+      cardsParser: args.cards,
+      list: args.cardList,
+      layout: args.layout,
+      outputDir: args.outputDir,
+      output: [{ renderer: args.output, outputDir: '.' }],
+    },
+  ],
+};
+
+
+const { cardList } = args;
 
 Promise.all([
   Cards.findFactory(args),
