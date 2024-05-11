@@ -47,11 +47,15 @@ Promise.all([Cards.findFactory(args), Templates.findFactory(args)]).then(
     const cardsContent = FileContent.factory(args, cardsFile);
 
     const cards = cardsFactory(args, cardsContent);
-    cards.cards$.subscribe(() => console.log('Loaded cards from', cardList));
+    deckSubscriptions.push(
+      cards.cards$.subscribe(() => console.log('Loaded cards from', cardList)),
+    );
 
     const templates = templatesFactory(args, cards, File.factory);
-    templates.needsLayout$.subscribe(({ templatePaths }) =>
-      console.log('Requested layout for template', templatePaths.filePath),
+    deckSubscriptions.push(
+      templates.needsLayout$.subscribe(({ templatePaths }) =>
+        console.log('Requested layout for template', templatePaths.filePath),
+      ),
     );
 
     Layout.findFactory(deckConfig)
