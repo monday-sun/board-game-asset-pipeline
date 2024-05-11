@@ -1,12 +1,7 @@
 #!/usr/bin/env node
 
-import { Subscription } from 'rxjs';
 import yargs from 'yargs';
-import { Cards } from './cards';
-import { File } from './file/file';
-import { Layout } from './layout';
-import { Output } from './output';
-import { Templates } from './templates';
+import { createDeckPipeline } from './pipeline/deck-pipeline';
 import { Arguements } from './types';
 
 const args: Arguements = {
@@ -35,55 +30,6 @@ const config = {
   ],
 };
 
-const { cardList } = args;
-
 const deckConfig = config.deck[0];
-
-const deckSubscriptions: Subscription[] = [];
-Promise.all([
-  Cards.findFactory(args, deckConfig),
-  Templates.findFactory(args, deckConfig),
-  Layout.findFactory(args, deckConfig),
-])
-  .then(([cardsFactory, templatesFactory, layoutFactory]) => {
-    const cards = cardsFactory(args, deckConfig);
-    deckSubscriptions.push(
-      cards.cards$.subscribe(() => console.log('Loaded cards from', cardList)),
-    );
-
-    const templates = templatesFactory(args, deckConfig, cards, File.factory);
-    deckSubscriptions.push(
-      templates.needsLayout$.subscribe(({ templatePaths }) =>
-        console.log('Requested layout for template', templatePaths.filePath),
-      ),
-    );
-
-    const layout = layoutFactory(args, deckConfig, templates);
-    deckSubscriptions.push(
-      layout.layout$.subscribe(({ templatePaths, card }) =>
-        console.log(
-          'Generated layout for card',
-          card.name,
-          'with template',
-          templatePaths.filePath,
-        ),
-      ),
-    );
-
-    return layout;
-  })
-  .then((layout) => {
-    deckConfig.output.forEach((outputConfig) =>
-      Output.findOutputFactory(outputConfig).then((factory) => {
-        const output = factory(args, outputConfig, layout);
-
-        deckSubscriptions.push(
-          output.generated$.subscribe((outputPath) => {
-            console.log(`Generated output ${outputPath}`);
-          }),
-        );
-
-        return output;
-      }),
-    );
-  });
+console.log('Generating deck with config', deckConfig);
+const deckSubscriptions = createDeckPipeline(args, deckConfig);
