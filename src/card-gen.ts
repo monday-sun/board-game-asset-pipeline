@@ -41,8 +41,12 @@ const { cardList } = args;
 const deckSubscriptions: Subscription[] = [];
 const deckConfig = config.deck[0];
 
-Promise.all([Cards.findFactory(args), Templates.findFactory(args)]).then(
-  ([cardsFactory, templatesFactory]) => {
+Promise.all([
+  Cards.findFactory(args),
+  Templates.findFactory(args),
+  Layout.findFactory(deckConfig),
+])
+  .then(([cardsFactory, templatesFactory, layoutFactory]) => {
     const cardsFile = File.factory(args, cardList);
     const cardsContent = FileContent.factory(args, cardsFile);
 
@@ -58,37 +62,32 @@ Promise.all([Cards.findFactory(args), Templates.findFactory(args)]).then(
       ),
     );
 
-    Layout.findFactory(deckConfig)
-      .then((layoutFactory) => {
-        const layout = layoutFactory(args, deckConfig, templates);
+    const layout = layoutFactory(args, deckConfig, templates);
+    deckSubscriptions.push(
+      layout.layout$.subscribe(({ templatePaths, card }) =>
+        console.log(
+          'Generated layout for card',
+          card.name,
+          'with template',
+          templatePaths.filePath,
+        ),
+      ),
+    );
+
+    return layout;
+  })
+  .then((layout) => {
+    deckConfig.output.forEach((outputConfig) =>
+      Output.findOutputFactory(outputConfig).then((factory) => {
+        const output = factory(args, outputConfig, layout);
 
         deckSubscriptions.push(
-          layout.layout$.subscribe(({ templatePaths, card }) =>
-            console.log(
-              'Generated layout for card',
-              card.name,
-              'with template',
-              templatePaths.filePath,
-            ),
-          ),
-        );
-
-        return layout;
-      })
-      .then((layout) => {
-        deckConfig.output.forEach((outputConfig) =>
-          Output.findOutputFactory(outputConfig).then((factory) => {
-            const output = factory(args, outputConfig, layout);
-
-            deckSubscriptions.push(
-              output.generated$.subscribe((outputPath) => {
-                console.log(`Generated output ${outputPath}`);
-              }),
-            );
-
-            return output;
+          output.generated$.subscribe((outputPath) => {
+            console.log(`Generated output ${outputPath}`);
           }),
         );
-      });
-  },
-);
+
+        return output;
+      }),
+    );
+  });
