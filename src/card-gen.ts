@@ -38,13 +38,13 @@ const config = {
 
 const { cardList } = args;
 
-const deckSubscriptions: Subscription[] = [];
 const deckConfig = config.deck[0];
 
+const deckSubscriptions: Subscription[] = [];
 Promise.all([
   Cards.findFactory(args),
-  Templates.findFactory(args),
-  Layout.findFactory(deckConfig),
+  Templates.findFactory(args, deckConfig),
+  Layout.findFactory(args, deckConfig),
 ])
   .then(([cardsFactory, templatesFactory, layoutFactory]) => {
     const cardsFile = File.factory(args, cardList);
@@ -55,7 +55,7 @@ Promise.all([
       cards.cards$.subscribe(() => console.log('Loaded cards from', cardList)),
     );
 
-    const templates = templatesFactory(args, cards, File.factory);
+    const templates = templatesFactory(args, deckConfig, cards, File.factory);
     deckSubscriptions.push(
       templates.needsLayout$.subscribe(({ templatePaths }) =>
         console.log('Requested layout for template', templatePaths.filePath),

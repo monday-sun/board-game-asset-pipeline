@@ -32,6 +32,7 @@ export namespace Layout {
   };
 
   export const findFactory = (
+    _: Arguements,
     deckConfig: DeckConfig,
   ): Promise<LayoutFactory> => {
     const type = deckConfig.layout;
