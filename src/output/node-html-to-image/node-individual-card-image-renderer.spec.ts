@@ -1,5 +1,6 @@
 import nodeHtmlToImage from 'node-html-to-image';
 import { of } from 'rxjs';
+import { OutputConfig } from '../../config';
 import { LayoutResult } from '../../layout';
 import { factory } from './node-individual-card-image-renderer';
 
@@ -30,9 +31,12 @@ describe('RawLayout', () => {
       ],
     );
 
-    const testSubject = factory({ outputDir: 'test-output' } as any, {
-      layout$,
-    });
+    const testSubject = factory(
+      (<OutputConfig>{ rootOutputDir: 'test-output' }) as any,
+      {
+        layout$,
+      },
+    );
     const expectedOutputPaths = [
       'test-output/individual-card-images/testcard-back.png',
     ];

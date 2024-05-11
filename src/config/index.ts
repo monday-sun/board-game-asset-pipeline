@@ -1,18 +1,19 @@
-type Renderer = {
+export type OutputConfig = {
   renderer: string;
-  outputDir: string;
+  outputDir?: string;
+  rootOutputDir: string;
 };
 
-type Deck = {
+export type DeckConfig = {
   cardsParser: string;
   list: string;
   layout: string;
   outputDir: string;
-  output: Renderer[];
+  output: OutputConfig[];
 };
 
 export interface Config {
-  deck: Deck[];
+  deck: DeckConfig[];
 }
 
 export { ConfigReader } from './yaml/yaml-config';

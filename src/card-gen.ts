@@ -30,11 +30,10 @@ const config = {
       list: args.cardList,
       layout: args.layout,
       outputDir: args.outputDir,
-      output: [{ renderer: args.output, outputDir: '.' }],
+      output: [{ renderer: args.output, rootOutputDir: args.outputDir }],
     },
   ],
 };
-
 
 const { cardList } = args;
 
@@ -65,7 +64,7 @@ Promise.all([
     ),
   );
 
-  const output = outputFactory(args, layout);
+  const output = outputFactory(config.deck[0].output[0], layout);
   output.generated$.subscribe((outputPath) => {
     console.log(`Generated output ${outputPath}`);
   });

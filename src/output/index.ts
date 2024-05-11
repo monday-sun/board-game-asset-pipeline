@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { Observable } from 'rxjs';
+import { Config, OutputConfig } from '../config';
 import { Layout } from '../layout';
 import { Arguements } from '../types';
 
@@ -8,7 +9,7 @@ export interface Output {
   generated$: Observable<string[]>;
 }
 
-export type OutputFactory = (args: Arguements, layout: Layout) => Output;
+export type OutputFactory = (config: OutputConfig, layout: Layout) => Output;
 
 export namespace Output {
   type OutputTypes = { nodeIndividual: string; raw: string };

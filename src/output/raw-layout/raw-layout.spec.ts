@@ -1,5 +1,6 @@
 import fsPromises from 'fs/promises';
 import { of } from 'rxjs';
+import { OutputConfig } from '../../config';
 import { LayoutResult } from '../../layout';
 import { factory } from './raw-layout';
 
@@ -26,9 +27,12 @@ describe('RawLayout', () => {
       ],
     );
 
-    const testSubject = factory({ outputDir: 'test-output' } as any, {
-      layout$,
-    });
+    const testSubject = factory(
+      (<OutputConfig>{ rootOutputDir: 'test-output' }),
+      {
+        layout$,
+      },
+    );
     const expectedOutputPaths = [
       'test-output/raw-layout/testcard-back.testFormat',
     ];
