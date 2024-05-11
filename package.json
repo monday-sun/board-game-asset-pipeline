@@ -7,10 +7,10 @@
   "author": "Monday Romelfanger <monday.romelfanger@gmail.com>",
   "license": "MIT",
   "bin": {
-    "card-gen": "./build/src/card-gen.js"
+    "card-gen": "./src/card-gen.ts"
   },
   "scripts": {
-    "card-gen": "node ./build/src/card-gen.js",
+    "card-gen": "ts-node ./src/card-gen.ts",
     "clean": "rm -rf ./build",
     "lint": "eslint",
     "format": "prettier --write .",
