@@ -54,25 +54,30 @@ Promise.all([Cards.findFactory(args), Templates.findFactory(args)]).then(
     );
 
     const outputSubscriptions: Subscription[] = [];
-    Layout.findFactory(deckConfig).then((layoutFactory) => {
-      const layout = layoutFactory(args, deckConfig, templates);
-      layout.layout$.subscribe(({ templatePaths, card }) =>
-        console.log(
-          'Generated layout for card',
-          card.name,
-          'with template',
-          templatePaths.filePath,
-        ),
-      );
-
-      Promise.all(
-        deckConfig.output.flatMap((outputConfig) =>
-          subscribeOutput(outputConfig, layout),
-        ),
-      ).then((subscriptions) => {
-        outputSubscriptions.concat(subscriptions);
+    Layout.findFactory(deckConfig)
+      .then((layoutFactory) => {
+        const layout = layoutFactory(args, deckConfig, templates);
+        outputSubscriptions.push(
+          layout.layout$.subscribe(({ templatePaths, card }) =>
+            console.log(
+              'Generated layout for card',
+              card.name,
+              'with template',
+              templatePaths.filePath,
+            ),
+          ),
+        );
+        return layout;
+      })
+      .then((layout) => {
+        Promise.all(
+          deckConfig.output.flatMap((outputConfig) =>
+            subscribeOutput(outputConfig, layout),
+          ),
+        ).then((subscriptions) => {
+          outputSubscriptions.concat(subscriptions);
+        });
       });
-    });
   },
 );
 
