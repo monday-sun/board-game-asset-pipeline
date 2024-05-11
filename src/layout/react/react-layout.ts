@@ -22,9 +22,9 @@ function executeInChildProcess(
 
   return new Promise((resolve, reject) =>
     execFile(
-      'node',
+      'ts-node',
       [
-        './build/src/layout/react/react-render/' + renderPath,
+        './src/layout/react/react-render/' + renderPath,
         templatePath,
         JSON.stringify(data),
       ],

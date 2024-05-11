@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env ts-node
 
 import { Subscription } from 'rxjs';
 import yargs from 'yargs';
