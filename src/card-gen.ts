@@ -21,6 +21,7 @@ if (!config) {
   process.exit(1);
 }
 
-const deckConfig = config.decks[0];
-console.log('Generating deck with config', deckConfig);
-const deckSubscriptions = createDeckPipeline(args, deckConfig);
+const deckSubscriptions = config.decks.flatMap((deck) => {
+  console.log('Generating deck with config', deck);
+  return createDeckPipeline(args, deck);
+});
