@@ -13,8 +13,15 @@ export class ConfigReader {
   getConfig() {
     try {
       const fileContents = fs.readFileSync(this.configPath, 'utf8');
-      const data = yaml.load(fileContents);
+      const data = yaml.load(fileContents) as Config;
+      data.decks.forEach((deck) => {
+        const outputDir = deck.outputDir;
+        deck.output.forEach((outputConfig) => {
+          outputConfig.rootOutputDir = outputDir;
+        });
+      })
       this.config = data as Config;
+
     } catch (e) {
       console.error(e);
       this.config = null;
