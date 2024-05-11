@@ -5,8 +5,11 @@ import { Observable, from, map, mergeAll } from 'rxjs';
 import { Output, OutputFactory } from '..';
 import { OutputConfig } from '../../config';
 import { Layout, LayoutResult } from '../../layout';
-import { Arguements, ImageFileInfo } from '../../types';
-import { createOutputFileName } from '../file-name/output-file-name';
+import { Arguements } from '../../types';
+import {
+  ImageFileInfo,
+  createOutputFileName,
+} from '../file-name/output-file-name';
 
 type ImageRenderInfo = {
   html: string;
