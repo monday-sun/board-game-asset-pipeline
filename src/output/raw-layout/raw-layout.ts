@@ -45,7 +45,7 @@ export const factory: OutputFactory = (
     config.outputDir || 'raw-layout',
   );
   if (!fs.existsSync(outputPath)) {
-    fs.mkdirSync(outputPath);
+    fs.mkdirSync(outputPath, { recursive: true });
   }
   return new RawLayout(outputPath, layout);
 };

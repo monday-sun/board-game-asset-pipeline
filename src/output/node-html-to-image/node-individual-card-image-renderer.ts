@@ -85,7 +85,7 @@ export const factory: OutputFactory = (
     config.outputDir || 'individual-card-images',
   );
   if (!fs.existsSync(outputPath)) {
-    fs.mkdirSync(outputPath);
+    fs.mkdirSync(outputPath, { recursive: true });
   }
   return new NodeIndividualCardImageOutput(outputPath, layout);
 };
