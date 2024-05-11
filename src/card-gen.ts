@@ -9,8 +9,8 @@ import { Arguements } from './types';
 const args: Arguements = {
   ...yargs(process.argv.slice(2))
     .options({
-      config: { type: 'string', default: 'config.yml' },
-      watch: { type: 'boolean', default: false },
+      config: { type: 'string', default: 'config.yml', alias: 'c' },
+      watch: { type: 'boolean', default: false, alias: 'w' },
     })
     .parseSync(),
   test: false,
