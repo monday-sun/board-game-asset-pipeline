@@ -1,16 +1,25 @@
 import { of } from 'rxjs';
 import { Cards } from '..';
+import { DeckConfig } from '../../config';
 import { FileContent } from '../../file/file-content';
 import { Arguements } from '../../types';
 
+jest.mock('../../file/file-content');
 describe('PapaParseCards', () => {
   it('parses cards from a CSV file', (done) => {
     const csvContent = `name,count,frontTemplate,backTemplate,customOption
 Card1,1,Front1,Back1,Unknown1
 Card2,2,Front2,Back2,Unknown2`;
+
     const content: FileContent = {
       content$: of({ filePath: '', content: csvContent }),
     };
+
+    const mockContentFactory = FileContent.factory as jest.MockedFunction<
+      typeof FileContent.factory
+    >;
+    mockContentFactory.mockReturnValue(content);
+
     const expectedCards = [
       {
         name: 'Card1',
@@ -27,8 +36,10 @@ Card2,2,Front2,Back2,Unknown2`;
         customOption: 'Unknown2',
       },
     ];
-    Cards.findFactory(<Arguements>{ cards: 'papaparse' })
-      .then((factory) => factory({} as any, content))
+    Cards.findFactory(<Arguements>{}, <DeckConfig>{ cardsParser: 'papaparse' })
+      .then((factory) =>
+        factory(<Arguements>{}, <DeckConfig>{ list: 'fake/path.csv' }),
+      )
       .then((testSubject) => {
         testSubject.cards$.subscribe((cards) => {
           expect(cards).toEqual(expectedCards);
@@ -42,8 +53,15 @@ Card2,2,Front2,Back2,Unknown2`;
     const content: FileContent = {
       content$: of({ filePath: '', content: csvContent }),
     };
-    Cards.findFactory(<Arguements>{ cards: 'papaparse' })
-      .then((factory) => factory({} as any, content))
+    const mockContentFactory = FileContent.factory as jest.MockedFunction<
+      typeof FileContent.factory
+    >;
+    mockContentFactory.mockReturnValue(content);
+
+    Cards.findFactory(<Arguements>{}, <DeckConfig>{ cardsParser: 'papaparse' })
+      .then((factory) =>
+        factory({} as any, <DeckConfig>{ list: 'fake/path.csv' }),
+      )
       .then((testSubject) => {
         testSubject.cards$.subscribe({
           error: (error) => {

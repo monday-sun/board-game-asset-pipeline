@@ -4,7 +4,6 @@ import { Subscription } from 'rxjs';
 import yargs from 'yargs';
 import { Cards } from './cards';
 import { File } from './file/file';
-import { FileContent } from './file/file-content';
 import { Layout } from './layout';
 import { Output } from './output';
 import { Templates } from './templates';
@@ -42,15 +41,12 @@ const deckConfig = config.deck[0];
 
 const deckSubscriptions: Subscription[] = [];
 Promise.all([
-  Cards.findFactory(args),
+  Cards.findFactory(args, deckConfig),
   Templates.findFactory(args, deckConfig),
   Layout.findFactory(args, deckConfig),
 ])
   .then(([cardsFactory, templatesFactory, layoutFactory]) => {
-    const cardsFile = File.factory(args, cardList);
-    const cardsContent = FileContent.factory(args, cardsFile);
-
-    const cards = cardsFactory(args, cardsContent);
+    const cards = cardsFactory(args, deckConfig);
     deckSubscriptions.push(
       cards.cards$.subscribe(() => console.log('Loaded cards from', cardList)),
     );
