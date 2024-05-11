@@ -1,59 +1,31 @@
 #!/usr/bin/env node
 
+import { Subscription } from 'rxjs';
 import yargs from 'yargs';
-import { Cards } from './cards';
-import { File } from './file/file';
-import { FileContent } from './file/file-content';
-import { Layout } from './layout';
-import { Output } from './output';
-import { Templates } from './templates';
+import { Config } from './config';
+import { createDeckPipeline } from './pipeline/deck-pipeline';
 import { Arguements } from './types';
 
 const args: Arguements = {
   ...yargs(process.argv.slice(2))
     .options({
-      cardList: { type: 'string', demandOption: true },
-      outputDir: { type: 'string', default: 'generated' },
-      cards: { type: 'string', default: 'papaparse' },
-      layout: { type: 'string', default: 'react' },
-      output: { type: 'string', default: 'raw' },
+      config: { type: 'string', default: 'config.yaml' },
       watch: { type: 'boolean', default: false },
     })
     .parseSync(),
   test: false,
 };
 
-const { cardList, outputDir, cardsParser, layout, imageRenderer } = args;
+const deckSubscriptions: Subscription[] = [];
 
-Promise.all([
-  Cards.findFactory(args),
-  Templates.findFactory(args),
-  Layout.findFactory(args),
-  Output.findOutputFactory(args),
-]).then(([cardsFactory, templatesFactory, layoutFactory, outputFactory]) => {
-  const cardsFile = File.factory(args, cardList);
-  const cardsContent = FileContent.factory(args, cardsFile);
+Config.factory(args).decks.subscribe((decks) => {
+  // Unsubscribe to any previous pipelines
+  deckSubscriptions.forEach((subscription) => subscription.unsubscribe());
 
-  const cards = cardsFactory(args, cardsContent);
-  cards.cards$.subscribe(() => console.log('Loaded cards from', cardList));
-
-  const templates = templatesFactory(args, cards, File.factory);
-  templates.needsLayout$.subscribe(({ templatePaths }) =>
-    console.log('Requested layout for template', templatePaths.filePath),
+  deckSubscriptions.concat(
+    decks.flatMap((deck) => {
+      console.log('Generating deck with config', deck);
+      return createDeckPipeline(args, deck);
+    }),
   );
-
-  const layout = layoutFactory(args, templates);
-  layout.layout$.subscribe(({ templatePaths, card }) =>
-    console.log(
-      'Generated layout for card',
-      card.name,
-      'with template',
-      templatePaths.filePath,
-    ),
-  );
-
-  const output = outputFactory(args, layout);
-  output.generated$.subscribe((outputPath) => {
-    console.log(`Generated output ${outputPath}`);
-  });
 });

@@ -3,6 +3,7 @@ import fsPromises from 'fs/promises';
 import path from 'path';
 import { Observable, from, map, mergeAll } from 'rxjs';
 import { Output, OutputFactory } from '..';
+import { OutputConfig } from '../../config';
 import { Layout } from '../../layout';
 import { Arguements } from '../../types';
 import { createOutputFileName } from '../file-name/output-file-name';
@@ -10,13 +11,7 @@ import { createOutputFileName } from '../file-name/output-file-name';
 export class RawLayout implements Output {
   generated$: Observable<string[]>;
 
-  constructor(outputDir: string, layout: Layout) {
-    const outputPath = path.join(outputDir, 'raw-layout');
-    // Ensure the output directory exists
-    if (!fs.existsSync(outputPath)) {
-      fs.mkdirSync(outputPath);
-    }
-
+  constructor(outputPath: string, layout: Layout) {
     this.generated$ = layout.layout$.pipe(
       map((result) => ({
         outputPath: createOutputFileName({
@@ -40,6 +35,17 @@ export class RawLayout implements Output {
   }
 }
 
-export const factory: OutputFactory = (args: Arguements, layout: Layout) => {
-  return new RawLayout(args.outputDir, layout);
+export const factory: OutputFactory = (
+  _: Arguements,
+  config: OutputConfig,
+  layout: Layout,
+) => {
+  const outputPath = path.join(
+    config.rootOutputDir,
+    config.outputDir || 'raw-layout',
+  );
+  if (!fs.existsSync(outputPath)) {
+    fs.mkdirSync(outputPath);
+  }
+  return new RawLayout(outputPath, layout);
 };

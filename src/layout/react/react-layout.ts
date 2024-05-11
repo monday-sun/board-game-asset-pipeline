@@ -1,5 +1,6 @@
 import { Observable, from, map, mergeAll } from 'rxjs';
 import { Layout, LayoutFactory, LayoutResult } from '..';
+import { DeckConfig } from '../../config';
 import { Templates } from '../../templates';
 import { Arguements } from '../../types';
 
@@ -81,6 +82,7 @@ export class ReactLayout implements Layout {
 
 export const factory: LayoutFactory = (
   args: Arguements,
+  _: DeckConfig,
   templates: Templates,
 ): Layout => {
   return new ReactLayout(

@@ -1,6 +1,8 @@
 import nodeHtmlToImage from 'node-html-to-image';
 import { of } from 'rxjs';
+import { OutputConfig } from '../../config';
 import { LayoutResult } from '../../layout';
+import { Arguements } from '../../types';
 import { factory } from './node-individual-card-image-renderer';
 
 jest.mock('node-html-to-image', () =>
@@ -30,9 +32,13 @@ describe('RawLayout', () => {
       ],
     );
 
-    const testSubject = factory({ outputDir: 'test-output' } as any, {
-      layout$,
-    });
+    const testSubject = factory(
+      <Arguements>{},
+      <OutputConfig>{ rootOutputDir: 'test-output' },
+      {
+        layout$,
+      },
+    );
     const expectedOutputPaths = [
       'test-output/individual-card-images/testcard-back.png',
     ];

@@ -3,9 +3,13 @@ import nodeHtmlToImage from 'node-html-to-image';
 import path from 'path';
 import { Observable, from, map, mergeAll } from 'rxjs';
 import { Output, OutputFactory } from '..';
+import { OutputConfig } from '../../config';
 import { Layout, LayoutResult } from '../../layout';
-import { Arguements, ImageFileInfo } from '../../types';
-import { createOutputFileName } from '../file-name/output-file-name';
+import { Arguements } from '../../types';
+import {
+  ImageFileInfo,
+  createOutputFileName,
+} from '../file-name/output-file-name';
 
 type ImageRenderInfo = {
   html: string;
@@ -72,10 +76,14 @@ class NodeIndividualCardImageOutput implements Output {
 }
 
 export const factory: OutputFactory = (
-  args: Arguements,
+  _: Arguements,
+  config: OutputConfig,
   layout: Layout,
 ): Output => {
-  const outputPath = path.join(args.outputDir, 'individual-card-images');
+  const outputPath = path.join(
+    config.rootOutputDir,
+    config.outputDir || 'individual-card-images',
+  );
   if (!fs.existsSync(outputPath)) {
     fs.mkdirSync(outputPath);
   }
