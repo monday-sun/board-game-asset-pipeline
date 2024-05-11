@@ -34,7 +34,7 @@ export namespace Output {
 
     // Ensure the output directory exists
     if (!fs.existsSync(config.rootOutputDir)) {
-      fs.mkdirSync(config.rootOutputDir);
+      fs.mkdirSync(config.rootOutputDir, { recursive: true });
     }
 
     console.log('Saving output with', importPath);
