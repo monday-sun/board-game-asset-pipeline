@@ -1,9 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import { Observable } from 'rxjs';
-import { Config, OutputConfig } from '../config';
+import { OutputConfig } from '../config';
 import { Layout } from '../layout';
-import { Arguements } from '../types';
 
 export interface Output {
   generated$: Observable<string[]>;
@@ -20,17 +19,17 @@ export namespace Output {
   };
 
   export const findOutputFactory = (
-    args: Arguements,
+    config: OutputConfig,
   ): Promise<OutputFactory> => {
-    const type = args.output;
+    const type = config.renderer;
     const importPath =
       type in outputTypes
         ? outputTypes[type as keyof OutputTypes]
         : path.join(process.cwd(), type);
 
     // Ensure the output directory exists
-    if (!fs.existsSync(args.outputDir)) {
-      fs.mkdirSync(args.outputDir);
+    if (!fs.existsSync(config.rootOutputDir)) {
+      fs.mkdirSync(config.rootOutputDir);
     }
 
     console.log('Saving output with', importPath);

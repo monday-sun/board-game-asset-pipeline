@@ -1,11 +1,13 @@
 #!/usr/bin/env node
 
+import { Subscription } from 'rxjs';
 import yargs from 'yargs';
 import { Cards } from './cards';
+import { OutputConfig } from './config';
 import { File } from './file/file';
 import { FileContent } from './file/file-content';
 import { Layout } from './layout';
-import { Output, OutputFactory } from './output';
+import { Output } from './output';
 import { Templates } from './templates';
 import { Arguements } from './types';
 
@@ -41,7 +43,6 @@ Promise.all([
   Cards.findFactory(args),
   Templates.findFactory(args),
   Layout.findFactory(args),
-  Output.findOutputFactory(args),
 ]).then(([cardsFactory, templatesFactory, layoutFactory, outputFactory]) => {
   const deckConfig = config.deck[0];
   const cardsFile = File.factory(args, cardList);
@@ -65,18 +66,21 @@ Promise.all([
     ),
   );
 
-  const outputSubscriptions = deckConfig.output.flatMap((outputConfig) =>
-    subscribeOutput(outputFactory, outputConfig, layout),
-  );
+  const outputSubscriptions: Subscription[] = [];
+  Promise.all(
+    deckConfig.output.flatMap((outputConfig) =>
+      subscribeOutput(outputConfig, layout),
+    ),
+  ).then((subscriptions) => {
+    outputSubscriptions.concat(subscriptions);
+  });
 });
 
-function subscribeOutput(
-  outputFactory: OutputFactory,
-  outputConfig: { renderer: string; rootOutputDir: string },
-  layout: Layout,
-) {
-  const output = outputFactory(outputConfig, layout);
-  return output.generated$.subscribe((outputPath) => {
-    console.log(`Generated output ${outputPath}`);
+function subscribeOutput(outputConfig: OutputConfig, layout: Layout) {
+  return Output.findOutputFactory(outputConfig).then((factory) => {
+    const output = factory(outputConfig, layout);
+    return output.generated$.subscribe((outputPath) => {
+      console.log(`Generated output ${outputPath}`);
+    });
   });
 }
