@@ -15,7 +15,7 @@ const Card: React.FC<CardProps> = ({ name, imageUrl, description }) => {
         width: '200px',
         height: '350px',
         padding: '10px',
-        backgroundColor: 'white',
+        backgroundColor: 'green',
       }}
     >
       <h2>{name}</h2>
