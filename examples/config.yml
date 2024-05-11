@@ -1,0 +1,11 @@
+---
+deck:
+  - cards-parser: csv
+    list: ./examples/deck_1.csv
+    layout: react
+    output-dir: generated
+    output:
+      - renderer: raw
+        output-dir: raw-layout
+      - renderer: node-individual-images
+        output-dir: individual
