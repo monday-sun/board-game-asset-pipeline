@@ -1,4 +1,4 @@
-import * as yaml from 'js-yaml';
+import * as yaml from 'yaml';
 import { Observable, filter, map, tap } from 'rxjs';
 import { ConfigFactory, Config as ConfigType, DeckConfig } from '..';
 import { File } from '../../file/file';
@@ -10,7 +10,7 @@ export class Config implements ConfigType {
 
   constructor(fileContent: FileContent) {
     this.decks = fileContent.content$.pipe(
-      map((content) => yaml.load(content.content)),
+      map((content) => yaml.parse(content.content)),
       filter((content) => content !== null && typeof content === 'object'),
       map((content) => (content as { decks: DeckConfig[] }).decks),
       map((decks) => {

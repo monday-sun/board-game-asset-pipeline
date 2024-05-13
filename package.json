@@ -20,13 +20,13 @@
   },
   "dependencies": {
     "@types/yargs": "^17.0.32",
-    "js-yaml": "^4.1.0",
     "node-html-to-image": "^4.0.0",
     "papaparse": "^5.4.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "rxjs": "^7.8.1",
     "ts-node": "^10.9.2",
+    "yaml": "^2.4.2",
     "yargs": "^17.7.2"
   },
   "devDependencies": {
@@ -34,7 +34,6 @@
     "@testing-library/jest-dom": "^6.4.5",
     "@testing-library/react": "^15.0.6",
     "@types/jest": "^29.5.12",
-    "@types/js-yaml": "^4.0.9",
     "@types/node": "^20.12.8",
     "@types/papaparse": "^5.3.14",
     "@types/react": "^18.3.1",

@@ -22,11 +22,13 @@ export namespace Cards {
   type ParserTypes = {
     csv: string;
     papaparse: string;
+    yaml: string;
   };
 
   const parserTypes: ParserTypes = {
     csv: './papa-parse/papa-parse-cards', // Default csv to papaParse
     papaparse: './papa-parse/papa-parse-cards',
+    yaml: './yaml/yaml-cards',
   };
 
   export const findFactory = (
