@@ -1,15 +1,20 @@
+import path from 'path';
 import { Observable, from, map, mergeAll } from 'rxjs';
-import { Layout, LayoutFactory, LayoutResult } from '..';
+import { Layout, LayoutResult } from '..';
 import { DeckConfig } from '../../config';
 import { Templates } from '../../templates';
 import { Arguements } from '../../types';
+
+function relativeRenderPath(renderPath: string): any {
+  return path.join(__dirname, renderPath);
+}
 
 function executeInThisProcess(
   templatePath: string,
   data: Record<string, string>,
   renderPath: string,
 ): Promise<string> {
-  const { render } = require('./react-render/' + renderPath);
+  const { render } = require(relativeRenderPath(renderPath));
   return render(templatePath, data);
 }
 
@@ -23,11 +28,7 @@ function executeInChildProcess(
   return new Promise((resolve, reject) =>
     execFile(
       'ts-node',
-      [
-        './src/layout/react/react-render/' + renderPath,
-        templatePath,
-        JSON.stringify(data),
-      ],
+      [relativeRenderPath(renderPath), templatePath, JSON.stringify(data)],
       (error: Error, stdout: string, stderr: string) => {
         if (error) {
           reject(error);
@@ -80,14 +81,11 @@ export class ReactLayout implements Layout {
   }
 }
 
-export const factory: LayoutFactory = (
+export const factory = (
   args: Arguements,
   _: DeckConfig,
   templates: Templates,
+  renderPath: string = 'react-render',
 ): Layout => {
-  return new ReactLayout(
-    templates,
-    args.watch ? 'child' : 'this',
-    args.test ? 'test/fake-react-render' : 'react-render',
-  );
+  return new ReactLayout(templates, args.watch ? 'child' : 'this', renderPath);
 };
