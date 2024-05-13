@@ -13,7 +13,6 @@ const args: Arguements = {
       watch: { type: 'boolean', default: false, alias: 'w' },
     })
     .parseSync(),
-  test: false,
 };
 
 const deckSubscriptions: Subscription[] = [];
