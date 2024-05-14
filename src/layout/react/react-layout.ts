@@ -1,4 +1,4 @@
-import { Observable, from, map, mergeAll } from 'rxjs';
+import { Observable, from, map, mergeAll, tap } from 'rxjs';
 import { Layout, LayoutFactory, LayoutResult } from '..';
 import { DeckConfig } from '../../config';
 import { Templates } from '../../templates';
@@ -76,6 +76,14 @@ export class ReactLayout implements Layout {
         ),
       ),
       mergeAll(),
+      tap(({ templatePaths, card }) =>
+        console.log(
+          'Generated layout for card',
+          card.name,
+          'with template',
+          templatePaths.filePath,
+        ),
+      ),
     );
   }
 }

@@ -17,20 +17,7 @@ export function createDeckPipeline(args: Arguements, deckConfig: DeckConfig) {
     .then(([cardsFactory, templatesFactory, layoutFactory]) => {
       const cards = cardsFactory(args, deckConfig);
       const templates = templatesFactory(args, deckConfig, cards, File.factory);
-
-      const layout = layoutFactory(args, deckConfig, templates);
-      deckSubscriptions.push(
-        layout.layout$.subscribe(({ templatePaths, card }) =>
-          console.log(
-            'Generated layout for card',
-            card.name,
-            'with template',
-            templatePaths.filePath,
-          ),
-        ),
-      );
-
-      return layout;
+      return layoutFactory(args, deckConfig, templates);
     })
     .then((layout) => {
       deckConfig.output.forEach((outputConfig) =>
