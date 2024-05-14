@@ -1,4 +1,4 @@
-import { Observable, map } from 'rxjs';
+import { Observable, map, tap } from 'rxjs';
 import * as yaml from 'yaml';
 import { Card, Cards, CardsFactory } from '..';
 import { DeckConfig } from '../../config';
@@ -14,6 +14,7 @@ class YamlCards implements Cards {
       map(({ content }) => yaml.parse(content)),
       map((results) => results as { cards: Card[] }),
       map(({ cards }) => cards),
+      tap(() => console.log('Loaded cards from yaml')),
     );
   }
 }

@@ -16,12 +16,6 @@ export function createDeckPipeline(args: Arguements, deckConfig: DeckConfig) {
   ])
     .then(([cardsFactory, templatesFactory, layoutFactory]) => {
       const cards = cardsFactory(args, deckConfig);
-      deckSubscriptions.push(
-        cards.cards$.subscribe(() =>
-          console.log('Loaded cards from', deckConfig.list),
-        ),
-      );
-
       const templates = templatesFactory(args, deckConfig, cards, File.factory);
       deckSubscriptions.push(
         templates.needsLayout$.subscribe(({ templatePaths }) =>

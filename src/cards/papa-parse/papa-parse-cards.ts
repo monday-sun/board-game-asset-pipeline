@@ -1,5 +1,5 @@
 import * as Papa from 'papaparse';
-import { Observable, map } from 'rxjs';
+import { Observable, map, tap } from 'rxjs';
 import { Card, Cards, CardsFactory } from '..';
 import { DeckConfig } from '../../config';
 import { File } from '../../file/file';
@@ -26,6 +26,7 @@ class PapaParseCards implements Cards {
         }
         return results.data;
       }),
+      tap(() => console.log('Loaded cards from csv')),
     );
   }
 }
