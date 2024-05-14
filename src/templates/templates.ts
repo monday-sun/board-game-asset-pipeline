@@ -1,4 +1,4 @@
-import { Observable, map, mergeAll, withLatestFrom } from 'rxjs';
+import { Observable, map, mergeAll, tap, withLatestFrom } from 'rxjs';
 import { NeedsLayout, TemplatesFactory } from '.';
 import { Card, Cards } from '../cards';
 import { DeckConfig } from '../config';
@@ -59,6 +59,14 @@ export class Templates {
         })),
       ),
       mergeAll(),
+      tap(({ card, templatePaths }) =>
+        console.log(
+          'Requested layout for card:',
+          card.name,
+          'with template:',
+          templatePaths.filePath,
+        ),
+      ),
     );
   }
 }
