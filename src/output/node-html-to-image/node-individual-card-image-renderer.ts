@@ -17,7 +17,6 @@ type ImageRenderInfo = {
 };
 
 function createOutputList(info: ImageFileInfo, count: number) {
-  console.log('Creating output list for', info, count);
   if (count === 1) {
     return [{ output: createOutputFileName(info) }];
   }
