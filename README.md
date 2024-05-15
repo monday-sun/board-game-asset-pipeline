@@ -9,7 +9,8 @@ https://github.com/monday-sun/board-game-card-gen-example
 
 ### To CardInfo (CardsParser)
 
-- CSV using [Papaparse](https://www.papaparse.com/)
+- [Yaml](src/cards/yaml/yaml-cards.md)
+- [CSV](src/cards/csv/csv-cards.md)
 
 ### To Html (LayoutRenderer)
 
