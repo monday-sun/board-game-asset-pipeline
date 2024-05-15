@@ -5,8 +5,8 @@ import { FileContent } from '../../file/file-content';
 import { Arguements } from '../../types';
 
 jest.mock('../../file/file-content');
-describe('PapaParseCards', () => {
-  it('parses cards from a CSV file', (done) => {
+describe('Yaml', () => {
+  it('parses cards from a yaml file', (done) => {
     const yaml = `
 cards:
   - name: Card1
@@ -36,14 +36,18 @@ cards:
         count: 1,
         frontTemplate: 'Front1',
         backTemplate: 'Back1',
-        customOption: 'Unknown1',
+        data: {
+          customOption: 'Unknown1',
+        },
       },
       {
         name: 'Card2',
         count: 2,
         frontTemplate: 'Front2',
         backTemplate: 'Back2',
-        customOption: 'Unknown2',
+        data: {
+          customOption: 'Unknown2',
+        },
       },
     ];
     Cards.findFactory(<Arguements>{}, <DeckConfig>{ cardsParser: 'yaml' })

@@ -20,7 +20,7 @@ describe('RawLayout', () => {
           templatePaths: { filePath: 'testCard' },
           card: {
             name: 'testCard',
-            count: '1',
+            count: 1,
           },
           layout: 'testLayout',
           format: 'testFormat',

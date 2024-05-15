@@ -6,10 +6,10 @@ import { Arguements } from '../types';
 
 export type Card = {
   name: string;
-  count: string;
+  count: number;
   frontTemplate: string;
   backTemplate: string;
-  [key: string]: string; // For unknown values
+  data: any;
 };
 
 export interface Cards {

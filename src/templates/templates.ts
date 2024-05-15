@@ -63,7 +63,7 @@ export class Templates {
         console.log(
           'Requested layout for card:',
           card.name,
-          'with template:',
+          ', with template:',
           templatePaths.filePath,
         ),
       ),

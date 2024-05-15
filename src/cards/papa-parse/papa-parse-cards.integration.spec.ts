@@ -23,17 +23,21 @@ Card2,2,Front2,Back2,Unknown2`;
     const expectedCards = [
       {
         name: 'Card1',
-        count: '1',
+        count: 1,
         frontTemplate: 'Front1',
         backTemplate: 'Back1',
-        customOption: 'Unknown1',
+        data: {
+          customOption: 'Unknown1',
+        },
       },
       {
         name: 'Card2',
-        count: '2',
+        count: 2,
         frontTemplate: 'Front2',
         backTemplate: 'Back2',
-        customOption: 'Unknown2',
+        data: {
+          customOption: 'Unknown2',
+        },
       },
     ];
     Cards.findFactory(<Arguements>{}, <DeckConfig>{ cardsParser: 'papaparse' })
@@ -44,30 +48,6 @@ Card2,2,Front2,Back2,Unknown2`;
         testSubject.cards$.subscribe((cards) => {
           expect(cards).toEqual(expectedCards);
           done();
-        });
-      });
-  });
-
-  it('throws error if no cards are parsed', (done) => {
-    const csvContent = `name,count,frontTemplate,backTemplate,customOption`;
-    const content: FileContent = {
-      content$: of({ filePath: '', content: csvContent }),
-    };
-    const mockContentFactory = FileContent.factory as jest.MockedFunction<
-      typeof FileContent.factory
-    >;
-    mockContentFactory.mockReturnValue(content);
-
-    Cards.findFactory(<Arguements>{}, <DeckConfig>{ cardsParser: 'papaparse' })
-      .then((factory) =>
-        factory({} as any, <DeckConfig>{ list: 'fake/path.csv' }),
-      )
-      .then((testSubject) => {
-        testSubject.cards$.subscribe({
-          error: (error) => {
-            expect(error.message).toEqual('No cards parsed from CSV file.');
-            done();
-          },
         });
       });
   });

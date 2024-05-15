@@ -14,6 +14,18 @@ class YamlCards implements Cards {
       map(({ content }) => yaml.parse(content)),
       map((results) => results as { cards: Card[] }),
       map(({ cards }) => cards),
+      map((cards) =>
+        cards.map(
+          ({ name, count, frontTemplate, backTemplate, ...data }) =>
+            <Card>{
+              name,
+              count: typeof count === 'string' ? parseInt(count) || 0 : count,
+              frontTemplate,
+              backTemplate,
+              data,
+            },
+        ),
+      ),
       tap(() => console.log('Loaded cards from yaml')),
     );
   }

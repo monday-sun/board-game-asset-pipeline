@@ -65,7 +65,7 @@ export class ReactLayout implements Layout {
     this.layout$ = templates.needsLayout$.pipe(
       map(({ templatePaths, card }) =>
         from(
-          toHTML(templatePaths.relativePath, card, process, renderPath),
+          toHTML(templatePaths.relativePath, card.data, process, renderPath),
         ).pipe(
           map((layout) => ({
             templatePaths,
@@ -78,9 +78,9 @@ export class ReactLayout implements Layout {
       mergeAll(),
       tap(({ templatePaths, card }) =>
         console.log(
-          'Generated layout for card',
+          'Generated layout for card:',
           card.name,
-          'with template',
+          ', with template',
           templatePaths.filePath,
         ),
       ),

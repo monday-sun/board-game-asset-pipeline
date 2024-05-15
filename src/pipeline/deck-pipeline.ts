@@ -25,8 +25,8 @@ export function createDeckPipeline(args: Arguements, deckConfig: DeckConfig) {
           const output = factory(args, outputConfig, layout);
 
           deckSubscriptions.push(
-            output.generated$.subscribe((outputPath) => {
-              console.log(`Generated output ${outputPath}`);
+            output.generated$.subscribe((outputPaths) => {
+              console.log(`Generated output ${outputPaths}`);
             }),
           );
 
