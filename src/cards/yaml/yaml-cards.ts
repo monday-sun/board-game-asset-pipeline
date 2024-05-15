@@ -27,7 +27,6 @@ class YamlCards implements Cards {
       map(({ cards }) => cards),
       map((cards) =>
         Object.keys(cards).map((name) => {
-          console.log(name);
           const { count, frontTemplate, ...data } = cards[name];
           let backTemplate = undefined;
           if (data.backTemplate) {
