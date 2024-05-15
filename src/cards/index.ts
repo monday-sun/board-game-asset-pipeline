@@ -8,7 +8,7 @@ export type Card = {
   name: string;
   count: number;
   frontTemplate: string;
-  backTemplate: string;
+  backTemplate?: string;
   data: any;
 };
 

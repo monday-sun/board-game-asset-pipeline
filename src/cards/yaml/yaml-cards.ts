@@ -28,7 +28,13 @@ class YamlCards implements Cards {
       map((cards) =>
         Object.keys(cards).map((name) => {
           console.log(name);
-          const { count, frontTemplate, backTemplate, ...data } = cards[name];
+          const { count, frontTemplate, ...data } = cards[name];
+          let backTemplate = undefined;
+          if (data.backTemplate) {
+            backTemplate = data.backTemplate;
+            delete data.backTemplate;
+          }
+
           return <Card>{
             name,
             count: typeof count === 'string' ? parseInt(count) || 0 : count,

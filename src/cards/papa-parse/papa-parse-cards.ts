@@ -10,7 +10,7 @@ type RawResults = {
   name: string;
   count: string;
   frontTemplate: string;
-  backTemplate: string;
+  backTemplate?: string;
 } & any;
 
 // https://www.papaparse.com/
@@ -30,16 +30,20 @@ class PapaParseCards implements Cards {
         return results.data;
       }),
       map((results) =>
-        results.map(
-          ({ name, count, frontTemplate, backTemplate, ...data }) =>
-            <Card>{
-              name,
-              count: typeof count === 'string' ? parseInt(count) || 0 : count,
-              frontTemplate,
-              backTemplate,
-              data,
-            },
-        ),
+        results.map(({ name, count, frontTemplate, ...data }) => {
+          let backTemplate = undefined;
+          if (data.backTemplate) {
+            backTemplate = data.backTemplate;
+            delete data.backTemplate;
+          }
+          return <Card>{
+            name,
+            count: typeof count === 'string' ? parseInt(count) || 0 : count,
+            frontTemplate,
+            backTemplate,
+            data,
+          };
+        }),
       ),
       tap(() => console.log('Loaded cards from csv')),
     );

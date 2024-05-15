@@ -51,4 +51,51 @@ Card2,2,Front2,Back2,Unknown2`;
         });
       });
   });
+
+  it('handles no backTemplate', (done) => {
+      const csvContent = `name,count,frontTemplate,customOption
+Card1,1,Front1,Unknown1
+Card2,2,Front2,Unknown2`;
+
+      const content: FileContent = {
+        content$: of({ filePath: '', content: csvContent }),
+      };
+
+      const mockContentFactory = FileContent.factory as jest.MockedFunction<
+        typeof FileContent.factory
+      >;
+      mockContentFactory.mockReturnValue(content);
+
+      const expectedCards = [
+        {
+          name: 'Card1',
+          count: 1,
+          frontTemplate: 'Front1',
+          data: {
+            customOption: 'Unknown1',
+          },
+        },
+        {
+          name: 'Card2',
+          count: 2,
+          frontTemplate: 'Front2',
+          data: {
+            customOption: 'Unknown2',
+          },
+        },
+      ];
+      Cards.findFactory(
+        <Arguements>{},
+        <DeckConfig>{ cardsParser: 'papaparse' },
+      )
+        .then((factory) =>
+          factory(<Arguements>{}, <DeckConfig>{ list: 'fake/path.csv' }),
+        )
+        .then((testSubject) => {
+          testSubject.cards$.subscribe((cards) => {
+            expect(cards).toEqual(expectedCards);
+            done();
+          });
+        });
+    });
 });
