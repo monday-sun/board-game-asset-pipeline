@@ -13,8 +13,7 @@ type RawResults = {
   backTemplate?: string;
 } & any;
 
-// https://www.papaparse.com/
-class PapaParseCards implements Cards {
+class CSVCards implements Cards {
   cards$: Observable<Card[]>;
   constructor(csv: FileContent) {
     this.cards$ = csv.content$.pipe(
@@ -54,7 +53,7 @@ export const factory: CardsFactory = (
   args: Arguements,
   deckConfig: DeckConfig,
 ): Cards => {
-  return new PapaParseCards(
+  return new CSVCards(
     FileContent.factory(args, File.factory(args, deckConfig.list)),
   );
 };

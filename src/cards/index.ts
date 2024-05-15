@@ -21,13 +21,11 @@ export type CardsFactory = (args: Arguements, deckConfig: DeckConfig) => Cards;
 export namespace Cards {
   type ParserTypes = {
     csv: string;
-    papaparse: string;
     yaml: string;
   };
 
   const parserTypes: ParserTypes = {
-    csv: './papa-parse/papa-parse-cards', // Default csv to papaParse
-    papaparse: './papa-parse/papa-parse-cards',
+    csv: './csv/papa-parse-cards',
     yaml: './yaml/yaml-cards',
   };
 
