@@ -10,8 +10,8 @@ import { Arguements } from '../../types';
 class PapaParseCards implements Cards {
   cards$: Observable<Card[]>;
 
-  constructor(csv: FileContent) {
-    this.cards$ = csv.content$.pipe(
+  constructor(csv$: FileContent) {
+    this.cards$ = csv$.pipe(
       map(({ content }) =>
         Papa.parse<Card>(content, {
           header: true,

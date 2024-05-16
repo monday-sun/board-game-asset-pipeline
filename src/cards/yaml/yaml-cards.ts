@@ -9,8 +9,8 @@ import { Arguements } from '../../types';
 class YamlCards implements Cards {
   cards$: Observable<Card[]>;
 
-  constructor(yamlContent: FileContent) {
-    this.cards$ = yamlContent.content$.pipe(
+  constructor(yamlContent$: FileContent) {
+    this.cards$ = yamlContent$.pipe(
       map(({ content }) => yaml.parse(content)),
       map((results) => results as { cards: Card[] }),
       map(({ cards }) => cards),

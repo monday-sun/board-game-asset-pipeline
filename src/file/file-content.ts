@@ -3,9 +3,7 @@ import { Observable, from, switchMap } from 'rxjs';
 import { Arguements } from '../types';
 import { File } from './file';
 
-export interface FileContent {
-  content$: Observable<{ filePath: string; content: string }>;
-}
+export type FileContent = Observable<{ filePath: string; content: string }>;
 
 export type FileContentFactory = (args: Arguements, file: File) => FileContent;
 
@@ -23,6 +21,6 @@ export namespace FileContent {
         ),
       ),
     );
-    return <FileContent>{ content$ };
+    return content$;
   };
 }

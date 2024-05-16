@@ -11,9 +11,7 @@ describe('PapaParseCards', () => {
 Card1,1,Front1,Back1,Unknown1
 Card2,2,Front2,Back2,Unknown2`;
 
-    const content: FileContent = {
-      content$: of({ filePath: '', content: csvContent }),
-    };
+    const content: FileContent = of({ filePath: '', content: csvContent });
 
     const mockContentFactory = FileContent.factory as jest.MockedFunction<
       typeof FileContent.factory
@@ -50,9 +48,7 @@ Card2,2,Front2,Back2,Unknown2`;
 
   it('throws error if no cards are parsed', (done) => {
     const csvContent = `name,count,frontTemplate,backTemplate,customOption`;
-    const content: FileContent = {
-      content$: of({ filePath: '', content: csvContent }),
-    };
+    const content: FileContent = of({ filePath: '', content: csvContent });
     const mockContentFactory = FileContent.factory as jest.MockedFunction<
       typeof FileContent.factory
     >;

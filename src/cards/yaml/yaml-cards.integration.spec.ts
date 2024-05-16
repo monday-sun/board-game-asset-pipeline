@@ -21,9 +21,7 @@ cards:
     customOption: Unknown2
 `;
 
-    const content: FileContent = {
-      content$: of({ filePath: '', content: yaml }),
-    };
+    const content: FileContent = of({ filePath: '', content: yaml });
 
     const mockContentFactory = FileContent.factory as jest.MockedFunction<
       typeof FileContent.factory

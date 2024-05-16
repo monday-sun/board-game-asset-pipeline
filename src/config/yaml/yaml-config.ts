@@ -8,8 +8,8 @@ import { Arguements } from '../../types';
 export class Config implements ConfigType {
   decks: Observable<DeckConfig[]>;
 
-  constructor(fileContent: FileContent) {
-    this.decks = fileContent.content$.pipe(
+  constructor(fileContent$: FileContent) {
+    this.decks = fileContent$.pipe(
       map((content) => yaml.parse(content.content)),
       filter((content) => content !== null && typeof content === 'object'),
       map((content) => (content as { decks: DeckConfig[] }).decks),
