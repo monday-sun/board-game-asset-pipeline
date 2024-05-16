@@ -1,6 +1,6 @@
 import { of } from 'rxjs';
 import { Cards } from '..';
-import { DeckConfig } from '../../config';
+import { Deck } from '../../config';
 import { FileContent } from '../../file/file-content';
 import { Arguements } from '../../types';
 
@@ -34,9 +34,9 @@ Card2,2,Front2,Back2,Unknown2`;
         customOption: 'Unknown2',
       },
     ];
-    Cards.findFactory(<Arguements>{}, <DeckConfig>{ cardsParser: 'papaparse' })
+    Cards.findFactory(<Arguements>{}, <Deck>{ cardsParser: 'papaparse' })
       .then((factory) =>
-        factory(<Arguements>{}, <DeckConfig>{ list: 'fake/path.csv' }),
+        factory(<Arguements>{}, <Deck>{ list: 'fake/path.csv' }),
       )
       .then((testSubject) => {
         testSubject.cards$.subscribe((cards) => {
@@ -54,10 +54,8 @@ Card2,2,Front2,Back2,Unknown2`;
     >;
     mockContentFactory.mockReturnValue(content);
 
-    Cards.findFactory(<Arguements>{}, <DeckConfig>{ cardsParser: 'papaparse' })
-      .then((factory) =>
-        factory({} as any, <DeckConfig>{ list: 'fake/path.csv' }),
-      )
+    Cards.findFactory(<Arguements>{}, <Deck>{ cardsParser: 'papaparse' })
+      .then((factory) => factory({} as any, <Deck>{ list: 'fake/path.csv' }))
       .then((testSubject) => {
         testSubject.cards$.subscribe({
           error: (error) => {

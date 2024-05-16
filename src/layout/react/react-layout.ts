@@ -1,6 +1,5 @@
 import { Observable, from, map, mergeAll } from 'rxjs';
 import { Layout, LayoutFactory, LayoutResult } from '..';
-import { DeckConfig } from '../../config';
 import { Templates } from '../../templates';
 import { Arguements } from '../../types';
 

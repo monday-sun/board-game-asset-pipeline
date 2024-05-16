@@ -1,6 +1,5 @@
 import { Observable } from 'rxjs';
 import { Card, Cards } from '../cards';
-import { DeckConfig } from '../config';
 import { FileFactory, Paths } from '../file/file';
 import { Arguements } from '../types';
 

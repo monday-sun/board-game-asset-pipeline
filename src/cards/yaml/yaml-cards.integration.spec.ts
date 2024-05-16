@@ -1,8 +1,8 @@
 import { of } from 'rxjs';
 import { Cards } from '..';
-import { DeckConfig } from '../../config';
 import { FileContent } from '../../file/file-content';
 import { Arguements } from '../../types';
+import { Deck } from '../../config';
 
 jest.mock('../../file/file-content');
 describe('PapaParseCards', () => {
@@ -44,9 +44,9 @@ cards:
         customOption: 'Unknown2',
       },
     ];
-    Cards.findFactory(<Arguements>{}, <DeckConfig>{ cardsParser: 'yaml' })
+    Cards.findFactory(<Arguements>{}, <Deck>{ cardsParser: 'yaml' })
       .then((factory) =>
-        factory(<Arguements>{}, <DeckConfig>{ list: 'fake/path.yaml' }),
+        factory(<Arguements>{}, <Deck>{ list: 'fake/path.yaml' }),
       )
       .then((testSubject) => {
         testSubject.cards$.subscribe((cards) => {

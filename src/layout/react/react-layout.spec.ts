@@ -1,5 +1,4 @@
 import { of } from 'rxjs';
-import { DeckConfig } from '../../config';
 import { Paths } from '../../file/file';
 import { NeedsLayout } from '../../templates';
 import { Arguements } from '../../types';

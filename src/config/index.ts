@@ -8,7 +8,7 @@ export type OutputConfig = {
   rootOutputDir: string;
 };
 
-export type DeckConfig = {
+export type Deck = {
   cardsParser: string;
   list: string;
   layout: string;
@@ -16,12 +16,8 @@ export type DeckConfig = {
   output: OutputConfig[];
 };
 
-export interface Config {
-  decks: Observable<DeckConfig[]>;
-}
+export type ConfigFactory = (args: Arguements) => Observable<Deck>;
 
-export type ConfigFactory = (args: Arguements) => Config;
-
-export namespace Config {
+export namespace Deck {
   export const factory = configFactory;
 }

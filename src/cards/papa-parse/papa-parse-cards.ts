@@ -1,7 +1,7 @@
 import * as Papa from 'papaparse';
 import { Observable, map } from 'rxjs';
 import { Card, Cards, CardsFactory } from '..';
-import { DeckConfig } from '../../config';
+import { Deck } from '../../config';
 import { File } from '../../file/file';
 import { FileContent } from '../../file/file-content';
 import { Arguements } from '../../types';
@@ -30,11 +30,8 @@ class PapaParseCards implements Cards {
   }
 }
 
-export const factory: CardsFactory = (
-  args: Arguements,
-  deckConfig: DeckConfig,
-): Cards => {
+export const factory: CardsFactory = (args: Arguements, deck: Deck): Cards => {
   return new PapaParseCards(
-    FileContent.factory(args, File.factory(args, deckConfig.list)),
+    FileContent.factory(args, File.factory(args, deck.list)),
   );
 };

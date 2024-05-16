@@ -1,13 +1,13 @@
 import { Subscription } from 'rxjs';
 import { Cards } from '../cards';
-import { DeckConfig } from '../config';
 import { File } from '../file/file';
 import { Layout } from '../layout';
 import { Output } from '../output';
 import { Templates } from '../templates';
 import { Arguements } from '../types';
+import { Deck } from '../config';
 
-export function createDeckPipeline(args: Arguements, deckConfig: DeckConfig) {
+export function createDeckPipeline(args: Arguements, deckConfig: Deck) {
   const deckSubscriptions: Subscription[] = [];
   Promise.all([
     Cards.findFactory(args, deckConfig),

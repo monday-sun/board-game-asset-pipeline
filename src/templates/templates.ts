@@ -1,9 +1,9 @@
 import { Observable, map, mergeAll, withLatestFrom } from 'rxjs';
 import { NeedsLayout, TemplatesFactory } from '.';
 import { Card, Cards } from '../cards';
-import { DeckConfig } from '../config';
 import { FileFactory } from '../file/file';
 import { Arguements } from '../types';
+import { Deck } from '../config';
 
 function addCardToTemplate(
   templatesToCards: { [key: string]: Card[] },
@@ -65,7 +65,7 @@ export class Templates {
 
 export const factory: TemplatesFactory = (
   args: Arguements,
-  _: DeckConfig,
+  _: Deck,
   cards: Cards,
   fileFactory: FileFactory,
 ): Templates => {

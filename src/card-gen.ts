@@ -2,7 +2,7 @@
 
 import { Subscription } from 'rxjs';
 import yargs from 'yargs';
-import { Config } from './config';
+import { Deck } from './config';
 import { createDeckPipeline } from './pipeline/deck-pipeline';
 import { Arguements } from './types';
 
@@ -18,14 +18,9 @@ const args: Arguements = {
 
 const deckSubscriptions: Subscription[] = [];
 
-Config.factory(args).decks.subscribe((decks) => {
+Deck.factory(args).subscribe((deck) => {
   // Unsubscribe to any previous pipelines
   deckSubscriptions.forEach((subscription) => subscription.unsubscribe());
 
-  deckSubscriptions.concat(
-    decks.flatMap((deck) => {
-      console.log('Generating deck with config', deck);
-      return createDeckPipeline(args, deck);
-    }),
-  );
+  deckSubscriptions.concat(createDeckPipeline(args, deck));
 });

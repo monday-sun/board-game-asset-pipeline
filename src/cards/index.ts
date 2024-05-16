@@ -1,7 +1,7 @@
 import path from 'path';
 import { cwd } from 'process';
 import { Observable } from 'rxjs';
-import { DeckConfig } from '../config';
+import { Deck } from '../config';
 import { Arguements } from '../types';
 
 export type Card = {
@@ -16,7 +16,7 @@ export interface Cards {
   cards$: Observable<Card[]>;
 }
 
-export type CardsFactory = (args: Arguements, deckConfig: DeckConfig) => Cards;
+export type CardsFactory = (args: Arguements, deckConfig: Deck) => Cards;
 
 export namespace Cards {
   type ParserTypes = {
@@ -33,9 +33,9 @@ export namespace Cards {
 
   export const findFactory = (
     _: Arguements,
-    deckConfig: DeckConfig,
+    deck: Deck,
   ): Promise<CardsFactory> => {
-    const type = deckConfig.cardsParser;
+    const type = deck.cardsParser;
     const importPath =
       type in parserTypes
         ? parserTypes[type as keyof ParserTypes]

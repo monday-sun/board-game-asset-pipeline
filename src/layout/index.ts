@@ -2,7 +2,6 @@ import path from 'path';
 import { cwd } from 'process';
 import { Observable } from 'rxjs';
 import { Card } from '../cards';
-import { DeckConfig } from '../config';
 import { Paths } from '../file/file';
 import { Templates } from '../templates';
 import { Arguements } from '../types';
