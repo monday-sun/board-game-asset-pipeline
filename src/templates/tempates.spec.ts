@@ -48,9 +48,8 @@ describe('Layouts', () => {
       <Cards>{
         cards$: of(cards),
       },
-      (_: any, filePath: string) => ({
-        path$: of({ filePath, relativePath: `rel/${filePath}` }),
-      }),
+      (_: any, filePath: string) =>
+        of({ filePath, relativePath: `rel/${filePath}` }),
     );
 
     testSubject.needsLayout$.subscribe((needsLayout) => {

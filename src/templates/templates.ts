@@ -46,7 +46,7 @@ export class Templates {
     const templateUpdate$ = templateToCards$.pipe(
       map((templateToCards) => Object.keys(templateToCards)),
       mergeAll(),
-      map((template) => fileFactory(this.args, template).path$),
+      map((template) => fileFactory(this.args, template)),
       mergeAll(),
     );
 

@@ -11,8 +11,8 @@ describe('File', () => {
     const expectedEmits = [
       { filePath: 'file1', relativePath: path.join(process.cwd(), 'file1') },
     ];
-    const file = File.factory({ watch: false } as any, 'file1');
-    file.path$.subscribe((file) => {
+    const file$ = File.factory({ watch: false } as any, 'file1');
+    file$.subscribe((file) => {
       expect(mockWatch).not.toHaveBeenCalled();
       expect(file).toEqual(expectedEmits.shift());
       if (expectedEmits.length === 0) {
@@ -28,8 +28,8 @@ describe('File', () => {
     const expectedEmits = [
       { filePath: 'file1', relativePath: path.join(process.cwd(), 'file1') },
     ];
-    const file = File.factory({ watch: true } as any, 'file1');
-    file.path$.subscribe((file) => {
+    const file$ = File.factory({ watch: true } as any, 'file1');
+    file$.subscribe((file) => {
       expect(file).toEqual(expectedEmits.shift());
       if (expectedEmits.length === 0) {
         done();
@@ -45,8 +45,8 @@ describe('File', () => {
       { filePath: 'file1', relativePath: path.join(process.cwd(), 'file1') },
       { filePath: 'file1', relativePath: path.join(process.cwd(), 'file1') },
     ];
-    const file = File.factory({ watch: true } as any, 'file1');
-    file.path$.subscribe((file) => {
+    const file$ = File.factory({ watch: true } as any, 'file1');
+    file$.subscribe((file) => {
       expect(file).toEqual(expectedEmits.shift());
       if (expectedEmits.length === 0) {
         done();
