@@ -31,43 +31,29 @@ function gatherTemplates(cards: Card[]) {
   return templatesToCards;
 }
 
-export class Templates {
-  needsLayout$: Observable<NeedsLayout>;
-
-  constructor(
-    private args: Arguements,
-    cards$: Observable<Card[]>,
-    fileFactory: FileFactory,
-  ) {
-    const templateToCards$ = cards$.pipe(
-      map((cards) => gatherTemplates(cards)),
-    );
-
-    const templateUpdate$ = templateToCards$.pipe(
-      map((templateToCards) => Object.keys(templateToCards)),
-      mergeAll(),
-      map((template) => fileFactory(this.args, template)),
-      mergeAll(),
-    );
-
-    this.needsLayout$ = templateUpdate$.pipe(
-      withLatestFrom(templateToCards$),
-      map(([templatePaths, templateToCards]) =>
-        templateToCards[templatePaths.filePath].map((card) => ({
-          templatePaths,
-          card,
-        })),
-      ),
-      mergeAll(),
-    );
-  }
-}
-
 export const factory: TemplatesFactory = (
   args: Arguements,
   _: Deck,
-  cards: Observable<Card[]>,
+  cards$: Observable<Card[]>,
   fileFactory: FileFactory,
-): Templates => {
-  return new Templates(args, cards, fileFactory);
+): Observable<NeedsLayout> => {
+  const templateToCards$ = cards$.pipe(map((cards) => gatherTemplates(cards)));
+
+  const templateUpdate$ = templateToCards$.pipe(
+    map((templateToCards) => Object.keys(templateToCards)),
+    mergeAll(),
+    map((template) => fileFactory(args, template)),
+    mergeAll(),
+  );
+
+  return templateUpdate$.pipe(
+    withLatestFrom(templateToCards$),
+    map(([templatePaths, templateToCards]) =>
+      templateToCards[templatePaths.filePath].map((card) => ({
+        templatePaths,
+        card,
+      })),
+    ),
+    mergeAll(),
+  );
 };

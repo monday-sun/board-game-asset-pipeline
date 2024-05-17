@@ -1,13 +1,14 @@
 import { of } from 'rxjs';
+import { Card } from '../cards';
 import { Deck } from '../config';
 import { Paths } from '../file/file';
 import { Arguements } from '../types';
-import { factory } from './templates';
+import { factory as testSubject } from './templates';
 describe('Layouts', () => {
   it('should map templates to cards', (done) => {
     const cards = [
-      { frontTemplate: 'template1', backTemplate: 'template2' },
-      { frontTemplate: 'template1', backTemplate: 'template3' },
+      <Card>{ frontTemplate: 'template1', backTemplate: 'template2' },
+      <Card>{ frontTemplate: 'template1', backTemplate: 'template3' },
     ];
 
     const expectedLayouts = [
@@ -41,7 +42,7 @@ describe('Layouts', () => {
       },
     ];
 
-    const testSubject = factory(
+    const templates$ = testSubject(
       <Arguements>{},
       <Deck>{},
       of(cards),
@@ -50,7 +51,7 @@ describe('Layouts', () => {
         of({ filePath, relativePath: `rel/${filePath}` }),
     );
 
-    testSubject.needsLayout$.subscribe((needsLayout) => {
+    templates$.subscribe((needsLayout) => {
       expect(needsLayout).toEqual(expectedLayouts.shift());
       if (expectedLayouts.length === 0) {
         done();

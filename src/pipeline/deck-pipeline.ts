@@ -1,4 +1,4 @@
-import { Subscription, from } from 'rxjs';
+import { Subscription, from, lastValueFrom } from 'rxjs';
 import { Cards } from '../cards';
 import { Deck } from '../config';
 import { File } from '../file/file';
@@ -10,8 +10,8 @@ import { Arguements } from '../types';
 export function createDeckPipeline(args: Arguements, deckConfig: Deck) {
   const deckSubscriptions: Subscription[] = [];
   Promise.all([
-    from(Cards.findFactory(args, deckConfig)),
-    Templates.findFactory(args, deckConfig),
+    lastValueFrom(Cards.findFactory(args, deckConfig)),
+    lastValueFrom(Templates.findFactory(args, deckConfig)),
     Layout.findFactory(args, deckConfig),
   ])
     .then(([cardsFactory, templatesFactory, layoutFactory]) => {
