@@ -1,7 +1,7 @@
 import fs from 'fs';
 import nodeHtmlToImage from 'node-html-to-image';
 import path from 'path';
-import { Observable, from, map, mergeAll } from 'rxjs';
+import { Observable, from, map, switchMap } from 'rxjs';
 import { OutputFactory } from '..';
 import { OutputConfig } from '../../config';
 import { LayoutResult } from '../../layout';
@@ -53,9 +53,9 @@ function toRenderInfo(
 function toImages(
   html: string,
   content: { output: string }[],
-): Promise<string[]> {
-  return nodeHtmlToImage({ content, html }).then(() =>
-    content.map((c) => c.output),
+): Observable<string[]> {
+  return from(nodeHtmlToImage({ content, html })).pipe(
+    map(() => content.map((c) => c.output)),
   );
 }
 
@@ -73,11 +73,6 @@ export const factory: OutputFactory = (
   }
   return layout$.pipe(
     map((result) => toRenderInfo(outputPath, result)),
-    map(({ html, content }) =>
-      from(toImages(html, content)).pipe(
-        map(() => content.map((c) => c.output)),
-      ),
-    ),
-    mergeAll(),
+    switchMap(({ html, content }) => toImages(html, content)),
   );
 };
