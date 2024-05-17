@@ -1,11 +1,30 @@
-import { of, switchMap } from 'rxjs';
+import { of } from 'rxjs';
 import { Cards } from '..';
 import { Deck } from '../../config';
 import { FileContent } from '../../file/file-content';
 import { Arguements } from '../../types';
+import { factory as testSubject } from './papa-parse-cards';
 
 jest.mock('../../file/file-content');
 describe('PapaParseCards', () => {
+  it("completes factory pipeline with 'csv' parser", (done) => {
+    let defined = false;
+    const cardsFactory$ = Cards.findFactory(
+      <Arguements>{},
+      <Deck>{ cardsParser: 'csv' },
+    );
+    cardsFactory$.subscribe({
+      next: (foundFactory) => {
+        expect(foundFactory).toBe(testSubject);
+        defined = true;
+      },
+      complete: () => {
+        expect(defined).toBe(true);
+        done();
+      },
+    });
+  });
+
   it('parses cards from a CSV file', (done) => {
     const csvContent = `name,count,frontTemplate,backTemplate,customOption
 Card1,1,Front1,Back1,Unknown1
@@ -34,16 +53,13 @@ Card2,2,Front2,Back2,Unknown2`;
         customOption: 'Unknown2',
       },
     ];
-    Cards.findFactory(<Arguements>{}, <Deck>{ cardsParser: 'papaparse' })
-      .pipe(
-        switchMap((factory) =>
-          factory(<Arguements>{}, <Deck>{ list: 'fake/path.csv' }),
-        ),
-      )
-      .subscribe((cards) => {
+
+    testSubject(<Arguements>{}, <Deck>{ list: 'fake/path.csv' }).subscribe(
+      (cards) => {
         expect(cards).toEqual(expectedCards);
-          done();
-      });
+        done();
+      },
+    );
   });
 
   it('throws error if no cards are parsed', (done) => {
@@ -54,17 +70,11 @@ Card2,2,Front2,Back2,Unknown2`;
     >;
     mockContentFactory.mockReturnValue(content);
 
-    Cards.findFactory(<Arguements>{}, <Deck>{ cardsParser: 'papaparse' })
-      .pipe(
-        switchMap((factory) =>
-          factory({} as any, <Deck>{ list: 'fake/path.csv' }),
-        ),
-      )
-      .subscribe({
-        error: (error) => {
-          expect(error.message).toEqual('No cards parsed from CSV file.');
-          done();
-        },
-      });
+    testSubject({} as any, <Deck>{ list: 'fake/path.csv' }).subscribe({
+      error: (error) => {
+        expect(error.message).toEqual('No cards parsed from CSV file.');
+        done();
+      },
+    });
   });
 });

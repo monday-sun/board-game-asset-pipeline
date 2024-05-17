@@ -1,13 +1,32 @@
-import { of, switchMap } from 'rxjs';
+import { of } from 'rxjs';
 import { Cards } from '..';
 import { Deck } from '../../config';
 import { FileContent } from '../../file/file-content';
 import { Arguements } from '../../types';
+import { factory as testSubject } from './yaml-cards';
 
 jest.mock('../../file/file-content');
 jest.mock('../../file/file');
 
 describe('PapaParseCards', () => {
+  it("completes factory pipeline with 'yaml' parser", (done) => {
+    let defined = false;
+    const cardsFactory$ = Cards.findFactory(
+      <Arguements>{},
+      <Deck>{ cardsParser: 'yaml' },
+    );
+    cardsFactory$.subscribe({
+      next: (foundFactory) => {
+        expect(foundFactory).toBe(testSubject);
+        defined = true;
+      },
+      complete: () => {
+        expect(defined).toBe(true);
+        done();
+      },
+    });
+  });
+
   it('parses cards from a CSV file', (done) => {
     const yaml = `
 cards:
@@ -46,15 +65,12 @@ cards:
         customOption: 'Unknown2',
       },
     ];
-    Cards.findFactory(<Arguements>{}, <Deck>{ cardsParser: 'yaml' })
-      .pipe(
-        switchMap((factory) =>
-          factory(<Arguements>{}, <Deck>{ list: 'fake/path.yaml' }),
-        ),
-      )
-      .subscribe((cards) => {
+
+    testSubject(<Arguements>{}, <Deck>{ list: 'fake/path.yaml' }).subscribe(
+      (cards) => {
         expect(cards).toEqual(expectedCards);
         done();
-      });
+      },
+    );
   });
 });
