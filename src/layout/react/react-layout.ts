@@ -1,7 +1,7 @@
 import { Observable, from, map, mergeAll } from 'rxjs';
-import { Layout, LayoutFactory, LayoutResult } from '..';
+import { LayoutFactory, LayoutResult } from '..';
 import { Deck } from '../../config';
-import { Templates } from '../../templates';
+import { NeedsLayout } from '../../templates';
 import { Arguements } from '../../types';
 
 function executeInThisProcess(
@@ -54,40 +54,29 @@ function toHTML(
   }
 }
 
-export class ReactLayout implements Layout {
-  layout$: Observable<LayoutResult>;
-
-  constructor(
-    templates: Templates,
-    process: 'this' | 'child',
-    renderPath: string,
-  ) {
-    this.layout$ = templates.needsLayout$.pipe(
-      map(({ templatePaths, card }) =>
-        from(
-          toHTML(templatePaths.relativePath, card, process, renderPath),
-        ).pipe(
-          map((layout) => ({
-            templatePaths,
-            card,
-            layout,
-            format: 'html',
-          })),
-        ),
-      ),
-      mergeAll(),
-    );
-  }
-}
-
 export const factory: LayoutFactory = (
   args: Arguements,
   _: Deck,
-  templates: Templates,
-): Layout => {
-  return new ReactLayout(
-    templates,
-    args.watch ? 'child' : 'this',
-    args.test ? 'test/fake-react-render' : 'react-render',
+  templates$: Observable<NeedsLayout>,
+): Observable<LayoutResult> => {
+  return templates$.pipe(
+    map(({ templatePaths, card }) =>
+      from(
+        toHTML(
+          templatePaths.relativePath,
+          card,
+          args.watch ? 'child' : 'this',
+          args.test ? 'test/fake-react-render' : 'react-render',
+        ),
+      ).pipe(
+        map((layout) => ({
+          templatePaths,
+          card,
+          layout,
+          format: 'html',
+        })),
+      ),
+    ),
+    mergeAll(),
   );
 };

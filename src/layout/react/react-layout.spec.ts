@@ -1,14 +1,35 @@
 import { of } from 'rxjs';
+import { Layout } from '..';
 import { Deck } from '../../config';
 import { Paths } from '../../file/file';
 import { NeedsLayout } from '../../templates';
 import { Arguements } from '../../types';
-import { factory } from './react-layout';
+import { factory as testSubject } from './react-layout';
 
 describe('ReactLayout', () => {
+  it("completes factory pipeline with 'react' layout", (done) => {
+    let defined = false;
+    const cardsFactory$ = Layout.findFactory(
+      <Arguements>{ test: true },
+      <Deck>{ layout: 'react' },
+    );
+    cardsFactory$.subscribe({
+      next: (foundFactory) => {
+        expect(foundFactory).toBe(testSubject);
+        defined = true;
+      },
+      complete: () => {
+        expect(defined).toBe(true);
+        done();
+      },
+    });
+  });
+
   it('should render all requested layouts', (done) => {
-    const testSubject = factory(<Arguements>{ test: true }, <Deck>{}, {
-      needsLayout$: of(
+    const layouts$ = testSubject(
+      <Arguements>{},
+      <Deck>{},
+      of(
         ...[
           <NeedsLayout>{
             templatePaths: <Paths>{
@@ -30,7 +51,7 @@ describe('ReactLayout', () => {
           },
         ],
       ),
-    });
+    );
 
     const expectedLayouts = [
       {
@@ -57,7 +78,7 @@ describe('ReactLayout', () => {
       },
     ];
 
-    testSubject.layout$.subscribe((layout) => {
+    layouts$.subscribe((layout) => {
       expect(layout).toEqual(expectedLayouts.shift());
       if (expectedLayouts.length === 0) {
         done();

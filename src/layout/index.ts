@@ -1,9 +1,10 @@
 import path from 'path';
 import { cwd } from 'process';
-import { Observable } from 'rxjs';
+import { Observable, from, map } from 'rxjs';
 import { Card } from '../cards';
+import { Deck } from '../config';
 import { Paths } from '../file/file';
-import { Templates } from '../templates';
+import { NeedsLayout } from '../templates';
 import { Arguements } from '../types';
 
 export type LayoutResult = {
@@ -13,15 +14,11 @@ export type LayoutResult = {
   format: string;
 };
 
-export interface Layout {
-  layout$: Observable<LayoutResult>;
-}
-
 export type LayoutFactory = (
   args: Arguements,
-  deckConfig: DeckConfig,
-  templates: Templates,
-) => Layout;
+  deck: Deck,
+  templates$: Observable<NeedsLayout>,
+) => Observable<LayoutResult>;
 
 export namespace Layout {
   type LayoutRenderTypes = { react: string };
@@ -32,14 +29,14 @@ export namespace Layout {
 
   export const findFactory = (
     _: Arguements,
-    deckConfig: DeckConfig,
-  ): Promise<LayoutFactory> => {
-    const type = deckConfig.layout;
+    deck: Deck,
+  ): Observable<LayoutFactory> => {
+    const type = deck.layout;
     const importPath =
       type in layoutRenderTypes
         ? layoutRenderTypes[type as keyof LayoutRenderTypes]
         : path.join(cwd(), type);
     console.log('Rendering layouts with', importPath);
-    return import(importPath).then(({ factory }) => factory);
+    return from(import(importPath)).pipe(map(({ factory }) => factory));
   };
 }
