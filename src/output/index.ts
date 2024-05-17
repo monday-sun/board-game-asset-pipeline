@@ -1,19 +1,17 @@
 import fs from 'fs';
 import path from 'path';
-import { Observable } from 'rxjs';
+import { Observable, from, map } from 'rxjs';
 import { OutputConfig } from '../config';
-import { Layout } from '../layout';
+import { LayoutResult } from '../layout';
 import { Arguements } from '../types';
 
-export interface Output {
-  generated$: Observable<string[]>;
-}
+export type OutputFilename = string;
 
 export type OutputFactory = (
   args: Arguements,
   config: OutputConfig,
-  layout: Layout,
-) => Output;
+  layout: Observable<LayoutResult>,
+) => Observable<OutputFilename[]>;
 
 export namespace Output {
   type OutputTypes = { nodeIndividual: string; raw: string };
@@ -23,9 +21,9 @@ export namespace Output {
     raw: './raw-layout/raw-layout',
   };
 
-  export const findOutputFactory = (
+  export const findFactory = (
     config: OutputConfig,
-  ): Promise<OutputFactory> => {
+  ): Observable<OutputFactory> => {
     const type = config.renderer;
     const importPath =
       type in outputTypes
@@ -38,6 +36,6 @@ export namespace Output {
     }
 
     console.log('Saving output with', importPath);
-    return import(importPath).then(({ factory }) => factory);
+    return from(import(importPath)).pipe(map(({ factory }) => factory));
   };
 }

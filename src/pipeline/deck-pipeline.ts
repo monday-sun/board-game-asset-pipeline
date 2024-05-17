@@ -50,16 +50,16 @@ export function createDeckPipeline(args: Arguements, deckConfig: Deck) {
     })
     .then((layout) => {
       deckConfig.output.forEach((outputConfig) =>
-        Output.findOutputFactory(outputConfig).then((factory) => {
-          const output = factory(args, outputConfig, layout);
+        lastValueFrom(Output.findFactory(outputConfig)).then((factory) => {
+          const generated$ = factory(args, outputConfig, layout);
 
           deckSubscriptions.push(
-            output.generated$.subscribe((outputPath) => {
+            generated$.subscribe((outputPath) => {
               console.log(`Generated output ${outputPath}`);
             }),
           );
 
-          return output;
+          return generated$;
         }),
       );
     });
