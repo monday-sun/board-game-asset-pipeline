@@ -1,6 +1,6 @@
 import path from 'path';
 import { cwd } from 'process';
-import { Observable } from 'rxjs';
+import { Observable, from, map } from 'rxjs';
 import { Deck } from '../config';
 import { Arguements } from '../types';
 
@@ -12,11 +12,10 @@ export type Card = {
   [key: string]: string; // For unknown values
 };
 
-export interface Cards {
-  cards$: Observable<Card[]>;
-}
-
-export type CardsFactory = (args: Arguements, deckConfig: Deck) => Cards;
+export type CardsFactory = (
+  args: Arguements,
+  deckConfig: Deck,
+) => Observable<Card[]>;
 
 export namespace Cards {
   type ParserTypes = {
@@ -34,7 +33,7 @@ export namespace Cards {
   export const findFactory = (
     _: Arguements,
     deck: Deck,
-  ): Promise<CardsFactory> => {
+  ): Observable<CardsFactory> => {
     const type = deck.cardsParser;
     const importPath =
       type in parserTypes
@@ -42,6 +41,6 @@ export namespace Cards {
         : path.join(cwd(), type);
 
     console.log('Loading cards with', importPath);
-    return import(importPath).then(({ factory }) => factory);
+    return from(import(importPath)).pipe(map(({ factory }) => factory));
   };
 }

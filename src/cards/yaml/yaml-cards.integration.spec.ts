@@ -1,10 +1,12 @@
-import { of } from 'rxjs';
+import { of, switchMap } from 'rxjs';
 import { Cards } from '..';
+import { Deck } from '../../config';
 import { FileContent } from '../../file/file-content';
 import { Arguements } from '../../types';
-import { Deck } from '../../config';
 
 jest.mock('../../file/file-content');
+jest.mock('../../file/file');
+
 describe('PapaParseCards', () => {
   it('parses cards from a CSV file', (done) => {
     const yaml = `
@@ -45,14 +47,14 @@ cards:
       },
     ];
     Cards.findFactory(<Arguements>{}, <Deck>{ cardsParser: 'yaml' })
-      .then((factory) =>
-        factory(<Arguements>{}, <Deck>{ list: 'fake/path.yaml' }),
+      .pipe(
+        switchMap((factory) =>
+          factory(<Arguements>{}, <Deck>{ list: 'fake/path.yaml' }),
+        ),
       )
-      .then((testSubject) => {
-        testSubject.cards$.subscribe((cards) => {
-          expect(cards).toEqual(expectedCards);
-          done();
-        });
+      .subscribe((cards) => {
+        expect(cards).toEqual(expectedCards);
+        done();
       });
   });
 });

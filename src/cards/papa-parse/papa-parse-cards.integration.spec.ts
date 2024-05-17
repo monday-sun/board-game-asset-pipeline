@@ -1,4 +1,4 @@
-import { of } from 'rxjs';
+import { of, switchMap } from 'rxjs';
 import { Cards } from '..';
 import { Deck } from '../../config';
 import { FileContent } from '../../file/file-content';
@@ -35,14 +35,14 @@ Card2,2,Front2,Back2,Unknown2`;
       },
     ];
     Cards.findFactory(<Arguements>{}, <Deck>{ cardsParser: 'papaparse' })
-      .then((factory) =>
-        factory(<Arguements>{}, <Deck>{ list: 'fake/path.csv' }),
+      .pipe(
+        switchMap((factory) =>
+          factory(<Arguements>{}, <Deck>{ list: 'fake/path.csv' }),
+        ),
       )
-      .then((testSubject) => {
-        testSubject.cards$.subscribe((cards) => {
-          expect(cards).toEqual(expectedCards);
+      .subscribe((cards) => {
+        expect(cards).toEqual(expectedCards);
           done();
-        });
       });
   });
 
@@ -55,14 +55,16 @@ Card2,2,Front2,Back2,Unknown2`;
     mockContentFactory.mockReturnValue(content);
 
     Cards.findFactory(<Arguements>{}, <Deck>{ cardsParser: 'papaparse' })
-      .then((factory) => factory({} as any, <Deck>{ list: 'fake/path.csv' }))
-      .then((testSubject) => {
-        testSubject.cards$.subscribe({
-          error: (error) => {
-            expect(error.message).toEqual('No cards parsed from CSV file.');
-            done();
-          },
-        });
+      .pipe(
+        switchMap((factory) =>
+          factory({} as any, <Deck>{ list: 'fake/path.csv' }),
+        ),
+      )
+      .subscribe({
+        error: (error) => {
+          expect(error.message).toEqual('No cards parsed from CSV file.');
+          done();
+        },
       });
   });
 });
