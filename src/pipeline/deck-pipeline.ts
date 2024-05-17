@@ -1,4 +1,4 @@
-import { Subscription, combineLatest, lastValueFrom, map } from 'rxjs';
+import { Subscription, combineLatest, map, mergeAll, switchMap } from 'rxjs';
 import { Cards, CardsFactory } from '../cards';
 import { Deck } from '../config';
 import { File } from '../file/file';
@@ -25,20 +25,24 @@ export function createDeckPipeline(args: Arguements, deckConfig: Deck) {
         deckSubscriptions,
       );
     }),
-    map((layout) => {
-      deckConfig.output.forEach((outputConfig) =>
-        lastValueFrom(Output.findFactory(outputConfig)).then((factory) => {
-          const generated$ = factory(args, outputConfig, layout);
-
-          deckSubscriptions.push(
-            generated$.subscribe((outputPath) => {
-              console.log(`Generated output ${outputPath}`);
-            }),
-          );
-
-          return generated$;
+    map((layout$) =>
+      deckConfig.output.map((outputConfig) => ({ layout$, outputConfig })),
+    ),
+    mergeAll(),
+    switchMap(({ layout$, outputConfig }) =>
+      Output.findFactory(outputConfig).pipe(
+        map((factory) => ({ layout$, outputConfig, factory })),
+      ),
+    ),
+    map(({ layout$, outputConfig, factory }) => {
+      const generated$ = factory(args, outputConfig, layout$);
+      deckSubscriptions.push(
+        generated$.subscribe((outputPath) => {
+          console.log(`Generated output ${outputPath}`);
         }),
       );
+
+      return generated$;
     }),
   );
   return deckSubscriptions;
