@@ -1,7 +1,7 @@
 import { of } from 'rxjs';
 import { Deck } from '..';
 import { FileContent } from '../../file/file-content';
-import { Arguements } from '../../types';
+import { Arguments } from '../../types';
 
 jest.mock('../../file/file-content');
 jest.mock('../../file/file');
@@ -51,7 +51,7 @@ decks:
         output: [{ renderer: 'raw', rootOutputDir: 'generated/items' }],
       },
     ];
-    Deck.factory(<Arguements>{}).subscribe((decks) => {
+    Deck.factory(<Arguments>{}).subscribe((decks) => {
       const expectedDeck = expectedDecks.shift();
       expect(decks).toEqual(expectedDeck);
       if (expectedDecks.length === 0) {

@@ -5,9 +5,9 @@ import { File } from '../file/file';
 import { Layout, LayoutFactory } from '../layout';
 import { Output } from '../output';
 import { Templates, TemplatesFactory } from '../templates';
-import { Arguements } from '../types';
+import { Arguments } from '../types';
 
-export function createDeckPipeline(args: Arguements, deckConfig: Deck) {
+export function createDeckPipeline(args: Arguments, deckConfig: Deck) {
   const deckSubscriptions: Subscription[] = [];
   combineLatest([
     // find needed factories in parallel
@@ -49,7 +49,7 @@ export function createDeckPipeline(args: Arguements, deckConfig: Deck) {
 }
 
 function createLayoutPipeline(
-  args: Arguements,
+  args: Arguments,
   deckConfig: Deck,
   cardsFactory: CardsFactory,
   templatesFactory: TemplatesFactory,

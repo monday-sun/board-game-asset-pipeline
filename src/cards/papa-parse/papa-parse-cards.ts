@@ -4,10 +4,10 @@ import { Card, CardsFactory } from '..';
 import { Deck } from '../../config';
 import { File } from '../../file/file';
 import { FileContent } from '../../file/file-content';
-import { Arguements } from '../../types';
+import { Arguments } from '../../types';
 
 export const factory: CardsFactory = (
-  args: Arguements,
+  args: Arguments,
   deck: Deck,
 ): Observable<Card[]> => {
   const cardsFile = File.factory(args, deck.list);

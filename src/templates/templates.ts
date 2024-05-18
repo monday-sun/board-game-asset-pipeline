@@ -3,7 +3,7 @@ import { NeedsLayout, TemplatesFactory } from '.';
 import { Card } from '../cards';
 import { Deck } from '../config';
 import { FileFactory } from '../file/file';
-import { Arguements } from '../types';
+import { Arguments } from '../types';
 
 function addCardToTemplate(
   templatesToCards: { [key: string]: Card[] },
@@ -32,7 +32,7 @@ function gatherTemplates(cards: Card[]) {
 }
 
 export const factory: TemplatesFactory = (
-  args: Arguements,
+  args: Arguments,
   _: Deck,
   cards$: Observable<Card[]>,
   fileFactory: FileFactory,

@@ -1,15 +1,15 @@
 import fs from 'fs';
 import fsPromises from 'fs/promises';
 import path from 'path';
-import { Observable, from, map, mergeAll } from 'rxjs';
+import { Observable, from, map, mergeMap } from 'rxjs';
 import { OutputFactory } from '..';
 import { OutputConfig } from '../../config';
 import { LayoutResult } from '../../layout';
-import { Arguements } from '../../types';
+import { Arguments } from '../../types';
 import { createOutputFileName } from '../file-name/output-file-name';
 
 export const factory: OutputFactory = (
-  _: Arguements,
+  _: Arguments,
   config: OutputConfig,
   layout$: Observable<LayoutResult>,
 ) => {
@@ -33,11 +33,10 @@ export const factory: OutputFactory = (
       }),
       layout: result.layout,
     })),
-    map(({ outputPath, layout }) =>
+    mergeMap(({ outputPath, layout }) =>
       from(fsPromises.writeFile(outputPath, layout)).pipe(
         map(() => [outputPath]),
       ),
     ),
-    mergeAll(),
   );
 };

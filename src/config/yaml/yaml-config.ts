@@ -3,9 +3,9 @@ import * as yaml from 'yaml';
 import { ConfigFactory, Deck } from '..';
 import { File } from '../../file/file';
 import { FileContent } from '../../file/file-content';
-import { Arguements } from '../../types';
+import { Arguments } from '../../types';
 
-export const factory: ConfigFactory = (args: Arguements) => {
+export const factory: ConfigFactory = (args: Arguments) => {
   const file$ = File.factory(args, args.config);
   const fileContent$ = FileContent.factory(args, file$);
   return fileContent$.pipe(

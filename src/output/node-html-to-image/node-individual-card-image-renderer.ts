@@ -5,7 +5,7 @@ import { Observable, from, map, switchMap } from 'rxjs';
 import { OutputFactory } from '..';
 import { OutputConfig } from '../../config';
 import { LayoutResult } from '../../layout';
-import { Arguements } from '../../types';
+import { Arguments } from '../../types';
 import {
   ImageFileInfo,
   createOutputFileName,
@@ -60,7 +60,7 @@ function toImages(
 }
 
 export const factory: OutputFactory = (
-  _: Arguements,
+  _: Arguments,
   config: OutputConfig,
   layout$: Observable<LayoutResult>,
 ) => {

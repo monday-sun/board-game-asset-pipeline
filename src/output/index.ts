@@ -3,12 +3,12 @@ import path from 'path';
 import { Observable, from, map } from 'rxjs';
 import { OutputConfig } from '../config';
 import { LayoutResult } from '../layout';
-import { Arguements } from '../types';
+import { Arguments } from '../types';
 
 export type OutputFilename = string;
 
 export type OutputFactory = (
-  args: Arguements,
+  args: Arguments,
   config: OutputConfig,
   layout: Observable<LayoutResult>,
 ) => Observable<OutputFilename[]>;

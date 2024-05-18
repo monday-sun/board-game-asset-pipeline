@@ -3,7 +3,7 @@ import { of } from 'rxjs';
 import { Output } from '..';
 import { OutputConfig } from '../../config';
 import { LayoutResult } from '../../layout';
-import { Arguements } from '../../types';
+import { Arguments } from '../../types';
 import { factory as testSubject } from './raw-layout';
 
 jest.mock('fs/promises', () => ({
@@ -46,7 +46,7 @@ describe('RawLayout', () => {
     );
 
     const generated$ = testSubject(
-      <Arguements>{},
+      <Arguments>{},
       <OutputConfig>{ rootOutputDir: 'test-output' },
       layout$,
     );
