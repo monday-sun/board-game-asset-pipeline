@@ -1,10 +1,10 @@
 import fs from 'fs';
 import nodeHtmlToImage from 'node-html-to-image';
 import path from 'path';
-import { Observable, from, map, mergeAll } from 'rxjs';
-import { Output, OutputFactory } from '..';
+import { Observable, from, map, switchMap } from 'rxjs';
+import { OutputFactory } from '..';
 import { OutputConfig } from '../../config';
-import { Layout, LayoutResult } from '../../layout';
+import { LayoutResult } from '../../layout';
 import { Arguements } from '../../types';
 import {
   ImageFileInfo,
@@ -53,33 +53,17 @@ function toRenderInfo(
 function toImages(
   html: string,
   content: { output: string }[],
-): Promise<string[]> {
-  return nodeHtmlToImage({ content, html }).then(() =>
-    content.map((c) => c.output),
+): Observable<string[]> {
+  return from(nodeHtmlToImage({ content, html })).pipe(
+    map(() => content.map((c) => c.output)),
   );
-}
-
-class NodeIndividualCardImageOutput implements Output {
-  generated$: Observable<string[]>;
-
-  constructor(outputPath: string, layout: Layout) {
-    this.generated$ = layout.layout$.pipe(
-      map((result) => toRenderInfo(outputPath, result)),
-      map(({ html, content }) =>
-        from(toImages(html, content)).pipe(
-          map(() => content.map((c) => c.output)),
-        ),
-      ),
-      mergeAll(),
-    );
-  }
 }
 
 export const factory: OutputFactory = (
   _: Arguements,
   config: OutputConfig,
-  layout: Layout,
-): Output => {
+  layout$: Observable<LayoutResult>,
+) => {
   const outputPath = path.join(
     config.rootOutputDir,
     config.outputDir || 'individual-card-images',
@@ -87,5 +71,8 @@ export const factory: OutputFactory = (
   if (!fs.existsSync(outputPath)) {
     fs.mkdirSync(outputPath, { recursive: true });
   }
-  return new NodeIndividualCardImageOutput(outputPath, layout);
+  return layout$.pipe(
+    map((result) => toRenderInfo(outputPath, result)),
+    switchMap(({ html, content }) => toImages(html, content)),
+  );
 };

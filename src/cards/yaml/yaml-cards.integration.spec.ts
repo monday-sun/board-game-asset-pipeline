@@ -1,11 +1,32 @@
 import { of } from 'rxjs';
 import { Cards } from '..';
-import { DeckConfig } from '../../config';
+import { Deck } from '../../config';
 import { FileContent } from '../../file/file-content';
 import { Arguements } from '../../types';
+import { factory as testSubject } from './yaml-cards';
 
 jest.mock('../../file/file-content');
+jest.mock('../../file/file');
+
 describe('PapaParseCards', () => {
+  it("completes factory pipeline with 'yaml' parser", (done) => {
+    let defined = false;
+    const cardsFactory$ = Cards.findFactory(
+      <Arguements>{},
+      <Deck>{ cardsParser: 'yaml' },
+    );
+    cardsFactory$.subscribe({
+      next: (foundFactory) => {
+        expect(foundFactory).toBe(testSubject);
+        defined = true;
+      },
+      complete: () => {
+        expect(defined).toBe(true);
+        done();
+      },
+    });
+  });
+
   it('parses cards from a CSV file', (done) => {
     const yaml = `
 cards:
@@ -21,9 +42,7 @@ cards:
     customOption: Unknown2
 `;
 
-    const content: FileContent = {
-      content$: of({ filePath: '', content: yaml }),
-    };
+    const content: FileContent = of({ filePath: '', content: yaml });
 
     const mockContentFactory = FileContent.factory as jest.MockedFunction<
       typeof FileContent.factory
@@ -46,15 +65,12 @@ cards:
         customOption: 'Unknown2',
       },
     ];
-    Cards.findFactory(<Arguements>{}, <DeckConfig>{ cardsParser: 'yaml' })
-      .then((factory) =>
-        factory(<Arguements>{}, <DeckConfig>{ list: 'fake/path.yaml' }),
-      )
-      .then((testSubject) => {
-        testSubject.cards$.subscribe((cards) => {
-          expect(cards).toEqual(expectedCards);
-          done();
-        });
-      });
+
+    testSubject(<Arguements>{}, <Deck>{ list: 'fake/path.yaml' }).subscribe(
+      (cards) => {
+        expect(cards).toEqual(expectedCards);
+        done();
+      },
+    );
   });
 });

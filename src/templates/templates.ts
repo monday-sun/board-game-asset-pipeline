@@ -1,7 +1,7 @@
 import { Observable, map, mergeAll, withLatestFrom } from 'rxjs';
 import { NeedsLayout, TemplatesFactory } from '.';
-import { Card, Cards } from '../cards';
-import { DeckConfig } from '../config';
+import { Card } from '../cards';
+import { Deck } from '../config';
 import { FileFactory } from '../file/file';
 import { Arguements } from '../types';
 
@@ -31,43 +31,29 @@ function gatherTemplates(cards: Card[]) {
   return templatesToCards;
 }
 
-export class Templates {
-  needsLayout$: Observable<NeedsLayout>;
-
-  constructor(
-    private args: Arguements,
-    cards: Cards,
-    fileFactory: FileFactory,
-  ) {
-    const templateToCards$ = cards.cards$.pipe(
-      map((cards) => gatherTemplates(cards)),
-    );
-
-    const templateUpdate$ = templateToCards$.pipe(
-      map((templateToCards) => Object.keys(templateToCards)),
-      mergeAll(),
-      map((template) => fileFactory(this.args, template).path$),
-      mergeAll(),
-    );
-
-    this.needsLayout$ = templateUpdate$.pipe(
-      withLatestFrom(templateToCards$),
-      map(([templatePaths, templateToCards]) =>
-        templateToCards[templatePaths.filePath].map((card) => ({
-          templatePaths,
-          card,
-        })),
-      ),
-      mergeAll(),
-    );
-  }
-}
-
 export const factory: TemplatesFactory = (
   args: Arguements,
-  _: DeckConfig,
-  cards: Cards,
+  _: Deck,
+  cards$: Observable<Card[]>,
   fileFactory: FileFactory,
-): Templates => {
-  return new Templates(args, cards, fileFactory);
+): Observable<NeedsLayout> => {
+  const templateToCards$ = cards$.pipe(map((cards) => gatherTemplates(cards)));
+
+  const templateUpdate$ = templateToCards$.pipe(
+    map((templateToCards) => Object.keys(templateToCards)),
+    mergeAll(),
+    map((template) => fileFactory(args, template)),
+    mergeAll(),
+  );
+
+  return templateUpdate$.pipe(
+    withLatestFrom(templateToCards$),
+    map(([templatePaths, templateToCards]) =>
+      templateToCards[templatePaths.filePath].map((card) => ({
+        templatePaths,
+        card,
+      })),
+    ),
+    mergeAll(),
+  );
 };

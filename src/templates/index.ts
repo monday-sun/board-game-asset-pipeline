@@ -1,6 +1,6 @@
-import { Observable } from 'rxjs';
-import { Card, Cards } from '../cards';
-import { DeckConfig } from '../config';
+import { Observable, from, map, take } from 'rxjs';
+import { Card } from '../cards';
+import { Deck } from '../config';
 import { FileFactory, Paths } from '../file/file';
 import { Arguements } from '../types';
 
@@ -9,22 +9,19 @@ export type NeedsLayout = {
   card: Card;
 };
 
-export interface Templates {
-  needsLayout$: Observable<NeedsLayout>;
-}
-
 export type TemplatesFactory = (
   args: Arguements,
-  deckConfig: DeckConfig,
-  cards: Cards,
+  deck: Deck,
+  cards$: Observable<Card[]>,
   fileFactory: FileFactory,
-) => Templates;
+) => Observable<NeedsLayout>;
 
 export namespace Templates {
   export const findFactory = (
     args: Arguements,
-    deckConfig: DeckConfig,
-  ): Promise<TemplatesFactory> => {
-    return import('./templates').then(({ factory }) => factory);
+    deck: Deck,
+  ): Observable<TemplatesFactory> => {
+    //
+    return from(import('./templates')).pipe(map(({ factory }) => factory));
   };
 }

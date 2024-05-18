@@ -1,9 +1,10 @@
 import fsPromises from 'fs/promises';
 import { of } from 'rxjs';
+import { Output } from '..';
 import { OutputConfig } from '../../config';
 import { LayoutResult } from '../../layout';
 import { Arguements } from '../../types';
-import { factory } from './raw-layout';
+import { factory as testSubject } from './raw-layout';
 
 jest.mock('fs/promises', () => ({
   writeFile: jest.fn().mockResolvedValue(''),
@@ -11,7 +12,23 @@ jest.mock('fs/promises', () => ({
 jest.mock('fs', () => ({ existsSync: jest.fn().mockReturnValue(true) }));
 
 describe('RawLayout', () => {
-  beforeEach(() => {});
+  it("completes factory pipeline with 'raw' output", (done) => {
+    let defined = false;
+    const outputFactory$ = Output.findFactory(<OutputConfig>{
+      renderer: 'raw',
+      rootOutputDir: '',
+    });
+    outputFactory$.subscribe({
+      next: (foundFactory) => {
+        expect(foundFactory).toBe(testSubject);
+        defined = true;
+      },
+      complete: () => {
+        expect(defined).toBe(true);
+        done();
+      },
+    });
+  });
 
   it('should generate correct output', (done) => {
     const layout$ = of(
@@ -28,18 +45,16 @@ describe('RawLayout', () => {
       ],
     );
 
-    const testSubject = factory(
+    const generated$ = testSubject(
       <Arguements>{},
       <OutputConfig>{ rootOutputDir: 'test-output' },
-      {
-        layout$,
-      },
+      layout$,
     );
     const expectedOutputPaths = [
       'test-output/raw-layout/testcard-back.testFormat',
     ];
 
-    testSubject.generated$.subscribe((outputPath) => {
+    generated$.subscribe((outputPath) => {
       const expectedOutputPath = expectedOutputPaths.shift();
       expect(outputPath).toEqual([expectedOutputPath]);
       expect(fsPromises.writeFile).toHaveBeenCalledWith(

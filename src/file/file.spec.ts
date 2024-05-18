@@ -5,19 +5,22 @@ import { File } from './file';
 jest.mock('fs/promises');
 
 describe('File', () => {
-  it('should emit once when watch is false and not call watch', (done) => {
+  it('should emit once when watch is false, not call watch, and complete', (done) => {
     const mockWatch = fsPromises.watch as jest.Mock;
 
     const expectedEmits = [
       { filePath: 'file1', relativePath: path.join(process.cwd(), 'file1') },
     ];
-    const file = File.factory({ watch: false } as any, 'file1');
-    file.path$.subscribe((file) => {
-      expect(mockWatch).not.toHaveBeenCalled();
-      expect(file).toEqual(expectedEmits.shift());
-      if (expectedEmits.length === 0) {
+    const file$ = File.factory({ watch: false } as any, 'file1');
+    file$.subscribe({
+      next: (file) => {
+        expect(mockWatch).not.toHaveBeenCalled();
+        expect(file).toEqual(expectedEmits.shift());
+      },
+      complete: () => {
+        expect(expectedEmits.length).toEqual(0);
         done();
-      }
+      },
     });
   });
 
@@ -28,8 +31,8 @@ describe('File', () => {
     const expectedEmits = [
       { filePath: 'file1', relativePath: path.join(process.cwd(), 'file1') },
     ];
-    const file = File.factory({ watch: true } as any, 'file1');
-    file.path$.subscribe((file) => {
+    const file$ = File.factory({ watch: true } as any, 'file1');
+    file$.subscribe((file) => {
       expect(file).toEqual(expectedEmits.shift());
       if (expectedEmits.length === 0) {
         done();
@@ -45,8 +48,8 @@ describe('File', () => {
       { filePath: 'file1', relativePath: path.join(process.cwd(), 'file1') },
       { filePath: 'file1', relativePath: path.join(process.cwd(), 'file1') },
     ];
-    const file = File.factory({ watch: true } as any, 'file1');
-    file.path$.subscribe((file) => {
+    const file$ = File.factory({ watch: true } as any, 'file1');
+    file$.subscribe((file) => {
       expect(file).toEqual(expectedEmits.shift());
       if (expectedEmits.length === 0) {
         done();

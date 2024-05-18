@@ -7,9 +7,7 @@ export type Paths = {
   filePath: string;
   relativePath: string;
 };
-export interface File {
-  path$: Observable<Paths>;
-}
+export type File = Observable<Paths>;
 
 export type FileFactory = (args: Arguements, filePath: string) => File;
 
@@ -36,6 +34,6 @@ export namespace File {
         ),
       );
     }
-    return <File>{ path$ };
+    return path$;
   };
 }

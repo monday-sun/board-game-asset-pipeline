@@ -1,62 +1,84 @@
-import { Subscription } from 'rxjs';
-import { Cards } from '../cards';
-import { DeckConfig } from '../config';
+import { Subscription, combineLatest, map, mergeAll, switchMap } from 'rxjs';
+import { Cards, CardsFactory } from '../cards';
+import { Deck } from '../config';
 import { File } from '../file/file';
-import { Layout } from '../layout';
+import { Layout, LayoutFactory } from '../layout';
 import { Output } from '../output';
-import { Templates } from '../templates';
+import { Templates, TemplatesFactory } from '../templates';
 import { Arguements } from '../types';
 
-export function createDeckPipeline(args: Arguements, deckConfig: DeckConfig) {
+export function createDeckPipeline(args: Arguements, deckConfig: Deck) {
   const deckSubscriptions: Subscription[] = [];
-  Promise.all([
+  combineLatest([
+    // find needed factories in parallel
     Cards.findFactory(args, deckConfig),
     Templates.findFactory(args, deckConfig),
     Layout.findFactory(args, deckConfig),
-  ])
-    .then(([cardsFactory, templatesFactory, layoutFactory]) => {
-      const cards = cardsFactory(args, deckConfig);
-      deckSubscriptions.push(
-        cards.cards$.subscribe(() =>
-          console.log('Loaded cards from', deckConfig.list),
-        ),
+  ]).pipe(
+    map(([cardsFactory, templatesFactory, layoutFactory]) => {
+      return createLayoutPipeline(
+        args,
+        deckConfig,
+        cardsFactory,
+        templatesFactory,
+        layoutFactory,
+        deckSubscriptions,
       );
-
-      const templates = templatesFactory(args, deckConfig, cards, File.factory);
+    }),
+    map((layout$) =>
+      deckConfig.output.map((outputConfig) => ({ layout$, outputConfig })),
+    ),
+    mergeAll(),
+    switchMap(({ layout$, outputConfig }) =>
+      Output.findFactory(outputConfig).pipe(
+        map((factory) => ({ layout$, outputConfig, factory })),
+      ),
+    ),
+    map(({ layout$, outputConfig, factory }) => {
+      const generated$ = factory(args, outputConfig, layout$);
       deckSubscriptions.push(
-        templates.needsLayout$.subscribe(({ templatePaths }) =>
-          console.log('Requested layout for template', templatePaths.filePath),
-        ),
-      );
-
-      const layout = layoutFactory(args, deckConfig, templates);
-      deckSubscriptions.push(
-        layout.layout$.subscribe(({ templatePaths, card }) =>
-          console.log(
-            'Generated layout for card',
-            card.name,
-            'with template',
-            templatePaths.filePath,
-          ),
-        ),
-      );
-
-      return layout;
-    })
-    .then((layout) => {
-      deckConfig.output.forEach((outputConfig) =>
-        Output.findOutputFactory(outputConfig).then((factory) => {
-          const output = factory(args, outputConfig, layout);
-
-          deckSubscriptions.push(
-            output.generated$.subscribe((outputPath) => {
-              console.log(`Generated output ${outputPath}`);
-            }),
-          );
-
-          return output;
+        generated$.subscribe((outputPath) => {
+          console.log(`Generated output ${outputPath}`);
         }),
       );
-    });
+
+      return generated$;
+    }),
+  );
   return deckSubscriptions;
+}
+
+function createLayoutPipeline(
+  args: Arguements,
+  deckConfig: Deck,
+  cardsFactory: CardsFactory,
+  templatesFactory: TemplatesFactory,
+  layoutFactory: LayoutFactory,
+  deckSubscriptions: Subscription[],
+) {
+  const cards$ = cardsFactory(args, deckConfig);
+  deckSubscriptions.push(
+    cards$.subscribe(() => console.log('Loaded cards from', deckConfig.list)),
+  );
+
+  const templates$ = templatesFactory(args, deckConfig, cards$, File.factory);
+  deckSubscriptions.push(
+    templates$.subscribe(({ templatePaths }) =>
+      console.log('Requested layout for template', templatePaths.filePath),
+    ),
+  );
+
+  const layout$ = layoutFactory(args, deckConfig, templates$);
+  deckSubscriptions.push(
+    layout$.subscribe(({ templatePaths, card }) =>
+      console.log(
+        'Generated layout for card',
+        card.name,
+        'with template',
+        templatePaths.filePath,
+      ),
+    ),
+  );
+
+  return layout$;
 }
