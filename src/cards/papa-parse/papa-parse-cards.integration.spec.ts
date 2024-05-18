@@ -2,7 +2,7 @@ import { of } from 'rxjs';
 import { Cards } from '..';
 import { Deck } from '../../config';
 import { FileContent } from '../../file/file-content';
-import { Arguements } from '../../types';
+import { Arguments } from '../../types';
 import { factory as testSubject } from './papa-parse-cards';
 
 jest.mock('../../file/file-content');
@@ -10,7 +10,7 @@ describe('PapaParseCards', () => {
   it("completes factory pipeline with 'csv' parser", (done) => {
     let defined = false;
     const cardsFactory$ = Cards.findFactory(
-      <Arguements>{},
+      <Arguments>{},
       <Deck>{ cardsParser: 'csv' },
     );
     cardsFactory$.subscribe({
@@ -54,7 +54,7 @@ Card2,2,Front2,Back2,Unknown2`;
       },
     ];
 
-    testSubject(<Arguements>{}, <Deck>{ list: 'fake/path.csv' }).subscribe(
+    testSubject(<Arguments>{}, <Deck>{ list: 'fake/path.csv' }).subscribe(
       (cards) => {
         expect(cards).toEqual(expectedCards);
         done();

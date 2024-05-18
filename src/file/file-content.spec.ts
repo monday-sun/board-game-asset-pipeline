@@ -1,6 +1,6 @@
 import fsPromises from 'fs/promises';
 import { of, throwError } from 'rxjs';
-import { Arguements } from '../types';
+import { Arguments } from '../types';
 import { FileContent } from './file-content';
 
 jest.mock('fs/promises');
@@ -11,7 +11,7 @@ describe('FileContent', () => {
     mockReadFile.mockResolvedValueOnce('file content');
 
     const fileContent$ = FileContent.factory(
-      <Arguements>{},
+      <Arguments>{},
       of({ filePath: 'file1', relativePath: 'rel/file1' }),
     );
     fileContent$.subscribe((content) => {
@@ -23,7 +23,7 @@ describe('FileContent', () => {
 
   it('reads when file change is observed', (done) => {
     const fileContent$ = FileContent.factory(
-      <Arguements>{},
+      <Arguments>{},
       throwError(() => 'test error'),
     );
 

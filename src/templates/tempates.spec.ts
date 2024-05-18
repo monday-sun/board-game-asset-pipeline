@@ -2,7 +2,7 @@ import { of } from 'rxjs';
 import { Card } from '../cards';
 import { Deck } from '../config';
 import { Paths } from '../file/file';
-import { Arguements } from '../types';
+import { Arguments } from '../types';
 import { factory as testSubject } from './templates';
 describe('Layouts', () => {
   it('should map templates to cards', (done) => {
@@ -43,7 +43,7 @@ describe('Layouts', () => {
     ];
 
     const templates$ = testSubject(
-      <Arguements>{},
+      <Arguments>{},
       <Deck>{},
       of(cards),
 

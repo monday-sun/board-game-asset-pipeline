@@ -2,7 +2,7 @@ import { of } from 'rxjs';
 import { Cards } from '..';
 import { Deck } from '../../config';
 import { FileContent } from '../../file/file-content';
-import { Arguements } from '../../types';
+import { Arguments } from '../../types';
 import { factory as testSubject } from './yaml-cards';
 
 jest.mock('../../file/file-content');
@@ -12,7 +12,7 @@ describe('PapaParseCards', () => {
   it("completes factory pipeline with 'yaml' parser", (done) => {
     let defined = false;
     const cardsFactory$ = Cards.findFactory(
-      <Arguements>{},
+      <Arguments>{},
       <Deck>{ cardsParser: 'yaml' },
     );
     cardsFactory$.subscribe({
@@ -66,7 +66,7 @@ cards:
       },
     ];
 
-    testSubject(<Arguements>{}, <Deck>{ list: 'fake/path.yaml' }).subscribe(
+    testSubject(<Arguments>{}, <Deck>{ list: 'fake/path.yaml' }).subscribe(
       (cards) => {
         expect(cards).toEqual(expectedCards);
         done();
