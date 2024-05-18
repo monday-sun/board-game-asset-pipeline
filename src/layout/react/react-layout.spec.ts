@@ -1,5 +1,5 @@
-import { of } from 'rxjs';
-import { Layout } from '..';
+import { of, tap } from 'rxjs';
+import { Layout, LayoutResult } from '..';
 import { Deck } from '../../config';
 import { Paths } from '../../file/file';
 import { NeedsLayout } from '../../templates';
@@ -25,64 +25,69 @@ describe('ReactLayout', () => {
     });
   });
 
-  it('should render all requested layouts', (done) => {
-    const layouts$ = testSubject(
-      <Arguements>{ test: true },
-      <Deck>{},
-      of(
-        ...[
-          <NeedsLayout>{
-            templatePaths: <Paths>{
-              filePath: './test/test-component',
-              relativePath: './test/test-component',
+  it.each([{ watch: true }, { watch: false }])(
+    'should render all requested layouts with %p watch',
+    ({ watch }, done: jest.DoneCallback) => {
+      const layouts$ = testSubject(
+        <Arguements>{ test: true, watch },
+        <Deck>{},
+        of(
+          ...[
+            <NeedsLayout>{
+              templatePaths: <Paths>{
+                filePath: './test/test-component',
+                relativePath: './test/test-component',
+              },
+              card: {
+                message: 'Goodbye!',
+              } as any,
             },
-            card: {
-              message: 'Goodbye!',
-            } as any,
-          },
-          <NeedsLayout>{
-            templatePaths: <Paths>{
-              filePath: './test/test-component',
-              relativePath: './test/test-component',
+            <NeedsLayout>{
+              templatePaths: <Paths>{
+                filePath: './test/test-component',
+                relativePath: './test/test-component',
+              },
+              card: {
+                message: 'Hello!',
+              } as any,
             },
-            card: {
-              message: 'Hello!',
-            } as any,
+          ],
+        ),
+      );
+
+      const expectedLayouts = [
+        {
+          templatePaths: <Paths>{
+            filePath: './test/test-component',
+            relativePath: './test/test-component',
           },
-        ],
-      ),
-    );
+          card: {
+            message: 'Goodbye!',
+          },
+          layout: '<div>Goodbye!</div>',
+          format: 'html',
+        },
+        {
+          templatePaths: <Paths>{
+            filePath: './test/test-component',
+            relativePath: './test/test-component',
+          },
+          card: {
+            message: 'Hello!',
+          },
+          layout: '<div>Hello!</div>',
+          format: 'html',
+        },
+      ];
 
-    const expectedLayouts = [
-      {
-        templatePaths: <Paths>{
-          filePath: './test/test-component',
-          relativePath: './test/test-component',
+      const actualLayouts: LayoutResult[] = [];
+      layouts$.pipe(tap((layout) => actualLayouts.push(layout))).subscribe({
+        complete: () => {
+          expect(actualLayouts.length).toBe(expectedLayouts.length);
+          expect(actualLayouts.sort()).toEqual(expectedLayouts);
+          done();
         },
-        card: {
-          message: 'Goodbye!',
-        },
-        layout: '<div>Goodbye!</div>',
-        format: 'html',
-      },
-      {
-        templatePaths: <Paths>{
-          filePath: './test/test-component',
-          relativePath: './test/test-component',
-        },
-        card: {
-          message: 'Hello!',
-        },
-        layout: '<div>Hello!</div>',
-        format: 'html',
-      },
-    ];
-
-    layouts$.subscribe((layout) => {
-      expect(layout).toEqual(expectedLayouts.shift());
-      if (expectedLayouts.length === 0) {
-        done();
-      }
-    });
-  });
+      });
+    },
+  );
 });
