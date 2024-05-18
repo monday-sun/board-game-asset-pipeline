@@ -1,85 +1,41 @@
-import {
-  Subscription,
-  combineLatest,
-  map,
-  mergeAll,
-  switchMap,
-  tap,
-} from 'rxjs';
-import { Cards, CardsFactory } from '../cards';
-import { Deck } from '../decks';
+import { Observable, merge, switchMap, tap } from 'rxjs';
+import { Card, Cards } from '../cards';
+import { Deck, OutputConfig } from '../decks';
 import { File } from '../file/file';
-import { Layout, LayoutFactory } from '../layout';
-import { Output } from '../output';
-import { Templates, TemplatesFactory } from '../templates';
+import { Layout, LayoutResult } from '../layout';
+import { Output, OutputFilename } from '../output';
+import { NeedsLayout, Templates } from '../templates';
 import { Arguments } from '../types';
 
-function gatherLayoutFactories(args: Arguments, deck: Deck) {
-  return combineLatest([
-    Cards.findFactory(args, deck),
-    Templates.findFactory(args, deck),
-    Layout.findFactory(args, deck),
-  ]);
-}
-
-export function createDeckPipeline(args: Arguments, deckConfig: Deck) {
-  const deckSubscriptions: Subscription[] = [];
-  gatherLayoutFactories(args, deckConfig).pipe(
-    map(([cardsFactory, templatesFactory, layoutFactory]) => {
-      return createLayoutPipeline(
-        args,
-        deckConfig,
-        cardsFactory,
-        templatesFactory,
-        layoutFactory,
-      );
-    }),
-    map((layout$) =>
-      deckConfig.output.map((outputConfig) => ({ layout$, outputConfig })),
-    ),
-    mergeAll(),
-    switchMap(({ layout$, outputConfig }) =>
-      Output.findFactory(outputConfig).pipe(
-        map((factory) => ({ layout$, outputConfig, factory })),
-      ),
-    ),
-    map(({ layout$, outputConfig, factory }) => {
-      const generated$ = factory(args, outputConfig, layout$);
-      deckSubscriptions.push(
-        generated$.subscribe((outputPath) => {
-          console.log(`Generated output ${outputPath}`);
-        }),
-      );
-
-      return generated$;
-    }),
+function cardsPipeline(args: Arguments, deck: Deck) {
+  return Cards.findFactory(args, deck).pipe(
+    switchMap((cardsFactory) => cardsFactory(args, deck)),
+    tap(() => console.log('Loaded cards from', deck.list)),
   );
-  return deckSubscriptions;
 }
 
-function createLayoutPipeline(
+function templatesPipeline(
   args: Arguments,
-  deckConfig: Deck,
-  cardsFactory: CardsFactory,
-  templatesFactory: TemplatesFactory,
-  layoutFactory: LayoutFactory,
+  deck: Deck,
+  cards$: Observable<Card[]>,
 ) {
-  const cards$ = cardsFactory(args, deckConfig).pipe(
-    tap(() => console.log('Loaded cards from', deckConfig.list)),
-  );
-
-  const templates$ = templatesFactory(
-    args,
-    deckConfig,
-    cards$,
-    File.factory,
-  ).pipe(
+  return Templates.findFactory(args, deck).pipe(
+    switchMap((templatesFactory) =>
+      templatesFactory(args, deck, cards$, File.factory),
+    ),
     tap(({ templatePaths }) =>
       console.log('Requested layout for template', templatePaths.filePath),
     ),
   );
+}
 
-  const layout$ = layoutFactory(args, deckConfig, templates$).pipe(
+function layoutPipeline(
+  args: Arguments,
+  deck: Deck,
+  needsLayout$: Observable<NeedsLayout>,
+) {
+  return Layout.findFactory(args, deck).pipe(
+    switchMap((layoutFactory) => layoutFactory(args, deck, needsLayout$)),
     tap(({ templatePaths, card }) =>
       console.log(
         'Generated layout for card',
@@ -89,6 +45,28 @@ function createLayoutPipeline(
       ),
     ),
   );
+}
 
-  return layout$;
+function outputPipeline(
+  args: Arguments,
+  outputConfig: OutputConfig,
+  layout$: Observable<LayoutResult>,
+) {
+  return Output.findFactory(outputConfig).pipe(
+    switchMap((outputFactory) => outputFactory(args, outputConfig, layout$)),
+    tap((outputPath) => console.log(`Generated output ${outputPath}`)),
+  );
+}
+
+export function createDeckPipeline(args: Arguments, deck: Deck) {
+  const cards$ = cardsPipeline(args, deck);
+  const templates$ = templatesPipeline(args, deck, cards$);
+  const layout$ = layoutPipeline(args, deck, templates$);
+
+  const outputPipelines: Observable<OutputFilename[]>[] = [];
+  deck.output.forEach((outputConfig) => {
+    outputPipelines.push(outputPipeline(args, outputConfig, layout$));
+  });
+
+  return merge(...outputPipelines);
 }
