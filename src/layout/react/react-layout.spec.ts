@@ -27,7 +27,7 @@ describe('ReactLayout', () => {
 
   it('should render all requested layouts', (done) => {
     const layouts$ = testSubject(
-      <Arguements>{},
+      <Arguements>{ test: true },
       <Deck>{},
       of(
         ...[

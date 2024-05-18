@@ -1,43 +1,35 @@
-import { Observable, from, map, mergeAll } from 'rxjs';
+import { Observable, combineLatest, from, map, mergeMap, of } from 'rxjs';
 import { LayoutFactory, LayoutResult } from '..';
 import { Deck } from '../../config';
 import { NeedsLayout } from '../../templates';
 import { Arguements } from '../../types';
+import { ReactRender } from './react-render';
 
 function executeInThisProcess(
   templatePath: string,
   data: Record<string, string>,
   renderPath: string,
-): Promise<string> {
-  const { render } = require('./react-render/' + renderPath);
-  return render(templatePath, data);
+): Observable<string> {
+  return from(import('./react-render/' + renderPath)).pipe(
+    map(({ render }) => render as ReactRender),
+    mergeMap((render) => render(templatePath, data)),
+  );
 }
 
 function executeInChildProcess(
   templatePath: string,
   data: Record<string, string>,
   renderPath: string,
-): Promise<string> {
-  const { execFile } = require('child_process');
-
-  return new Promise((resolve, reject) =>
-    execFile(
-      'ts-node',
-      [
+): Observable<string> {
+  return from(import('child_process')).pipe(
+    map(({ execFileSync }) =>
+      execFileSync('ts-node', [
         './src/layout/react/react-render/' + renderPath,
         templatePath,
         JSON.stringify(data),
-      ],
-      (error: Error, stdout: string, stderr: string) => {
-        if (error) {
-          reject(error);
-        } else if (stderr) {
-          reject(stderr);
-        } else {
-          resolve(stdout);
-        }
-      },
+      ]),
     ),
+    map((buffer) => buffer.toString()),
   );
 }
 
@@ -46,7 +38,7 @@ function toHTML(
   data: Record<string, string>,
   process: 'this' | 'child',
   renderPath: string,
-): Promise<string> {
+): Observable<string> {
   if (process === 'this') {
     return executeInThisProcess(templatePath, data, renderPath);
   } else {
@@ -60,23 +52,22 @@ export const factory: LayoutFactory = (
   templates$: Observable<NeedsLayout>,
 ): Observable<LayoutResult> => {
   return templates$.pipe(
-    map(({ templatePaths, card }) =>
-      from(
+    mergeMap((needsLayout) =>
+      combineLatest([
+        of(needsLayout),
         toHTML(
-          templatePaths.relativePath,
-          card,
+          needsLayout.templatePaths.relativePath,
+          needsLayout.card,
           args.watch ? 'child' : 'this',
           args.test ? 'test/fake-react-render' : 'react-render',
         ),
-      ).pipe(
-        map((layout) => ({
-          templatePaths,
-          card,
-          layout,
-          format: 'html',
-        })),
-      ),
+      ]),
     ),
-    mergeAll(),
+    map(([{ templatePaths, card }, layout]) => ({
+      templatePaths,
+      card,
+      layout,
+      format: 'html',
+    })),
   );
 };
