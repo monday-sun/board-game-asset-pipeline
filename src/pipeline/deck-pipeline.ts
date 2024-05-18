@@ -1,4 +1,11 @@
-import { Subscription, combineLatest, map, mergeAll, switchMap } from 'rxjs';
+import {
+  Subscription,
+  combineLatest,
+  map,
+  mergeAll,
+  switchMap,
+  tap,
+} from 'rxjs';
 import { Cards, CardsFactory } from '../cards';
 import { Deck } from '../decks';
 import { File } from '../file/file';
@@ -7,14 +14,17 @@ import { Output } from '../output';
 import { Templates, TemplatesFactory } from '../templates';
 import { Arguments } from '../types';
 
+function gatherLayoutFactories(args: Arguments, deck: Deck) {
+  return combineLatest([
+    Cards.findFactory(args, deck),
+    Templates.findFactory(args, deck),
+    Layout.findFactory(args, deck),
+  ]);
+}
+
 export function createDeckPipeline(args: Arguments, deckConfig: Deck) {
   const deckSubscriptions: Subscription[] = [];
-  combineLatest([
-    // find needed factories in parallel
-    Cards.findFactory(args, deckConfig),
-    Templates.findFactory(args, deckConfig),
-    Layout.findFactory(args, deckConfig),
-  ]).pipe(
+  gatherLayoutFactories(args, deckConfig).pipe(
     map(([cardsFactory, templatesFactory, layoutFactory]) => {
       return createLayoutPipeline(
         args,
@@ -22,7 +32,6 @@ export function createDeckPipeline(args: Arguments, deckConfig: Deck) {
         cardsFactory,
         templatesFactory,
         layoutFactory,
-        deckSubscriptions,
       );
     }),
     map((layout$) =>
@@ -54,23 +63,24 @@ function createLayoutPipeline(
   cardsFactory: CardsFactory,
   templatesFactory: TemplatesFactory,
   layoutFactory: LayoutFactory,
-  deckSubscriptions: Subscription[],
 ) {
-  const cards$ = cardsFactory(args, deckConfig);
-  deckSubscriptions.push(
-    cards$.subscribe(() => console.log('Loaded cards from', deckConfig.list)),
+  const cards$ = cardsFactory(args, deckConfig).pipe(
+    tap(() => console.log('Loaded cards from', deckConfig.list)),
   );
 
-  const templates$ = templatesFactory(args, deckConfig, cards$, File.factory);
-  deckSubscriptions.push(
-    templates$.subscribe(({ templatePaths }) =>
+  const templates$ = templatesFactory(
+    args,
+    deckConfig,
+    cards$,
+    File.factory,
+  ).pipe(
+    tap(({ templatePaths }) =>
       console.log('Requested layout for template', templatePaths.filePath),
     ),
   );
 
-  const layout$ = layoutFactory(args, deckConfig, templates$);
-  deckSubscriptions.push(
-    layout$.subscribe(({ templatePaths, card }) =>
+  const layout$ = layoutFactory(args, deckConfig, templates$).pipe(
+    tap(({ templatePaths, card }) =>
       console.log(
         'Generated layout for card',
         card.name,
