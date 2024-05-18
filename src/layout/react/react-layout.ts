@@ -2,7 +2,7 @@ import { Observable, combineLatest, from, map, mergeMap, of } from 'rxjs';
 import { LayoutFactory, LayoutResult } from '..';
 import { Deck } from '../../config';
 import { NeedsLayout } from '../../templates';
-import { Arguements } from '../../types';
+import { Arguments } from '../../types';
 import { ReactRender } from './react-render';
 
 function executeInThisProcess(
@@ -47,7 +47,7 @@ function toHTML(
 }
 
 export const factory: LayoutFactory = (
-  args: Arguements,
+  args: Arguments,
   _: Deck,
   templates$: Observable<NeedsLayout>,
   reactRenderPath: string = 'react-render',

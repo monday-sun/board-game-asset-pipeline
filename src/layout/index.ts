@@ -5,7 +5,7 @@ import { Card } from '../cards';
 import { Deck } from '../config';
 import { Paths } from '../file/file';
 import { NeedsLayout } from '../templates';
-import { Arguements } from '../types';
+import { Arguments } from '../types';
 
 export type LayoutResult = {
   templatePaths: Paths;
@@ -15,7 +15,7 @@ export type LayoutResult = {
 };
 
 export type LayoutFactory = (
-  args: Arguements,
+  args: Arguments,
   deck: Deck,
   templates$: Observable<NeedsLayout>,
 ) => Observable<LayoutResult>;
@@ -28,7 +28,7 @@ export namespace Layout {
   };
 
   export const findFactory = (
-    _: Arguements,
+    _: Arguments,
     deck: Deck,
   ): Observable<LayoutFactory> => {
     const type = deck.layout;

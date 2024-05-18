@@ -2,7 +2,7 @@ import path from 'path';
 import { cwd } from 'process';
 import { Observable, from, map } from 'rxjs';
 import { Deck } from '../config';
-import { Arguements } from '../types';
+import { Arguments } from '../types';
 
 export type Card = {
   name: string;
@@ -13,7 +13,7 @@ export type Card = {
 };
 
 export type CardsFactory = (
-  args: Arguements,
+  args: Arguments,
   deckConfig: Deck,
 ) => Observable<Card[]>;
 
@@ -31,7 +31,7 @@ export namespace Cards {
   };
 
   export const findFactory = (
-    _: Arguements,
+    _: Arguments,
     deck: Deck,
   ): Observable<CardsFactory> => {
     const type = deck.cardsParser;

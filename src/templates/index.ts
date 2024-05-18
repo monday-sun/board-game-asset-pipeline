@@ -1,8 +1,8 @@
-import { Observable, from, map, take } from 'rxjs';
+import { Observable, from, map } from 'rxjs';
 import { Card } from '../cards';
 import { Deck } from '../config';
 import { FileFactory, Paths } from '../file/file';
-import { Arguements } from '../types';
+import { Arguments } from '../types';
 
 export type NeedsLayout = {
   templatePaths: Paths;
@@ -10,7 +10,7 @@ export type NeedsLayout = {
 };
 
 export type TemplatesFactory = (
-  args: Arguements,
+  args: Arguments,
   deck: Deck,
   cards$: Observable<Card[]>,
   fileFactory: FileFactory,
@@ -18,7 +18,7 @@ export type TemplatesFactory = (
 
 export namespace Templates {
   export const findFactory = (
-    args: Arguements,
+    args: Arguments,
     deck: Deck,
   ): Observable<TemplatesFactory> => {
     //

@@ -1,7 +1,7 @@
 import fsPromises from 'fs/promises';
 import path from 'path';
 import { Observable, from, map, merge, of } from 'rxjs';
-import { Arguements } from '../types';
+import { Arguments } from '../types';
 
 export type Paths = {
   filePath: string;
@@ -9,11 +9,11 @@ export type Paths = {
 };
 export type File = Observable<Paths>;
 
-export type FileFactory = (args: Arguements, filePath: string) => File;
+export type FileFactory = (args: Arguments, filePath: string) => File;
 
 export namespace File {
   export const factory: FileFactory = (
-    args: Arguements,
+    args: Arguments,
     filePath: string,
   ): File => {
     const relativePath = path.join(process.cwd(), filePath);

@@ -3,11 +3,11 @@ import { Layout, LayoutResult } from '..';
 import { Deck } from '../../config';
 import { Paths } from '../../file/file';
 import { NeedsLayout } from '../../templates';
-import { Arguements } from '../../types';
+import { Arguments } from '../../types';
 import { factory } from './react-layout';
 
 const testSubject = factory as (
-  args: Arguements,
+  args: Arguments,
   _: Deck,
   templates$: Observable<NeedsLayout>,
   reactRenderPath: string,
@@ -17,7 +17,7 @@ describe('ReactLayout', () => {
   it("completes factory pipeline with 'react' layout", (done) => {
     let defined = false;
     const cardsFactory$ = Layout.findFactory(
-      <Arguements>{},
+      <Arguments>{},
       <Deck>{ layout: 'react' },
     );
     cardsFactory$.subscribe({
@@ -36,7 +36,7 @@ describe('ReactLayout', () => {
     'should render all requested layouts with %p watch',
     ({ watch }, done: jest.DoneCallback) => {
       const layouts$ = testSubject(
-        <Arguements>{ watch },
+        <Arguments>{ watch },
         <Deck>{},
         of(
           ...[

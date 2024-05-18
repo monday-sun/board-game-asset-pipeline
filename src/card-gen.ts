@@ -4,9 +4,9 @@ import { Subscription } from 'rxjs';
 import yargs from 'yargs';
 import { Deck } from './config';
 import { createDeckPipeline } from './pipeline/deck-pipeline';
-import { Arguements } from './types';
+import { Arguments } from './types';
 
-const args: Arguements = {
+const args: Arguments = {
   ...yargs(process.argv.slice(2))
     .options({
       config: { type: 'string', default: 'config.yml', alias: 'c' },
