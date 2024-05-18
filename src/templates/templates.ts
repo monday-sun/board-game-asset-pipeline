@@ -17,7 +17,7 @@ function addCardToTemplate(
 
 function gatherTemplates(cards: Card[]) {
   const templatesToCards: { [key: string]: Card[] } = {};
-
+  console.log('cards', cards);
   cards.forEach((card) => {
     if (card.frontTemplate) {
       addCardToTemplate(templatesToCards, card.frontTemplate, card);

@@ -30,12 +30,12 @@ describe('PapaParseCards', () => {
   it('parses cards from a CSV file', (done) => {
     const yaml = `
 cards:
-  - name: Card1
+  card-1:
     count: 1
     frontTemplate: Front1
     backTemplate: Back1
     customOption: Unknown1
-  - name: Card2
+  card-2:
     count: 2
     frontTemplate: Front2
     backTemplate: Back2
@@ -51,14 +51,14 @@ cards:
 
     const expectedCards = [
       {
-        name: 'Card1',
+        name: 'card-1',
         count: 1,
         frontTemplate: 'Front1',
         backTemplate: 'Back1',
         customOption: 'Unknown1',
       },
       {
-        name: 'Card2',
+        name: 'card-2',
         count: 2,
         frontTemplate: 'Front2',
         backTemplate: 'Back2',

@@ -14,7 +14,9 @@ export const factory: CardsFactory = (
   const cardListContent = FileContent.factory(args, cardList);
   return cardListContent.pipe(
     map(({ content }) => yaml.parse(content)),
-    map((results) => results as { cards: Card[] }),
     map(({ cards }) => cards),
+    map((cards) =>
+      Object.keys(cards).map((key) => ({ name: key, ...cards[key] })),
+    ),
   );
 };
