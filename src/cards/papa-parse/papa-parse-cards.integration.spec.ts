@@ -1,6 +1,6 @@
 import { of } from 'rxjs';
 import { Cards } from '..';
-import { Deck } from '../../config';
+import { Deck } from '../../decks';
 import { FileContent } from '../../file/file-content';
 import { Arguments } from '../../types';
 import { factory as testSubject } from './papa-parse-cards';

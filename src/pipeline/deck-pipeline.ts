@@ -1,6 +1,6 @@
 import { Subscription, combineLatest, map, mergeAll, switchMap } from 'rxjs';
 import { Cards, CardsFactory } from '../cards';
-import { Deck } from '../config';
+import { Deck } from '../decks';
 import { File } from '../file/file';
 import { Layout, LayoutFactory } from '../layout';
 import { Output } from '../output';

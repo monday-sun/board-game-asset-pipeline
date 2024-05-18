@@ -1,7 +1,7 @@
 import nodeHtmlToImage from 'node-html-to-image';
 import { of } from 'rxjs';
 import { Output } from '..';
-import { OutputConfig } from '../../config';
+import { OutputConfig } from '../../decks';
 import { LayoutResult } from '../../layout';
 import { Arguments } from '../../types';
 import { factory as testSubject } from './node-individual-card-image-renderer';

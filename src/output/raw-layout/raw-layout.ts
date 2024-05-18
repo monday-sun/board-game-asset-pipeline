@@ -3,7 +3,7 @@ import fsPromises from 'fs/promises';
 import path from 'path';
 import { Observable, from, map, mergeMap } from 'rxjs';
 import { OutputFactory } from '..';
-import { OutputConfig } from '../../config';
+import { OutputConfig } from '../../decks';
 import { LayoutResult } from '../../layout';
 import { Arguments } from '../../types';
 import { createOutputFileName } from '../file-name/output-file-name';

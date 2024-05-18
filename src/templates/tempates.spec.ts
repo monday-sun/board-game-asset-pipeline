@@ -1,6 +1,6 @@
 import { of } from 'rxjs';
 import { Card } from '../cards';
-import { Deck } from '../config';
+import { Deck } from '../decks';
 import { Paths } from '../file/file';
 import { Arguments } from '../types';
 import { factory as testSubject } from './templates';
