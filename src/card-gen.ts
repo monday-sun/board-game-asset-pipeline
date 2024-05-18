@@ -1,6 +1,6 @@
 #!/usr/bin/env ts-node
 
-import { Subscription } from 'rxjs';
+import { map } from 'rxjs';
 import yargs from 'yargs';
 import { Deck } from './decks';
 import { deckPipeline } from './pipeline/deck-pipeline';
@@ -15,11 +15,19 @@ const args: Arguments = {
     .parseSync(),
 };
 
-const deckSubscriptions: Subscription[] = [];
+let complete = false;
+Deck.factory(args)
+  .pipe(map((deck) => deckPipeline(args, deck)))
+  .subscribe({
+    complete: () => {
+      complete = true;
+    },
+  });
 
-Deck.factory(args).subscribe((deck) => {
-  // Unsubscribe to any previous pipelines
-  deckSubscriptions.forEach((subscription) => subscription.unsubscribe());
+function pollUntilComplete() {
+  if (!complete) {
+    setTimeout(pollUntilComplete, 1000); // Poll every 1 second (adjust as needed)
+  }
+}
 
-  deckSubscriptions.concat(deckPipeline(args, deck));
-});
+pollUntilComplete();
