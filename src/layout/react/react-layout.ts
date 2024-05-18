@@ -50,6 +50,7 @@ export const factory: LayoutFactory = (
   args: Arguements,
   _: Deck,
   templates$: Observable<NeedsLayout>,
+  reactRenderPath: string = 'react-render',
 ): Observable<LayoutResult> => {
   return templates$.pipe(
     mergeMap((needsLayout) =>
@@ -59,7 +60,7 @@ export const factory: LayoutFactory = (
           needsLayout.templatePaths.relativePath,
           needsLayout.card,
           args.watch ? 'child' : 'this',
-          args.test ? 'test/fake-react-render' : 'react-render',
+          reactRenderPath,
         ),
       ]),
     ),

@@ -1,16 +1,23 @@
-import { of, tap } from 'rxjs';
+import { Observable, of, tap } from 'rxjs';
 import { Layout, LayoutResult } from '..';
 import { Deck } from '../../config';
 import { Paths } from '../../file/file';
 import { NeedsLayout } from '../../templates';
 import { Arguements } from '../../types';
-import { factory as testSubject } from './react-layout';
+import { factory } from './react-layout';
+
+const testSubject = factory as (
+  args: Arguements,
+  _: Deck,
+  templates$: Observable<NeedsLayout>,
+  reactRenderPath: string,
+) => Observable<LayoutResult>;
 
 describe('ReactLayout', () => {
   it("completes factory pipeline with 'react' layout", (done) => {
     let defined = false;
     const cardsFactory$ = Layout.findFactory(
-      <Arguements>{ test: true },
+      <Arguements>{},
       <Deck>{ layout: 'react' },
     );
     cardsFactory$.subscribe({
@@ -29,7 +36,7 @@ describe('ReactLayout', () => {
     'should render all requested layouts with %p watch',
     ({ watch }, done: jest.DoneCallback) => {
       const layouts$ = testSubject(
-        <Arguements>{ test: true, watch },
+        <Arguements>{ watch },
         <Deck>{},
         of(
           ...[
@@ -53,6 +60,7 @@ describe('ReactLayout', () => {
             },
           ],
         ),
+        'test/fake-react-render',
       );
 
       const expectedLayouts = [
