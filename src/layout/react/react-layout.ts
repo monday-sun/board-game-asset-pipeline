@@ -1,6 +1,6 @@
 import { Observable, combineLatest, from, map, mergeMap, of } from 'rxjs';
 import { LayoutFactory, LayoutResult } from '..';
-import { Deck } from '../../config';
+import { Deck } from '../../decks';
 import { NeedsLayout } from '../../templates';
 import { Arguments } from '../../types';
 import { ReactRender } from './react-render';

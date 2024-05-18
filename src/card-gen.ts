@@ -2,7 +2,7 @@
 
 import { Subscription } from 'rxjs';
 import yargs from 'yargs';
-import { Deck } from './config';
+import { Deck } from './decks';
 import { createDeckPipeline } from './pipeline/deck-pipeline';
 import { Arguments } from './types';
 

@@ -1,7 +1,7 @@
 import path from 'path';
 import { cwd } from 'process';
 import { Observable, from, map } from 'rxjs';
-import { Deck } from '../config';
+import { Deck } from '../decks';
 import { Arguments } from '../types';
 
 export type Card = {

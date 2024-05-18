@@ -1,7 +1,7 @@
 import * as Papa from 'papaparse';
 import { Observable, map } from 'rxjs';
 import { Card, CardsFactory } from '..';
-import { Deck } from '../../config';
+import { Deck } from '../../decks';
 import { File } from '../../file/file';
 import { FileContent } from '../../file/file-content';
 import { Arguments } from '../../types';

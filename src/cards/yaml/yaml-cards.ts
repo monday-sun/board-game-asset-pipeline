@@ -1,7 +1,7 @@
 import { Observable, map } from 'rxjs';
 import * as yaml from 'yaml';
 import { Card, CardsFactory } from '..';
-import { Deck } from '../../config';
+import { Deck } from '../../decks';
 import { File } from '../../file/file';
 import { FileContent } from '../../file/file-content';
 import { Arguments } from '../../types';

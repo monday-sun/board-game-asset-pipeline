@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 import { Arguments } from '../types';
-import { factory as configFactory } from './yaml/yaml-config';
+import { factory as configFactory } from './yaml/yaml-decks';
 
 export type OutputConfig = {
   renderer: string;

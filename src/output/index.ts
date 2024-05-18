@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { Observable, from, map } from 'rxjs';
-import { OutputConfig } from '../config';
+import { OutputConfig } from '../decks';
 import { LayoutResult } from '../layout';
 import { Arguments } from '../types';
 

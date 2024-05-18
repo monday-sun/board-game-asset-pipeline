@@ -1,6 +1,6 @@
 import { Observable, of, tap } from 'rxjs';
 import { Layout, LayoutResult } from '..';
-import { Deck } from '../../config';
+import { Deck } from '../../decks';
 import { Paths } from '../../file/file';
 import { NeedsLayout } from '../../templates';
 import { Arguments } from '../../types';

@@ -2,7 +2,7 @@ import path from 'path';
 import { cwd } from 'process';
 import { Observable, from, map } from 'rxjs';
 import { Card } from '../cards';
-import { Deck } from '../config';
+import { Deck } from '../decks';
 import { Paths } from '../file/file';
 import { NeedsLayout } from '../templates';
 import { Arguments } from '../types';

@@ -1,7 +1,7 @@
 import fsPromises from 'fs/promises';
 import { of } from 'rxjs';
 import { Output } from '..';
-import { OutputConfig } from '../../config';
+import { OutputConfig } from '../../decks';
 import { LayoutResult } from '../../layout';
 import { Arguments } from '../../types';
 import { factory as testSubject } from './raw-layout';
