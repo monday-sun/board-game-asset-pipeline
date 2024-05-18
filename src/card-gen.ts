@@ -3,7 +3,7 @@
 import { Subscription } from 'rxjs';
 import yargs from 'yargs';
 import { Deck } from './decks';
-import { createDeckPipeline } from './pipeline/deck-pipeline';
+import { deckPipeline } from './pipeline/deck-pipeline';
 import { Arguments } from './types';
 
 const args: Arguments = {
@@ -21,5 +21,5 @@ Deck.factory(args).subscribe((deck) => {
   // Unsubscribe to any previous pipelines
   deckSubscriptions.forEach((subscription) => subscription.unsubscribe());
 
-  deckSubscriptions.concat(createDeckPipeline(args, deck));
+  deckSubscriptions.concat(deckPipeline(args, deck));
 });

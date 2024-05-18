@@ -58,7 +58,7 @@ function outputPipeline(
   );
 }
 
-export function createDeckPipeline(args: Arguments, deck: Deck) {
+export function deckPipeline(args: Arguments, deck: Deck) {
   const cards$ = cardsPipeline(args, deck);
   const templates$ = templatesPipeline(args, deck, cards$);
   const layout$ = layoutPipeline(args, deck, templates$);
