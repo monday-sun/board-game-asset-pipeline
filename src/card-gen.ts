@@ -1,6 +1,6 @@
 #!/usr/bin/env ts-node
 
-import { map } from 'rxjs';
+import { switchMap } from 'rxjs';
 import yargs from 'yargs';
 import { Deck } from './decks';
 import { deckPipeline } from './pipeline/deck-pipeline';
@@ -17,10 +17,15 @@ const args: Arguments = {
 
 let complete = false;
 Deck.factory(args)
-  .pipe(map((deck) => deckPipeline(args, deck)))
+  .pipe(switchMap((deck) => deckPipeline(args, deck)))
   .subscribe({
+    error: (err) => {
+      console.error(err);
+      process.exit(1);
+    },
     complete: () => {
       complete = true;
+      console.log('Completed deck pipeline');
     },
   });
 
