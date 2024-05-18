@@ -1,7 +1,7 @@
 import fs from 'fs';
 import nodeHtmlToImage from 'node-html-to-image';
 import path from 'path';
-import { Observable, from, map, switchMap } from 'rxjs';
+import { Observable, from, map, mergeMap } from 'rxjs';
 import { OutputFactory } from '..';
 import { OutputConfig } from '../../decks';
 import { LayoutResult } from '../../layout';
@@ -73,6 +73,6 @@ export const factory: OutputFactory = (
   }
   return layout$.pipe(
     map((result) => toRenderInfo(outputPath, result)),
-    switchMap(({ html, content }) => toImages(html, content)),
+    mergeMap(({ html, content }) => toImages(html, content)),
   );
 };
