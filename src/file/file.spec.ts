@@ -18,7 +18,7 @@ describe('File', () => {
   });
 
   it('should emit once when watch is false, not call watch, and complete', (done) => {
-    const watchSpy = jest.spyOn(fsPromises, 'watch');
+    const watchSpy = jest.spyOn(fs, 'watch');
     const expectedEmits = [
       { filePath: 'file1', relativePath: path.join(process.cwd(), 'file1') },
     ];
