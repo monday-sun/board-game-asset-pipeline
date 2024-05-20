@@ -10,7 +10,7 @@ export type OutputFilename = string;
 export type OutputFactory = (
   args: Arguments,
   config: OutputConfig,
-  layout: Observable<LayoutResult>,
+  layout$: Observable<LayoutResult>,
 ) => Observable<OutputFilename[]>;
 
 export namespace Output {
