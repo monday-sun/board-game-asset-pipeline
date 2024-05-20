@@ -32,11 +32,6 @@ Card2,2,Front2,Back2,Unknown2`;
 
     const content: FileContent = of({ filePath: '', content: csvContent });
 
-    const mockContentFactory = FileContent.factory as jest.MockedFunction<
-      typeof FileContent.factory
-    >;
-    mockContentFactory.mockReturnValue(content);
-
     const expectedCards = [
       {
         name: 'Card1',
@@ -54,23 +49,17 @@ Card2,2,Front2,Back2,Unknown2`;
       },
     ];
 
-    testSubject(<Arguments>{}, <Deck>{ list: 'fake/path.csv' }).subscribe(
-      (cards) => {
-        expect(cards).toEqual(expectedCards);
-        done();
-      },
-    );
+    testSubject(<Arguments>{}, content).subscribe((cards) => {
+      expect(cards).toEqual(expectedCards);
+      done();
+    });
   });
 
   it('throws error if no cards are parsed', (done) => {
     const csvContent = `name,count,frontTemplate,backTemplate,customOption`;
     const content: FileContent = of({ filePath: '', content: csvContent });
-    const mockContentFactory = FileContent.factory as jest.MockedFunction<
-      typeof FileContent.factory
-    >;
-    mockContentFactory.mockReturnValue(content);
 
-    testSubject({} as any, <Deck>{ list: 'fake/path.csv' }).subscribe({
+    testSubject({} as any, content).subscribe({
       error: (error) => {
         expect(error.message).toEqual('No cards parsed from CSV file.');
         done();

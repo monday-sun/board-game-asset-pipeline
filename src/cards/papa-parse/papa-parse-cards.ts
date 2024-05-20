@@ -1,18 +1,14 @@
 import * as Papa from 'papaparse';
 import { Observable, map } from 'rxjs';
 import { Card, CardsFactory } from '..';
-import { Deck } from '../../decks';
-import { File } from '../../file/file';
 import { FileContent } from '../../file/file-content';
 import { Arguments } from '../../types';
 
 export const factory: CardsFactory = (
   args: Arguments,
-  deck: Deck,
+  cardList$: FileContent,
 ): Observable<Card[]> => {
-  const cardsFile = File.factory(args, deck.list);
-  const cardList = FileContent.factory(args, cardsFile);
-  return cardList.pipe(
+  return cardList$.pipe(
     map(({ content }) =>
       Papa.parse<Card>(content, {
         header: true,

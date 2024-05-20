@@ -44,11 +44,6 @@ cards:
 
     const content: FileContent = of({ filePath: '', content: yaml });
 
-    const mockContentFactory = FileContent.factory as jest.MockedFunction<
-      typeof FileContent.factory
-    >;
-    mockContentFactory.mockReturnValue(content);
-
     const expectedCards = [
       {
         name: 'card-1',
@@ -66,7 +61,7 @@ cards:
       },
     ];
 
-    testSubject(<Arguments>{}, <Deck>{ list: 'fake/path.yaml' }).subscribe(
+    testSubject(<Arguments>{}, content).subscribe(
       (cards) => {
         expect(cards).toEqual(expectedCards);
         done();
