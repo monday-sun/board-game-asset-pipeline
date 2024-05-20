@@ -6,6 +6,7 @@ import { File } from './file';
 
 describe('File', () => {
   let endWatch$: BehaviorSubject<boolean>;
+  const watchSpy = jest.spyOn(fs, 'watch');
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -18,7 +19,6 @@ describe('File', () => {
   });
 
   it('should emit once when watch is false, not call watch, and complete', (done) => {
-    const watchSpy = jest.spyOn(fs, 'watch');
     const expectedEmits = [
       { filePath: 'file1', relativePath: path.join(process.cwd(), 'file1') },
     ];
@@ -36,8 +36,6 @@ describe('File', () => {
   });
 
   it('should emit once when watch is true and call watch', (done) => {
-    const watchSpy = jest.spyOn(fs, 'watch');
-
     const expectedEmits = [
       { filePath: 'file1', relativePath: path.join(process.cwd(), 'file1') },
     ];
@@ -67,8 +65,6 @@ describe('File', () => {
   });
 
   it('should emit twice when watching and file changes', (done) => {
-    const watchSpy = jest.spyOn(fs, 'watch');
-
     const expectedEmits = [
       { filePath: 'file1', relativePath: path.join(process.cwd(), 'file1') },
       { filePath: 'file1', relativePath: path.join(process.cwd(), 'file1') },
@@ -94,8 +90,6 @@ describe('File', () => {
   });
 
   it('should watch once with multiple subscribers', (done) => {
-    const watchSpy = jest.spyOn(fs, 'watch');
-
     const expectedEmits = [
       { filePath: 'file1', relativePath: path.join(process.cwd(), 'file1') },
       { filePath: 'file1', relativePath: path.join(process.cwd(), 'file1') },
