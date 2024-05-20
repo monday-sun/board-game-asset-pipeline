@@ -1,4 +1,4 @@
-import { Observable, merge, mergeMap, tap } from 'rxjs';
+import { Observable, merge, mergeMap, shareReplay, tap } from 'rxjs';
 import { Card, Cards } from '../cards';
 import { Deck, OutputConfig } from '../decks';
 import { File } from '../file/file';
@@ -18,6 +18,7 @@ function cardsPipeline(
   return Cards.findFactory(args, deck).pipe(
     mergeMap((cardsFactory) => cardsFactory(args, fileContent$)),
     tap(() => console.log('Loaded cards from', deck.list)),
+    shareReplay(),
   );
 }
 
@@ -41,6 +42,7 @@ function templatesPipeline(
         card.frontTemplate === templatePaths.filePath ? 'front' : 'back',
       ),
     ),
+    shareReplay(),
   );
 }
 
@@ -59,6 +61,7 @@ function layoutPipeline(
         card.frontTemplate === templatePaths.filePath ? 'front' : 'back',
       ),
     ),
+    shareReplay(),
   );
 }
 
