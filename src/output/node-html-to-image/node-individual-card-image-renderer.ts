@@ -1,7 +1,7 @@
 import fs from 'fs';
 import nodeHtmlToImage from 'node-html-to-image';
 import path from 'path';
-import { Observable, from, map, mergeMap } from 'rxjs';
+import { Observable, from, map, mergeMap, tap } from 'rxjs';
 import { OutputFactory } from '..';
 import { OutputConfig } from '../../decks';
 import { LayoutResult } from '../../layout';
@@ -60,7 +60,7 @@ function toImages(
 }
 
 export const factory: OutputFactory = (
-  _: Arguments,
+  args: Arguments,
   config: OutputConfig,
   layout$: Observable<LayoutResult>,
 ) => {
@@ -73,6 +73,7 @@ export const factory: OutputFactory = (
   }
   return layout$.pipe(
     map((result) => toRenderInfo(outputPath, result)),
+    tap((renderInfo) => args.verbose && console.info('Rendering:', renderInfo)),
     mergeMap(({ html, content }) => toImages(html, content)),
   );
 };
