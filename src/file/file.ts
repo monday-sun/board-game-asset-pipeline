@@ -1,3 +1,4 @@
+import assert from 'assert';
 import fs from 'fs';
 import path from 'path';
 import {
@@ -5,7 +6,6 @@ import {
   Observable,
   catchError,
   filter,
-  from,
   map,
   of,
   shareReplay,
@@ -25,14 +25,14 @@ export type File = Observable<Paths>;
 export type FileFactory = (
   args: Arguments,
   filePath: string,
-  endWatch$: Observable<boolean>,
+  endWatch$?: Observable<boolean>,
 ) => File;
 
 export namespace File {
   export const factory: FileFactory = (
     args: Arguments,
     filePath: string,
-    endWatch$: Observable<boolean>,
+    endWatch$?: Observable<boolean>,
   ): File => {
     const relativePath = path.join(process.cwd(), filePath);
     const paths = {
@@ -43,7 +43,7 @@ export namespace File {
     let path$ = of(paths);
 
     if (args.watch) {
-
+      assert(endWatch$, 'endWatch$ must be defined when watching');
       const ac = new AbortController();
       endWatch$ = endWatch$.pipe(
         filter((endWatch) => !!endWatch),

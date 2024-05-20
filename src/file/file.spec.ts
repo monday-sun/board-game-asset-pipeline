@@ -22,7 +22,7 @@ describe('File', () => {
     const expectedEmits = [
       { filePath: 'file1', relativePath: path.join(process.cwd(), 'file1') },
     ];
-    const file$ = File.factory({ watch: false } as any, 'file1', endWatch$);
+    const file$ = File.factory({ watch: false } as any, 'file1');
     file$.subscribe({
       next: (file) => {
         expect(watchSpy).not.toHaveBeenCalled();
