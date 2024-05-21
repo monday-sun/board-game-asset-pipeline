@@ -2,6 +2,7 @@ import path from 'path';
 import { cwd } from 'process';
 import { Observable, from, map } from 'rxjs';
 import { Deck } from '../decks';
+import { FileContent } from '../file/file-content';
 import { Arguments } from '../types';
 
 export type Card = {
@@ -14,7 +15,7 @@ export type Card = {
 
 export type CardsFactory = (
   args: Arguments,
-  deckConfig: Deck,
+  content$: FileContent,
 ) => Observable<Card[]>;
 
 export namespace Cards {

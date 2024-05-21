@@ -1,3 +1,4 @@
+import path from 'path';
 import { Observable, combineLatest, from, map, mergeMap, of } from 'rxjs';
 import { LayoutFactory, LayoutResult } from '..';
 import { Deck } from '../../decks';
@@ -24,7 +25,7 @@ function executeInChildProcess(
   return from(import('child_process')).pipe(
     map(({ execFileSync }) =>
       execFileSync('ts-node', [
-        './src/layout/react/react-render/' + renderPath,
+        path.join(__dirname, 'react-render', renderPath),
         templatePath,
         JSON.stringify(data),
       ]),
