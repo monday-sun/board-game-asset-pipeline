@@ -1,21 +1,26 @@
 import fs from 'fs';
-import fsPromises from 'fs/promises';
 import path from 'path';
-import { BehaviorSubject, delay, toArray } from 'rxjs';
+import { BehaviorSubject, toArray } from 'rxjs';
 import { File } from './file';
+
+jest.mock('fs');
 
 describe('File', () => {
   let endWatch$: BehaviorSubject<boolean>;
   const watchSpy = jest.spyOn(fs, 'watch');
+  let watchCallBack: fs.WatchListener<string>;
 
-  beforeEach(async () => {
+  beforeEach(() => {
     jest.clearAllMocks();
     endWatch$ = new BehaviorSubject<boolean>(false);
-    await fsPromises.writeFile(path.join(process.cwd(), 'file1'), 'test');
-  });
-
-  afterEach(async () => {
-    await fsPromises.rm(path.join(process.cwd(), 'file1'));
+    watchSpy.mockImplementation(((
+      path: string,
+      _: fs.WatchOptions,
+      cb: fs.WatchListener<string>,
+    ) => {
+      watchCallBack = cb;
+      cb('change', path);
+    }) as any);
   });
 
   it('should emit once when watch is false, not call watch, and complete', (done) => {
@@ -41,13 +46,7 @@ describe('File', () => {
       { filePath: 'file1', relativePath: path.join(process.cwd(), 'file1') },
     ];
 
-    const file$ = File.factory(
-      { watch: true } as any,
-      'file1',
-      // delay is needed to prevent the test from completing before the watch event is emitted
-      // other test don't have this problem because they're writing the file too
-      endWatch$.pipe(delay(3000)),
-    );
+    const file$ = File.factory({ watch: true } as any, 'file1', endWatch$);
 
     let checkedFiles = false;
     file$.pipe(toArray()).subscribe({
@@ -86,9 +85,8 @@ describe('File', () => {
       },
     });
 
-    fsPromises
-      .writeFile(path.join(process.cwd(), 'file1'), 'test')
-      .then(() => endWatch$.next(true));
+    watchCallBack('change', 'file1');
+    endWatch$.next(true);
   });
 
   it('should watch once with multiple subscribers', (done) => {
@@ -113,8 +111,7 @@ describe('File', () => {
       },
     });
 
-    fsPromises
-      .writeFile(path.join(process.cwd(), 'file1'), 'test')
-      .then(() => endWatch$.next(true));
+    watchCallBack('change', 'file1');
+    endWatch$.next(true);
   });
 });
