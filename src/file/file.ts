@@ -7,9 +7,10 @@ import {
   catchError,
   filter,
   map,
+  merge,
+  mergeMap,
   of,
   shareReplay,
-  switchMap,
   take,
   takeUntil,
   tap,
@@ -62,15 +63,17 @@ export namespace File {
         },
       );
 
-      path$ = path$.pipe(
+      const watchPath$ = path$.pipe(
         tap((path) => args.verbose && console.log('Watching', path)),
-        switchMap(() => watchSubject),
+        mergeMap(() => watchSubject),
         filter((eventType) => eventType === 'change'),
         tap((info) => args.verbose && console.log('Watch info:', info)),
         map(() => paths),
-        shareReplay(),
         takeUntil(endWatch$),
       );
+
+      // watch is inconsistent about emitting an event on start, so always emit path at least once.
+      path$ = merge(path$, watchPath$).pipe(shareReplay());
     }
 
     path$ = path$.pipe(

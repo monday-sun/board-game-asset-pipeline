@@ -35,8 +35,9 @@ describe('File', () => {
     });
   });
 
-  it('should emit once when watch is true and call watch', (done) => {
+  it('should emit twice when watch is true and call watch', (done) => {
     const expectedEmits = [
+      { filePath: 'file1', relativePath: path.join(process.cwd(), 'file1') },
       { filePath: 'file1', relativePath: path.join(process.cwd(), 'file1') },
     ];
 
@@ -45,7 +46,7 @@ describe('File', () => {
       'file1',
       // delay is needed to prevent the test from completing before the watch event is emitted
       // other test don't have this problem because they're writing the file too
-      endWatch$.pipe(delay(2000)),
+      endWatch$.pipe(delay(3000)),
     );
 
     let checkedFiles = false;
@@ -64,8 +65,9 @@ describe('File', () => {
     endWatch$.next(true);
   });
 
-  it('should emit twice when watching and file changes', (done) => {
+  it('should emit three times when watching and file changes', (done) => {
     const expectedEmits = [
+      { filePath: 'file1', relativePath: path.join(process.cwd(), 'file1') },
       { filePath: 'file1', relativePath: path.join(process.cwd(), 'file1') },
       { filePath: 'file1', relativePath: path.join(process.cwd(), 'file1') },
     ];
@@ -91,6 +93,7 @@ describe('File', () => {
 
   it('should watch once with multiple subscribers', (done) => {
     const expectedEmits = [
+      { filePath: 'file1', relativePath: path.join(process.cwd(), 'file1') },
       { filePath: 'file1', relativePath: path.join(process.cwd(), 'file1') },
       { filePath: 'file1', relativePath: path.join(process.cwd(), 'file1') },
     ];

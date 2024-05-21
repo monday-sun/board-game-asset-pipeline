@@ -31,13 +31,13 @@ export namespace FileContent {
             .then((content) => ({ filePath: file.filePath, content })),
         ),
       ),
-      shareReplay(),
       distinctUntilChanged(
         ({ content: prevContent }, { content }) => content === prevContent,
       ),
+      shareReplay(),
       tap(
         ({ filePath, content }) =>
-          args.verbose && console.log(`New ${filePath} contents: ${content}`),
+          args.verbose && console.log(`New ${filePath} contents.`),
       ),
     );
     return content$;
