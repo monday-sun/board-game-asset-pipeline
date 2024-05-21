@@ -1,35 +1,74 @@
 import fsPromises from 'fs/promises';
-import { of, throwError } from 'rxjs';
+import path from 'path';
+import { of } from 'rxjs';
 import { Arguments } from '../types';
 import { FileContent } from './file-content';
-
-jest.mock('fs/promises');
-
 describe('FileContent', () => {
-  it('reads when file change is observed', (done) => {
-    const mockReadFile = fsPromises.readFile as jest.Mock;
-    mockReadFile.mockResolvedValueOnce('file content');
+  const paths = {
+    filePath: 'file1',
+    relativePath: path.join(process.cwd(), 'file1'),
+  };
 
-    const fileContent$ = FileContent.factory(
-      <Arguments>{},
-      of({ filePath: 'file1', relativePath: 'rel/file1' }),
-    );
-    fileContent$.subscribe((content) => {
-      expect(mockReadFile).toHaveBeenCalledWith('rel/file1', 'utf8');
-      expect(content).toEqual({ filePath: 'file1', content: 'file content' });
-      done();
-    });
+  beforeEach(async () => {
+    jest.clearAllMocks();
+    await fsPromises.writeFile(paths.relativePath, 'test');
+  });
+
+  afterEach(async () => {
+    await fsPromises.rm(paths.relativePath);
   });
 
   it('reads when file change is observed', (done) => {
-    const fileContent$ = FileContent.factory(
-      <Arguments>{},
-      throwError(() => 'test error'),
-    );
+    const readSpy = jest.spyOn(fsPromises, 'readFile');
+    const fileContent$ = FileContent.factory(<Arguments>{}, of(paths));
 
+    let count = 0;
     fileContent$.subscribe({
-      error: (error) => {
-        expect(error).toEqual('test error');
+      next: (content) => {
+        expect(content).toEqual({ filePath: paths.filePath, content: 'test' });
+        count++;
+      },
+      complete: () => {
+        expect(count).toEqual(1);
+        expect(readSpy).toHaveBeenCalledWith(paths.relativePath, 'utf8');
+        expect(readSpy).toHaveBeenCalledTimes(1);
+        done();
+      },
+    });
+  });
+
+  it('drops unchanged content', (done) => {
+    const readSpy = jest.spyOn(fsPromises, 'readFile');
+    const fileContent$ = FileContent.factory(<Arguments>{}, of(paths, paths));
+
+    let count = 0;
+    fileContent$.subscribe({
+      next: (content) => {
+        expect(content).toEqual({ filePath: paths.filePath, content: 'test' });
+        count++;
+      },
+      complete: () => {
+        expect(count).toEqual(1);
+        expect(readSpy).toHaveBeenCalledTimes(2);
+        done();
+      },
+    });
+  });
+
+  it('does not re-read on re-subscription', (done) => {
+    const readSpy = jest.spyOn(fsPromises, 'readFile');
+    const fileContent$ = FileContent.factory(<Arguments>{}, of(paths));
+
+    let count = 0;
+    fileContent$.subscribe(() => {});
+    fileContent$.subscribe({
+      next: (content) => {
+        expect(content).toEqual({ filePath: paths.filePath, content: 'test' });
+        count++;
+      },
+      complete: () => {
+        expect(count).toEqual(1);
+        expect(readSpy).toHaveBeenCalledTimes(1);
         done();
       },
     });

@@ -1,5 +1,12 @@
 import fsPromises from 'fs/promises';
-import { Observable, from, switchMap } from 'rxjs';
+import {
+  Observable,
+  distinctUntilChanged,
+  from,
+  mergeMap,
+  shareReplay,
+  tap,
+} from 'rxjs';
 import { Arguments } from '../types';
 import { File } from './file';
 
@@ -13,12 +20,24 @@ export namespace FileContent {
     file$: File,
   ): FileContent => {
     const content$ = file$.pipe(
-      switchMap((file) =>
+      tap(
+        ({ relativePath }) =>
+          args.verbose && console.log(`Reading ${relativePath}`),
+      ),
+      mergeMap((file) =>
         from(
           fsPromises
             .readFile(file.relativePath, 'utf8')
             .then((content) => ({ filePath: file.filePath, content })),
         ),
+      ),
+      distinctUntilChanged(
+        ({ content: prevContent }, { content }) => content === prevContent,
+      ),
+      shareReplay(),
+      tap(
+        ({ filePath, content }) =>
+          args.verbose && console.log(`New ${filePath} contents.`),
       ),
     );
     return content$;

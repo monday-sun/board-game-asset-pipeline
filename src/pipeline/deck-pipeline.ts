@@ -1,84 +1,94 @@
-import { Subscription, combineLatest, map, mergeAll, switchMap } from 'rxjs';
-import { Cards, CardsFactory } from '../cards';
-import { Deck } from '../decks';
+import { Observable, merge, mergeMap, shareReplay, tap } from 'rxjs';
+import { Card, Cards } from '../cards';
+import { Deck, OutputConfig } from '../decks';
 import { File } from '../file/file';
-import { Layout, LayoutFactory } from '../layout';
-import { Output } from '../output';
-import { Templates, TemplatesFactory } from '../templates';
+import { FileContent } from '../file/file-content';
+import { Layout, LayoutResult } from '../layout';
+import { Output, OutputFilename } from '../output';
+import { NeedsLayout, Templates } from '../templates';
 import { Arguments } from '../types';
 
-export function createDeckPipeline(args: Arguments, deckConfig: Deck) {
-  const deckSubscriptions: Subscription[] = [];
-  combineLatest([
-    // find needed factories in parallel
-    Cards.findFactory(args, deckConfig),
-    Templates.findFactory(args, deckConfig),
-    Layout.findFactory(args, deckConfig),
-  ]).pipe(
-    map(([cardsFactory, templatesFactory, layoutFactory]) => {
-      return createLayoutPipeline(
-        args,
-        deckConfig,
-        cardsFactory,
-        templatesFactory,
-        layoutFactory,
-        deckSubscriptions,
-      );
-    }),
-    map((layout$) =>
-      deckConfig.output.map((outputConfig) => ({ layout$, outputConfig })),
-    ),
-    mergeAll(),
-    switchMap(({ layout$, outputConfig }) =>
-      Output.findFactory(outputConfig).pipe(
-        map((factory) => ({ layout$, outputConfig, factory })),
-      ),
-    ),
-    map(({ layout$, outputConfig, factory }) => {
-      const generated$ = factory(args, outputConfig, layout$);
-      deckSubscriptions.push(
-        generated$.subscribe((outputPath) => {
-          console.log(`Generated output ${outputPath}`);
-        }),
-      );
-
-      return generated$;
-    }),
+function cardsPipeline(
+  args: Arguments,
+  deck: Deck,
+  endWatch$: Observable<boolean> | undefined,
+) {
+  const file$ = File.factory(args, deck.list, endWatch$);
+  const fileContent$ = FileContent.factory(args, file$);
+  return Cards.findFactory(args, deck).pipe(
+    mergeMap((cardsFactory) => cardsFactory(args, fileContent$)),
+    tap(() => console.log('Loaded cards from', deck.list)),
+    shareReplay(),
   );
-  return deckSubscriptions;
 }
 
-function createLayoutPipeline(
+function templatesPipeline(
   args: Arguments,
-  deckConfig: Deck,
-  cardsFactory: CardsFactory,
-  templatesFactory: TemplatesFactory,
-  layoutFactory: LayoutFactory,
-  deckSubscriptions: Subscription[],
+  deck: Deck,
+  cards$: Observable<Card[]>,
+  endWatch$: Observable<boolean> | undefined,
 ) {
-  const cards$ = cardsFactory(args, deckConfig);
-  deckSubscriptions.push(
-    cards$.subscribe(() => console.log('Loaded cards from', deckConfig.list)),
-  );
-
-  const templates$ = templatesFactory(args, deckConfig, cards$, File.factory);
-  deckSubscriptions.push(
-    templates$.subscribe(({ templatePaths }) =>
-      console.log('Requested layout for template', templatePaths.filePath),
-    ),
-  );
-
-  const layout$ = layoutFactory(args, deckConfig, templates$);
-  deckSubscriptions.push(
-    layout$.subscribe(({ templatePaths, card }) =>
-      console.log(
-        'Generated layout for card',
-        card.name,
-        'with template',
-        templatePaths.filePath,
+  return Templates.findFactory(args, deck).pipe(
+    mergeMap((templatesFactory) =>
+      templatesFactory(args, deck, cards$, (args, path) =>
+        File.factory(args, path, endWatch$),
       ),
     ),
+    tap(({ templatePaths, card }) =>
+      console.log(
+        'Requested layout for card:',
+        card.name,
+        'side:',
+        card.frontTemplate === templatePaths.filePath ? 'front' : 'back',
+      ),
+    ),
+    shareReplay(),
   );
+}
 
-  return layout$;
+function layoutPipeline(
+  args: Arguments,
+  deck: Deck,
+  needsLayout$: Observable<NeedsLayout>,
+) {
+  return Layout.findFactory(args, deck).pipe(
+    mergeMap((layoutFactory) => layoutFactory(args, deck, needsLayout$)),
+    tap(({ templatePaths, card }) =>
+      console.log(
+        'Generated layout for card:',
+        card.name,
+        'side:',
+        card.frontTemplate === templatePaths.filePath ? 'front' : 'back',
+      ),
+    ),
+    shareReplay(),
+  );
+}
+
+function outputPipeline(
+  args: Arguments,
+  outputConfig: OutputConfig,
+  layout$: Observable<LayoutResult>,
+) {
+  return Output.findFactory(outputConfig).pipe(
+    mergeMap((outputFactory) => outputFactory(args, outputConfig, layout$)),
+    tap((outputPath) => console.log(`Generated output ${outputPath}`)),
+  );
+}
+
+export function deckPipeline(
+  args: Arguments,
+  deck: Deck,
+  endWatch$?: Observable<boolean>,
+) {
+  const cards$ = cardsPipeline(args, deck, endWatch$);
+  const templates$ = templatesPipeline(args, deck, cards$, endWatch$);
+  const layout$ = layoutPipeline(args, deck, templates$);
+
+  const outputPipelines: Observable<OutputFilename[]>[] = [];
+  deck.output.forEach((outputConfig) => {
+    outputPipelines.push(outputPipeline(args, outputConfig, layout$));
+  });
+
+  return merge(...outputPipelines);
 }
