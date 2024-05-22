@@ -30,7 +30,7 @@ export type ConfigFactory = (
 export namespace Deck {
   export const factory = configFactory;
 
-  export const pipeline = (
+  export const deckPipeline = (
     args: Arguments,
     deck: Deck,
     endWatch$?: Observable<boolean>,
@@ -62,7 +62,7 @@ export namespace Deck {
     );
 
     const decks$ = Deck.factory(args, deckContent$).pipe(
-      mergeMap((deck) => Deck.pipeline(args, deck, endCardsAndTemplatesWatch$)),
+      mergeMap((deck) => Deck.deckPipeline(args, deck, endCardsAndTemplatesWatch$)),
     );
     return decks$;
   };
