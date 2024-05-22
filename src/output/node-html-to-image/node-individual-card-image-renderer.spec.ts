@@ -35,19 +35,15 @@ describe('RawLayout', () => {
   });
 
   it('should generate correct output', (done) => {
-    const layout$ = of(
-      ...[
-        <LayoutResult>{
-          templatePaths: { filePath: 'testCard' },
-          card: {
-            name: 'testCard',
-            count: '1',
-          },
-          layout: 'testLayout',
-          format: 'testFormat',
-        },
-      ],
-    );
+    const layout$ = of(<LayoutResult>{
+      templatePaths: { filePath: 'testCard' },
+      card: {
+        name: 'testCard',
+        count: '1',
+      },
+      layout: 'testLayout',
+      format: 'testFormat',
+    });
 
     const generated$ = testSubject(
       <Arguments>{},
@@ -65,6 +61,58 @@ describe('RawLayout', () => {
         content: [{ output: expectedOutputPath }],
         html: 'testLayout',
       });
+      done();
+    });
+  });
+
+  it('should continue after error', (done) => {
+    const consoleSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+    const layout$ = of(
+      <LayoutResult>{
+        templatePaths: { filePath: 'testCard' },
+        card: {
+          name: 'testCard',
+          count: '1',
+        },
+        layout: 'testLayout',
+        format: 'testFormat',
+      },
+      <LayoutResult>{
+        templatePaths: { filePath: 'testCard' },
+        card: {
+          name: 'testCard',
+          count: '1',
+        },
+        layout: 'testLayout',
+        format: 'testFormat',
+      },
+    );
+
+    (nodeHtmlToImage as jest.Mock).mockRejectedValueOnce('testError');
+
+    const generated$ = testSubject(
+      <Arguments>{},
+      <OutputConfig>{ rootOutputDir: 'test-output' },
+      layout$,
+    );
+    const expectedOutputPaths = [
+      'test-output/individual-card-images/testcard-back.png',
+    ];
+
+    generated$.subscribe((outputPath) => {
+      const expectedOutputPath = expectedOutputPaths.shift();
+      expect(outputPath).toEqual([expectedOutputPath]);
+      expect(nodeHtmlToImage).toHaveBeenCalledWith({
+        content: [{ output: expectedOutputPath }],
+        html: 'testLayout',
+      });
+      expect(consoleSpy).toHaveBeenCalledWith(
+        'Error rendering image',
+        'testError',
+      );
+      expect(nodeHtmlToImage).toHaveBeenCalledTimes(2);
       done();
     });
   });

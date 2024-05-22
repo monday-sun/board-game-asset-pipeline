@@ -1,7 +1,16 @@
 import fs from 'fs';
 import nodeHtmlToImage from 'node-html-to-image';
 import path from 'path';
-import { Observable, from, map, mergeMap, tap } from 'rxjs';
+import {
+  Observable,
+  catchError,
+  filter,
+  from,
+  map,
+  mergeMap,
+  of,
+  tap,
+} from 'rxjs';
 import { OutputFactory } from '..';
 import { OutputConfig } from '../../decks';
 import { LayoutResult } from '../../layout';
@@ -56,6 +65,10 @@ function toImages(
 ): Observable<string[]> {
   return from(nodeHtmlToImage({ content, html })).pipe(
     map(() => content.map((c) => c.output)),
+    catchError((error) => {
+      console.error('Error rendering image', error);
+      return of([]);
+    }),
   );
 }
 
@@ -75,5 +88,6 @@ export const factory: OutputFactory = (
     map((result) => toRenderInfo(outputPath, result)),
     tap((renderInfo) => args.verbose && console.info('Rendering:', renderInfo)),
     mergeMap(({ html, content }) => toImages(html, content)),
+    filter((images) => images.length > 0),
   );
 };
