@@ -45,8 +45,8 @@ decks$.subscribe({
   },
 });
 
-process.on('SIGTERM', () => {
-  console.log('SIGTERM signal received. Closing gracefully.');
+process.on('SIGINT', () => {
+  console.log('SIGINT signal received. Closing gracefully.');
   endConfigWatch$.next(true);
   if (complete) {
     process.exit(0);
