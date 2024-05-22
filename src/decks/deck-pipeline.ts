@@ -1,21 +1,10 @@
-import { Observable, merge, mergeMap, tap } from 'rxjs';
-import { Deck, OutputConfig } from '.';
+import { Observable, merge } from 'rxjs';
+import { Deck } from '.';
 import { Cards } from '../cards';
-import { Layout, LayoutResult } from '../layout';
+import { Layout } from '../layout';
 import { Output, OutputFilename } from '../output';
 import { Templates } from '../templates';
 import { Arguments } from '../types';
-
-function outputPipeline(
-  args: Arguments,
-  outputConfig: OutputConfig,
-  layout$: Observable<LayoutResult>,
-) {
-  return Output.findFactory(outputConfig).pipe(
-    mergeMap((outputFactory) => outputFactory(args, outputConfig, layout$)),
-    tap((outputPath) => console.log(`Generated output ${outputPath}`)),
-  );
-}
 
 export function deckPipeline(
   args: Arguments,
@@ -28,7 +17,7 @@ export function deckPipeline(
 
   const outputPipelines: Observable<OutputFilename[]>[] = [];
   deck.output.forEach((outputConfig) => {
-    outputPipelines.push(outputPipeline(args, outputConfig, layout$));
+    outputPipelines.push(Output.pipeline(args, outputConfig, layout$));
   });
 
   return merge(...outputPipelines);
