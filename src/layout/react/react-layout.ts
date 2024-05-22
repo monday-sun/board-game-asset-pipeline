@@ -3,6 +3,7 @@ import {
   Observable,
   catchError,
   combineLatest,
+  filter,
   from,
   map,
   mergeMap,
@@ -78,6 +79,7 @@ export const factory: LayoutFactory = (
         ),
       ]),
     ),
+    filter(([_, html]) => !!html),
     map(([{ templatePaths, card }, layout]) => ({
       templatePaths,
       card,

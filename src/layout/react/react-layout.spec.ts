@@ -135,15 +135,6 @@ describe('ReactLayout', () => {
       const expectedLayouts = [
         {
           templatePaths: <Paths>{
-            filePath: './does-not-exist-component',
-            relativePath: './does-not-exist-component',
-          },
-          card: {},
-          layout: '',
-          format: 'html',
-        },
-        {
-          templatePaths: <Paths>{
             filePath: './test/test-component',
             relativePath: './test/test-component',
           },
