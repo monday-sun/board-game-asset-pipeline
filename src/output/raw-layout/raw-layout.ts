@@ -1,7 +1,7 @@
 import fs from 'fs';
 import fsPromises from 'fs/promises';
 import path from 'path';
-import { Observable, from, map, mergeMap } from 'rxjs';
+import { Observable, catchError, filter, from, map, mergeMap, of } from 'rxjs';
 import { OutputFactory } from '..';
 import { OutputConfig } from '../../decks';
 import { LayoutResult } from '../../layout';
@@ -36,7 +36,12 @@ export const factory: OutputFactory = (
     mergeMap(({ outputPath, layout }) =>
       from(fsPromises.writeFile(outputPath, layout)).pipe(
         map(() => [outputPath]),
+        catchError((error) => {
+          console.error('Error writing file', error);
+          return of([]);
+        }),
       ),
     ),
+    filter((output) => output.length > 0),
   );
 };
