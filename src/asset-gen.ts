@@ -17,21 +17,10 @@ const args: Arguments = {
     .parseSync(),
 };
 
-const endConfigWatch$ = new BehaviorSubject<boolean>(false);
-const endDeckWatch$ = new BehaviorSubject<boolean>(false);
-
-const deckFile$ = File.factory(args, args.config, endConfigWatch$);
-const deckContent$ = FileContent.factory(args, deckFile$).pipe(
-  // We're getting new decks, so stop watching on all current decks.
-  tap(() => endDeckWatch$.next(true)),
-  // reset back to false
-  tap(() => endDeckWatch$.next(false)),
-);
-
+const endDecksWatch$ = new BehaviorSubject<boolean>(false);
 let complete = false;
-const decks$ = Deck.factory(args, deckContent$).pipe(
-  mergeMap((deck) => Deck.pipeline(args, deck, endDeckWatch$)),
-);
+
+const decks$ = decksPipeline(args, endDecksWatch$);
 
 decks$.subscribe({
   error: (err) => {
@@ -46,7 +35,7 @@ decks$.subscribe({
 
 process.on('SIGINT', () => {
   console.log('SIGINT signal received. Closing gracefully.');
-  endConfigWatch$.next(true);
+  endDecksWatch$.next(true);
   if (complete) {
     process.exit(0);
   } else {
@@ -59,6 +48,23 @@ process.on('SIGINT', () => {
     });
   }
 });
+
+function decksPipeline(args: Arguments, endDecksWatch$: BehaviorSubject<boolean>) {
+  const endCardsAndTemplatesWatch$ = new BehaviorSubject<boolean>(false);
+
+  const deckFile$ = File.factory(args, args.config, endDecksWatch$);
+  const deckContent$ = FileContent.factory(args, deckFile$).pipe(
+    // We're getting new decks, so stop watching on all current decks.
+    tap(() => endCardsAndTemplatesWatch$.next(true)),
+    // reset back to false
+    tap(() => endCardsAndTemplatesWatch$.next(false))
+  );
+
+  const decks$ = Deck.factory(args, deckContent$).pipe(
+    mergeMap((deck) => Deck.pipeline(args, deck, endCardsAndTemplatesWatch$))
+  );
+  return decks$;
+}
 
 function pollUntilComplete() {
   if (!complete) {
