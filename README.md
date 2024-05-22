@@ -1,9 +1,9 @@
-# board-game-card-gen
+# board-game-asset-pipeline
 
-A plugin pipeline for generating custom cards for board games.
+A plugin pipeline for generating custom assets for board games.
 
 ## Examples
-https://github.com/monday-sun/board-game-card-gen-example
+https://github.com/monday-sun/board-game-asset-pipeline-example
 
 ## Current Plugins
 
