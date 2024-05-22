@@ -1,5 +1,6 @@
-import { Observable, merge } from 'rxjs';
+import { BehaviorSubject, Observable, merge, mergeMap, tap } from 'rxjs';
 import { Cards } from '../cards';
+import { File } from '../file/file';
 import { FileContent } from '../file/file-content';
 import { Layout } from '../layout';
 import { Output, OutputFilename } from '../output';
@@ -44,5 +45,25 @@ export namespace Deck {
     });
 
     return merge(...outputPipelines);
+  };
+
+  export const decksPipeline = (
+    args: Arguments,
+    endDecksWatch$: BehaviorSubject<boolean>,
+  ) => {
+    const endCardsAndTemplatesWatch$ = new BehaviorSubject<boolean>(false);
+
+    const deckFile$ = File.factory(args, args.config, endDecksWatch$);
+    const deckContent$ = FileContent.factory(args, deckFile$).pipe(
+      // We're getting new decks, so stop watching on all current decks.
+      tap(() => endCardsAndTemplatesWatch$.next(true)),
+      // reset back to false
+      tap(() => endCardsAndTemplatesWatch$.next(false)),
+    );
+
+    const decks$ = Deck.factory(args, deckContent$).pipe(
+      mergeMap((deck) => Deck.pipeline(args, deck, endCardsAndTemplatesWatch$)),
+    );
+    return decks$;
   };
 }

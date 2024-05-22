@@ -1,10 +1,8 @@
 #!/usr/bin/env ts-node
 
-import { BehaviorSubject, mergeMap, tap } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import yargs from 'yargs';
 import { Deck } from './decks';
-import { File } from './file/file';
-import { FileContent } from './file/file-content';
 import { Arguments } from './types';
 
 const args: Arguments = {
@@ -20,7 +18,7 @@ const args: Arguments = {
 const endDecksWatch$ = new BehaviorSubject<boolean>(false);
 let complete = false;
 
-const decks$ = decksPipeline(args, endDecksWatch$);
+const decks$ = Deck.decksPipeline(args, endDecksWatch$);
 
 decks$.subscribe({
   error: (err) => {
@@ -48,23 +46,6 @@ process.on('SIGINT', () => {
     });
   }
 });
-
-function decksPipeline(args: Arguments, endDecksWatch$: BehaviorSubject<boolean>) {
-  const endCardsAndTemplatesWatch$ = new BehaviorSubject<boolean>(false);
-
-  const deckFile$ = File.factory(args, args.config, endDecksWatch$);
-  const deckContent$ = FileContent.factory(args, deckFile$).pipe(
-    // We're getting new decks, so stop watching on all current decks.
-    tap(() => endCardsAndTemplatesWatch$.next(true)),
-    // reset back to false
-    tap(() => endCardsAndTemplatesWatch$.next(false))
-  );
-
-  const decks$ = Deck.factory(args, deckContent$).pipe(
-    mergeMap((deck) => Deck.pipeline(args, deck, endCardsAndTemplatesWatch$))
-  );
-  return decks$;
-}
 
 function pollUntilComplete() {
   if (!complete) {
