@@ -1,16 +1,15 @@
 {
-  "name": "board-game-card-gen",
+  "name": "board-game-asset-pipeline",
   "version": "0.0.1",
-  "description": "Card generation pipeline for board games",
-  "main": "index.js",
-  "repository": "git@github.com:monday-sun/baord-game-card-gen.git",
+  "description": "Asset generation pipeline for board games",
+  "repository": "git@github.com:monday-sun/baord-game-asset-pipeline.git",
   "author": "Monday Romelfanger <monday.romelfanger@gmail.com>",
   "license": "MIT",
   "bin": {
-    "card-gen": "./src/card-gen.ts"
+    "asset-gen": "./src/card-gen.ts"
   },
   "scripts": {
-    "card-gen": "ts-node ./src/card-gen.ts",
+    "asset-gen": "ts-node ./src/card-gen.ts",
     "clean": "rm -rf ./build",
     "lint": "eslint",
     "format": "prettier --write .",
