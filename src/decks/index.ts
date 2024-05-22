@@ -27,7 +27,7 @@ export type ConfigFactory = (
   deck$: FileContent,
 ) => Observable<Deck>;
 
-export namespace Deck {
+export namespace Decks {
   export const factory = configFactory;
 
   export const deckPipeline = (
@@ -47,7 +47,7 @@ export namespace Deck {
     return merge(...outputPipelines);
   };
 
-  export const decksPipeline = (
+  export const pipeline = (
     args: Arguments,
     endDecksWatch$: BehaviorSubject<boolean>,
   ) => {
@@ -61,8 +61,10 @@ export namespace Deck {
       tap(() => endCardsAndTemplatesWatch$.next(false)),
     );
 
-    const decks$ = Deck.factory(args, deckContent$).pipe(
-      mergeMap((deck) => Deck.deckPipeline(args, deck, endCardsAndTemplatesWatch$)),
+    const decks$ = Decks.factory(args, deckContent$).pipe(
+      mergeMap((deck) =>
+        Decks.deckPipeline(args, deck, endCardsAndTemplatesWatch$),
+      ),
     );
     return decks$;
   };

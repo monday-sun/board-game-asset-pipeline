@@ -2,7 +2,7 @@
 
 import { BehaviorSubject } from 'rxjs';
 import yargs from 'yargs';
-import { Deck } from './decks';
+import { Decks } from './decks';
 import { Arguments } from './types';
 
 const args: Arguments = {
@@ -18,7 +18,7 @@ const args: Arguments = {
 const endDecksWatch$ = new BehaviorSubject<boolean>(false);
 let complete = false;
 
-const decks$ = Deck.decksPipeline(args, endDecksWatch$);
+const decks$ = Decks.pipeline(args, endDecksWatch$);
 
 decks$.subscribe({
   error: (err) => {
