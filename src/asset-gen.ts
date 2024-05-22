@@ -3,9 +3,9 @@
 import { BehaviorSubject, mergeMap, tap } from 'rxjs';
 import yargs from 'yargs';
 import { Deck } from './decks';
+import { deckPipeline } from './decks/deck-pipeline';
 import { File } from './file/file';
 import { FileContent } from './file/file-content';
-import { deckPipeline } from './pipeline/deck-pipeline';
 import { Arguments } from './types';
 
 const args: Arguments = {

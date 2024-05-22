@@ -1,6 +1,6 @@
 import { Observable, merge, mergeMap, shareReplay, tap } from 'rxjs';
+import { Deck, OutputConfig } from '.';
 import { Card, Cards } from '../cards';
-import { Deck, OutputConfig } from '../decks';
 import { File } from '../file/file';
 import { FileContent } from '../file/file-content';
 import { Layout, LayoutResult } from '../layout';
