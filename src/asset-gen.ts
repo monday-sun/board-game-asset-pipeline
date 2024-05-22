@@ -3,7 +3,6 @@
 import { BehaviorSubject, mergeMap, tap } from 'rxjs';
 import yargs from 'yargs';
 import { Deck } from './decks';
-import { deckPipeline } from './decks/deck-pipeline';
 import { File } from './file/file';
 import { FileContent } from './file/file-content';
 import { Arguments } from './types';
@@ -31,7 +30,7 @@ const deckContent$ = FileContent.factory(args, deckFile$).pipe(
 
 let complete = false;
 const decks$ = Deck.factory(args, deckContent$).pipe(
-  mergeMap((deck) => deckPipeline(args, deck, endDeckWatch$)),
+  mergeMap((deck) => Deck.pipeline(args, deck, endDeckWatch$)),
 );
 
 decks$.subscribe({
