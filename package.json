@@ -6,10 +6,10 @@
   "author": "Monday Romelfanger <monday.romelfanger@gmail.com>",
   "license": "MIT",
   "bin": {
-    "asset-gen": "./src/card-gen.ts"
+    "asset-gen": "./src/asset-gen.ts"
   },
   "scripts": {
-    "asset-gen": "ts-node ./src/card-gen.ts",
+    "asset-gen": "ts-node ./src/asset-gen.ts",
     "clean": "rm -rf ./build",
     "lint": "eslint",
     "format": "prettier --write .",
