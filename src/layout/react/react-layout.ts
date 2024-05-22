@@ -1,5 +1,13 @@
 import path from 'path';
-import { Observable, combineLatest, from, map, mergeMap, of } from 'rxjs';
+import {
+  Observable,
+  catchError,
+  combineLatest,
+  from,
+  map,
+  mergeMap,
+  of,
+} from 'rxjs';
 import { LayoutFactory, LayoutResult } from '..';
 import { Deck } from '../../decks';
 import { NeedsLayout } from '../../templates';
@@ -40,11 +48,16 @@ function toHTML(
   process: 'this' | 'child',
   renderPath: string,
 ): Observable<string> {
-  if (process === 'this') {
-    return executeInThisProcess(templatePath, data, renderPath);
-  } else {
-    return executeInChildProcess(templatePath, data, renderPath);
-  }
+  const layoutPipeline =
+    process === 'this'
+      ? executeInThisProcess(templatePath, data, renderPath)
+      : executeInChildProcess(templatePath, data, renderPath);
+  return layoutPipeline.pipe(
+    catchError((error) => {
+      console.error('Error rendering React layout', error);
+      return of('');
+    }),
+  );
 }
 
 export const factory: LayoutFactory = (

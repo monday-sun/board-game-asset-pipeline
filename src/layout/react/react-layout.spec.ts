@@ -98,4 +98,72 @@ describe('ReactLayout', () => {
       });
     },
   );
+
+  it.each([{ watch: true }, { watch: false }])(
+    'should continue rendering after error with %p watch',
+    ({ watch }, done: jest.DoneCallback) => {
+      const consoleErrorSpy = jest
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
+
+      const layouts$ = testSubject(
+        <Arguments>{ watch },
+        <Deck>{},
+        of(
+          ...[
+            <NeedsLayout>{
+              templatePaths: <Paths>{
+                filePath: './does-not-exist-component',
+                relativePath: './does-not-exist-component',
+              },
+              card: {} as any,
+            },
+            <NeedsLayout>{
+              templatePaths: <Paths>{
+                filePath: './test/test-component',
+                relativePath: './test/test-component',
+              },
+              card: {
+                message: 'Hello!',
+              } as any,
+            },
+          ],
+        ),
+        'test/fake-react-render',
+      );
+
+      const expectedLayouts = [
+        {
+          templatePaths: <Paths>{
+            filePath: './does-not-exist-component',
+            relativePath: './does-not-exist-component',
+          },
+          card: {},
+          layout: '',
+          format: 'html',
+        },
+        {
+          templatePaths: <Paths>{
+            filePath: './test/test-component',
+            relativePath: './test/test-component',
+          },
+          card: {
+            message: 'Hello!',
+          },
+          layout: '<div>Hello!</div>',
+          format: 'html',
+        },
+      ];
+
+      const actualLayouts: LayoutResult[] = [];
+      layouts$.pipe(tap((layout) => actualLayouts.push(layout))).subscribe({
+        complete: () => {
+          expect(consoleErrorSpy).toHaveBeenCalled();
+          expect(actualLayouts.length).toBe(expectedLayouts.length);
+          expect(actualLayouts.sort()).toEqual(expectedLayouts);
+          done();
+        },
+      });
+    },
+  );
 });
