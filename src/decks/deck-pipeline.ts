@@ -8,19 +8,7 @@ import { Output, OutputFilename } from '../output';
 import { NeedsLayout, Templates } from '../templates';
 import { Arguments } from '../types';
 
-function cardsPipeline(
-  args: Arguments,
-  deck: Deck,
-  endWatch$: Observable<boolean> | undefined,
-) {
-  const file$ = File.factory(args, deck.list, endWatch$);
-  const fileContent$ = FileContent.factory(args, file$);
-  return Cards.findFactory(args, deck).pipe(
-    mergeMap((cardsFactory) => cardsFactory(args, fileContent$)),
-    tap(() => console.log('Loaded cards from', deck.list)),
-    shareReplay(),
-  );
-}
+
 
 function templatesPipeline(
   args: Arguments,
@@ -81,7 +69,7 @@ export function deckPipeline(
   deck: Deck,
   endWatch$?: Observable<boolean>,
 ) {
-  const cards$ = cardsPipeline(args, deck, endWatch$);
+  const cards$ = Cards.pipeline(args, deck, endWatch$);
   const templates$ = templatesPipeline(args, deck, cards$, endWatch$);
   const layout$ = layoutPipeline(args, deck, templates$);
 

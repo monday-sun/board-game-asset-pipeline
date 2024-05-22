@@ -1,7 +1,8 @@
 import path from 'path';
 import { cwd } from 'process';
-import { Observable, from, map } from 'rxjs';
+import { Observable, from, map, mergeMap, shareReplay, tap } from 'rxjs';
 import { Deck } from '../decks';
+import { File } from '../file/file';
 import { FileContent } from '../file/file-content';
 import { Arguments } from '../types';
 
@@ -43,5 +44,19 @@ export namespace Cards {
 
     console.log('Loading cards with', importPath);
     return from(import(importPath)).pipe(map(({ factory }) => factory));
+  };
+
+  export const pipeline = (
+    args: Arguments,
+    deck: Deck,
+    endWatch$: Observable<boolean> | undefined,
+  ) => {
+    const file$ = File.factory(args, deck.list, endWatch$);
+    const fileContent$ = FileContent.factory(args, file$);
+    return Cards.findFactory(args, deck).pipe(
+      mergeMap((cardsFactory) => cardsFactory(args, fileContent$)),
+      tap(() => console.log('Loaded cards from', deck.list)),
+      shareReplay(),
+    );
   };
 }
