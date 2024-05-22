@@ -31,18 +31,63 @@ describe('RawLayout', () => {
   });
 
   it('should generate correct output', (done) => {
+    const layout$ = of(<LayoutResult>{
+      templatePaths: { filePath: 'testCard' },
+      card: {
+        name: 'testCard',
+        count: '1',
+      },
+      layout: 'testLayout',
+      format: 'testFormat',
+    });
+
+    const generated$ = testSubject(
+      <Arguments>{},
+      <OutputConfig>{ rootOutputDir: 'test-output' },
+      layout$,
+    );
+    const expectedOutputPaths = [
+      'test-output/raw-layout/testcard-back.testFormat',
+    ];
+
+    generated$.subscribe((outputPath) => {
+      const expectedOutputPath = expectedOutputPaths.shift();
+      expect(outputPath).toEqual([expectedOutputPath]);
+      expect(fsPromises.writeFile).toHaveBeenCalledWith(
+        expectedOutputPath,
+        'testLayout',
+      );
+      done();
+    });
+  });
+
+  it('should continue after error', (done) => {
+    const consoleSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
     const layout$ = of(
-      ...[
-        <LayoutResult>{
-          templatePaths: { filePath: 'testCard' },
-          card: {
-            name: 'testCard',
-            count: '1',
-          },
-          layout: 'testLayout',
-          format: 'testFormat',
+      <LayoutResult>{
+        templatePaths: { filePath: 'testCard' },
+        card: {
+          name: 'testCard',
+          count: '1',
         },
-      ],
+        layout: 'testLayout',
+        format: 'testFormat',
+      },
+      <LayoutResult>{
+        templatePaths: { filePath: 'testCard' },
+        card: {
+          name: 'testCard',
+          count: '1',
+        },
+        layout: 'testLayout',
+        format: 'testFormat',
+      },
+    );
+
+    (fsPromises.writeFile as jest.Mock).mockRejectedValueOnce(
+      new Error('test error'),
     );
 
     const generated$ = testSubject(
@@ -60,6 +105,11 @@ describe('RawLayout', () => {
       expect(fsPromises.writeFile).toHaveBeenCalledWith(
         expectedOutputPath,
         'testLayout',
+      );
+      expect(fsPromises.writeFile).toHaveBeenCalledTimes(2);
+      expect(consoleSpy).toHaveBeenCalledWith(
+        'Error writing file',
+        new Error('test error'),
       );
       done();
     });
