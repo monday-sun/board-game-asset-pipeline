@@ -15,7 +15,11 @@ jest.mock('fs/promises', () => ({
 }));
 jest.mock('fs', () => ({ existsSync: jest.fn().mockReturnValue(true) }));
 
-describe('RawLayout', () => {
+describe('nodeIndividualCard)imageRender', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it("completes factory pipeline with 'nodeIndividual' output", (done) => {
     let defined = false;
     const outputFactory$ = Output.findFactory(<OutputConfig>{

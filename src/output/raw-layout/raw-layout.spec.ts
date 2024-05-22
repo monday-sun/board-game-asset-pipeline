@@ -12,6 +12,10 @@ jest.mock('fs/promises', () => ({
 jest.mock('fs', () => ({ existsSync: jest.fn().mockReturnValue(true) }));
 
 describe('RawLayout', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it("completes factory pipeline with 'raw' output", (done) => {
     let defined = false;
     const outputFactory$ = Output.findFactory(<OutputConfig>{
