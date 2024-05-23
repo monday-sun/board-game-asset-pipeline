@@ -1,4 +1,4 @@
-import { Observable, map, mergeAll, withLatestFrom } from 'rxjs';
+import { Observable, delay, map, mergeAll, withLatestFrom } from 'rxjs';
 import { NeedsLayout, TemplatesFactory } from '.';
 import { Card } from '../cards';
 import { Deck } from '../decks';
@@ -43,6 +43,8 @@ export const factory: TemplatesFactory = (
     map((templateToCards) => Object.keys(templateToCards)),
     mergeAll(),
     map((template) => fileFactory(args, template)),
+    // When watching, add delay to prevent overrending if file is autosaved.
+    delay(args.watch ? 1000 : 0),
     mergeAll(),
   );
 
