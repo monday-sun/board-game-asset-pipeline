@@ -1,5 +1,5 @@
 import { of } from 'rxjs';
-import { Deck } from '..';
+import { Deck, Decks } from '..';
 import { FileContent } from '../../file/file-content';
 import { Arguments } from '../../types';
 
@@ -42,7 +42,7 @@ decks:
         output: [{ renderer: 'raw', rootOutputDir: 'generated/items' }],
       },
     ];
-    Deck.factory(<Arguments>{}, content).subscribe((decks) => {
+    Decks.factory(<Arguments>{}, content).subscribe((decks) => {
       const expectedDeck = expectedDecks.shift();
       expect(decks).toEqual(expectedDeck);
       if (expectedDecks.length === 0) {

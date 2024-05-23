@@ -1,6 +1,6 @@
 import path from 'path';
 import { cwd } from 'process';
-import { Observable, from, map } from 'rxjs';
+import { Observable, from, map, mergeMap, shareReplay, tap } from 'rxjs';
 import { Card } from '../cards';
 import { Deck } from '../decks';
 import { Paths } from '../file/file';
@@ -38,5 +38,24 @@ export namespace Layout {
         : path.join(cwd(), type);
     console.log('Rendering layouts with', importPath);
     return from(import(importPath)).pipe(map(({ factory }) => factory));
+  };
+
+  export const pipeline = (
+    args: Arguments,
+    deck: Deck,
+    needsLayout$: Observable<NeedsLayout>,
+  ) => {
+    return Layout.findFactory(args, deck).pipe(
+      mergeMap((layoutFactory) => layoutFactory(args, deck, needsLayout$)),
+      tap(({ templatePaths, card }) =>
+        console.log(
+          'Generated layout for card:',
+          card.name,
+          'side:',
+          card.frontTemplate === templatePaths.filePath ? 'front' : 'back',
+        ),
+      ),
+      shareReplay(),
+    );
   };
 }

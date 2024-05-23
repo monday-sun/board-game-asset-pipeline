@@ -1,7 +1,12 @@
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable, merge, mergeMap, tap } from 'rxjs';
+import { Cards } from '../cards';
+import { File } from '../file/file';
+import { FileContent } from '../file/file-content';
+import { Layout } from '../layout';
+import { Output, OutputFilename } from '../output';
+import { Templates } from '../templates';
 import { Arguments } from '../types';
 import { factory as configFactory } from './yaml/yaml-decks';
-import { FileContent } from '../file/file-content';
 
 export type OutputConfig = {
   renderer: string;
@@ -17,8 +22,50 @@ export type Deck = {
   output: OutputConfig[];
 };
 
-export type ConfigFactory = (args: Arguments, deck$: FileContent) => Observable<Deck>;
+export type ConfigFactory = (
+  args: Arguments,
+  deck$: FileContent,
+) => Observable<Deck>;
 
-export namespace Deck {
+export namespace Decks {
   export const factory = configFactory;
+
+  export const deckPipeline = (
+    args: Arguments,
+    deck: Deck,
+    endWatch$?: Observable<boolean>,
+  ) => {
+    const cards$ = Cards.pipeline(args, deck, endWatch$);
+    const templates$ = Templates.pipeline(args, deck, cards$, endWatch$);
+    const layout$ = Layout.pipeline(args, deck, templates$);
+
+    const outputPipelines: Observable<OutputFilename[]>[] = [];
+    deck.output.forEach((outputConfig) => {
+      outputPipelines.push(Output.pipeline(args, outputConfig, layout$));
+    });
+
+    return merge(...outputPipelines);
+  };
+
+  export const pipeline = (
+    args: Arguments,
+    endDecksWatch$: BehaviorSubject<boolean>,
+  ) => {
+    const endCardsAndTemplatesWatch$ = new BehaviorSubject<boolean>(false);
+
+    const deckFile$ = File.factory(args, args.config, endDecksWatch$);
+    const deckContent$ = FileContent.factory(args, deckFile$).pipe(
+      // We're getting new decks, so stop watching on all current decks.
+      tap(() => endCardsAndTemplatesWatch$.next(true)),
+      // reset back to false
+      tap(() => endCardsAndTemplatesWatch$.next(false)),
+    );
+
+    const decks$ = Decks.factory(args, deckContent$).pipe(
+      mergeMap((deck) =>
+        Decks.deckPipeline(args, deck, endCardsAndTemplatesWatch$),
+      ),
+    );
+    return decks$;
+  };
 }

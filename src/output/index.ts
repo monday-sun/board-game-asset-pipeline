@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { Observable, from, map } from 'rxjs';
+import { Observable, from, map, mergeMap, tap } from 'rxjs';
 import { OutputConfig } from '../decks';
 import { LayoutResult } from '../layout';
 import { Arguments } from '../types';
@@ -37,5 +37,16 @@ export namespace Output {
 
     console.log('Saving output with', importPath);
     return from(import(importPath)).pipe(map(({ factory }) => factory));
+  };
+
+  export const pipeline = (
+    args: Arguments,
+    outputConfig: OutputConfig,
+    layout$: Observable<LayoutResult>,
+  ) => {
+    return Output.findFactory(outputConfig).pipe(
+      mergeMap((outputFactory) => outputFactory(args, outputConfig, layout$)),
+      tap((outputPath) => console.log(`Generated output ${outputPath}`)),
+    );
   };
 }

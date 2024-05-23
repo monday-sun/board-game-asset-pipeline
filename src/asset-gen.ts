@@ -1,11 +1,8 @@
 #!/usr/bin/env ts-node
 
-import { BehaviorSubject, mergeMap, tap } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import yargs from 'yargs';
-import { Deck } from './decks';
-import { File } from './file/file';
-import { FileContent } from './file/file-content';
-import { deckPipeline } from './pipeline/deck-pipeline';
+import { Decks } from './decks';
 import { Arguments } from './types';
 
 const args: Arguments = {
@@ -18,21 +15,10 @@ const args: Arguments = {
     .parseSync(),
 };
 
-const endConfigWatch$ = new BehaviorSubject<boolean>(false);
-const endDeckWatch$ = new BehaviorSubject<boolean>(false);
-
-const deckFile$ = File.factory(args, args.config, endConfigWatch$);
-const deckContent$ = FileContent.factory(args, deckFile$).pipe(
-  // We're getting new decks, so stop watching on all current decks.
-  tap(() => endDeckWatch$.next(true)),
-  // reset back to false
-  tap(() => endDeckWatch$.next(false)),
-);
-
+const endDecksWatch$ = new BehaviorSubject<boolean>(false);
 let complete = false;
-const decks$ = Deck.factory(args, deckContent$).pipe(
-  mergeMap((deck) => deckPipeline(args, deck, endDeckWatch$)),
-);
+
+const decks$ = Decks.pipeline(args, endDecksWatch$);
 
 decks$.subscribe({
   error: (err) => {
@@ -45,9 +31,9 @@ decks$.subscribe({
   },
 });
 
-process.on('SIGTERM', () => {
-  console.log('SIGTERM signal received. Closing gracefully.');
-  endConfigWatch$.next(true);
+process.on('SIGINT', () => {
+  console.log('SIGINT signal received. Closing gracefully.');
+  endDecksWatch$.next(true);
   if (complete) {
     process.exit(0);
   } else {
