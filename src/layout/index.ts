@@ -3,12 +3,11 @@ import { cwd } from 'process';
 import { Observable, from, map, mergeMap, shareReplay, tap } from 'rxjs';
 import { Card } from '../cards';
 import { Deck } from '../decks';
-import { Paths } from '../file/file';
 import { NeedsLayout } from '../templates';
 import { Arguments } from '../types';
 
 export type LayoutResult = {
-  templatePaths: Paths;
+  template: string;
   card: Card;
   layout: string;
   format: string;
@@ -47,12 +46,12 @@ export namespace Layout {
   ) => {
     return Layout.findFactory(args, deck).pipe(
       mergeMap((layoutFactory) => layoutFactory(args, deck, needsLayout$)),
-      tap(({ templatePaths, card }) =>
+      tap(({ template, card }) =>
         console.log(
           'Generated layout for card:',
           card.name,
           'side:',
-          card.frontTemplate === templatePaths.filePath ? 'front' : 'back',
+          card.frontTemplate === template ? 'front' : 'back',
         ),
       ),
       shareReplay(),

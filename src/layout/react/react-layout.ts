@@ -1,63 +1,65 @@
 import path from 'path';
-import {
-  Observable,
-  catchError,
-  combineLatest,
-  filter,
-  from,
-  map,
-  mergeMap,
-  of,
-} from 'rxjs';
+import { Observable, catchError, filter, from, map, mergeMap, of } from 'rxjs';
 import { LayoutFactory, LayoutResult } from '..';
+import { Card } from '../../cards';
 import { Deck } from '../../decks';
+import { Paths } from '../../file/file';
 import { NeedsLayout } from '../../templates';
 import { Arguments } from '../../types';
 import { ReactRender } from './react-render';
 
 function executeInThisProcess(
   templatePath: string,
-  data: Record<string, string>,
+  cards: Card[],
   renderPath: string,
-): Observable<string> {
+): Observable<LayoutResult[]> {
   return from(import('./react-render/' + renderPath)).pipe(
     map(({ render }) => render as ReactRender),
-    mergeMap((render) => render(templatePath, data)),
+    mergeMap((render) => render(templatePath, cards)),
   );
 }
 
 function executeInChildProcess(
   templatePath: string,
-  data: Record<string, string>,
+  cards: Card[],
   renderPath: string,
-): Observable<string> {
+): Observable<LayoutResult[]> {
   return from(import('child_process')).pipe(
     map(({ execFileSync }) =>
       execFileSync('ts-node', [
         path.join(__dirname, 'react-render', renderPath),
         templatePath,
-        JSON.stringify(data),
+        JSON.stringify(cards),
       ]),
     ),
     map((buffer) => buffer.toString()),
+    map((json) => JSON.parse(json) as LayoutResult[]),
   );
 }
 
 function toHTML(
-  templatePath: string,
-  data: Record<string, string>,
+  templatePaths: Paths,
+  cards: Card[],
   process: 'this' | 'child',
   renderPath: string,
-): Observable<string> {
+): Observable<LayoutResult> {
   const layoutPipeline =
     process === 'this'
-      ? executeInThisProcess(templatePath, data, renderPath)
-      : executeInChildProcess(templatePath, data, renderPath);
+      ? executeInThisProcess(templatePaths.relativePath, cards, renderPath)
+      : executeInChildProcess(templatePaths.relativePath, cards, renderPath);
   return layoutPipeline.pipe(
     catchError((error) => {
       console.error('Error rendering React layout', error);
-      return of('');
+      return of([]);
     }),
+    filter((layoutResults) => layoutResults.length > 0),
+    map((layoutResults) =>
+      layoutResults.map((layoutResult) => ({
+        ...layoutResult,
+        template: templatePaths.filePath,
+      })),
+    ),
+    mergeMap((layoutResults) => from(layoutResults)),
   );
 }
 
@@ -69,22 +71,12 @@ export const factory: LayoutFactory = (
 ): Observable<LayoutResult> => {
   return templates$.pipe(
     mergeMap((needsLayout) =>
-      combineLatest([
-        of(needsLayout),
-        toHTML(
-          needsLayout.templatePaths.relativePath,
-          needsLayout.card,
-          args.watch ? 'child' : 'this',
-          reactRenderPath,
-        ),
-      ]),
+      toHTML(
+        needsLayout.templatePaths,
+        needsLayout.cards,
+        args.watch ? 'child' : 'this',
+        reactRenderPath,
+      ),
     ),
-    filter(([_, html]) => !!html),
-    map(([{ templatePaths, card }, layout]) => ({
-      templatePaths,
-      card,
-      layout,
-      format: 'html',
-    })),
   );
 };

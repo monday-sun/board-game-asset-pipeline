@@ -1,4 +1,4 @@
-import { of } from 'rxjs';
+import { of, toArray } from 'rxjs';
 import { Card } from '../cards';
 import { Deck } from '../decks';
 import { Paths } from '../file/file';
@@ -17,28 +17,21 @@ describe('Layouts', () => {
           filePath: 'template1',
           relativePath: 'rel/template1',
         },
-        card: cards[0],
-      },
-      {
-        templatePaths: <Paths>{
-          filePath: 'template1',
-          relativePath: 'rel/template1',
-        },
-        card: cards[1],
+        cards: [cards[0], cards[1]],
       },
       {
         templatePaths: <Paths>{
           filePath: 'template2',
           relativePath: 'rel/template2',
         },
-        card: cards[0],
+        cards: [cards[0]],
       },
       {
         templatePaths: <Paths>{
           filePath: 'template3',
           relativePath: 'rel/template3',
         },
-        card: cards[1],
+        cards: [cards[1]],
       },
     ];
 
@@ -51,11 +44,9 @@ describe('Layouts', () => {
         of({ filePath, relativePath: `rel/${filePath}` }),
     );
 
-    templates$.subscribe((needsLayout) => {
-      expect(needsLayout).toEqual(expectedLayouts.shift());
-      if (expectedLayouts.length === 0) {
-        done();
-      }
+    templates$.pipe(toArray()).subscribe((needsLayout) => {
+      expect(needsLayout.sort()).toEqual(expectedLayouts);
+      done();
     });
   });
 });

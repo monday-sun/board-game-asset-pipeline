@@ -45,18 +45,14 @@ describe('ReactLayout', () => {
                 filePath: './test/test-component',
                 relativePath: './test/test-component',
               },
-              card: {
-                message: 'Goodbye!',
-              } as any,
-            },
-            <NeedsLayout>{
-              templatePaths: <Paths>{
-                filePath: './test/test-component',
-                relativePath: './test/test-component',
-              },
-              card: {
-                message: 'Hello!',
-              } as any,
+              cards: [
+                {
+                  message: 'Goodbye!',
+                } as any,
+                {
+                  message: 'Hello!',
+                } as any,
+              ],
             },
           ],
         ),
@@ -65,10 +61,8 @@ describe('ReactLayout', () => {
 
       const expectedLayouts = [
         {
-          templatePaths: <Paths>{
-            filePath: './test/test-component',
-            relativePath: './test/test-component',
-          },
+          template: './test/test-component',
+
           card: {
             message: 'Goodbye!',
           },
@@ -77,10 +71,7 @@ describe('ReactLayout', () => {
           format: 'html',
         },
         {
-          templatePaths: <Paths>{
-            filePath: './test/test-component',
-            relativePath: './test/test-component',
-          },
+          template: './test/test-component',
           card: {
             message: 'Hello!',
           },
@@ -118,16 +109,18 @@ describe('ReactLayout', () => {
                 filePath: './does-not-exist-component',
                 relativePath: './does-not-exist-component',
               },
-              card: {} as any,
+              cards: [{} as any],
             },
             <NeedsLayout>{
               templatePaths: <Paths>{
                 filePath: './test/test-component',
                 relativePath: './test/test-component',
               },
-              card: {
-                message: 'Hello!',
-              } as any,
+              cards: [
+                {
+                  message: 'Hello!',
+                } as any,
+              ],
             },
           ],
         ),
@@ -136,10 +129,7 @@ describe('ReactLayout', () => {
 
       const expectedLayouts = [
         {
-          templatePaths: <Paths>{
-            filePath: './test/test-component',
-            relativePath: './test/test-component',
-          },
+          template: './test/test-component',
           card: {
             message: 'Hello!',
           },

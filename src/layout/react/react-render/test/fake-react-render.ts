@@ -1,19 +1,19 @@
 import crypto from 'crypto';
 import fsPromises from 'fs/promises';
 import path from 'path';
-import { Observable, from, map, mergeMap, of } from 'rxjs';
+import { Observable, from, map, mergeMap, toArray } from 'rxjs';
 import { ReactRender } from '..';
+import { LayoutResult } from '../../..';
+import { Card } from '../../../../cards';
 
 export const render: ReactRender = (
   templatePath: string,
-  data: any,
-): Observable<string> => {
-  const hash = crypto
-    .createHash('sha256')
-    .update(JSON.stringify(data))
-    .digest('hex');
-
-  return of(hash).pipe(
+  cards: Card[],
+): Observable<LayoutResult[]> => {
+  return from(cards).pipe(
+    map((card) =>
+      crypto.createHash('sha256').update(JSON.stringify(card)).digest('hex'),
+    ),
     mergeMap((hash) =>
       from(
         fsPromises.readFile(
@@ -35,15 +35,16 @@ export const render: ReactRender = (
         throw new Error(jsonData.errorMessage);
       }
 
-      return jsonData.stdout;
+      return jsonData.stdout as LayoutResult;
     }),
+    toArray(),
   );
 };
 
 if (require.main === module) {
   const [templatePath, dataString] = process.argv.slice(2);
   const data = JSON.parse(dataString);
-  render(templatePath, data).subscribe((html) => {
-    process.stdout.write(html);
+  render(templatePath, data).subscribe((layoutResult) => {
+    process.stdout.write(JSON.stringify(layoutResult));
   });
 }

@@ -48,12 +48,9 @@ export const factory: TemplatesFactory = (
 
   return templateUpdate$.pipe(
     withLatestFrom(templateToCards$),
-    map(([templatePaths, templateToCards]) =>
-      templateToCards[templatePaths.filePath].map((card) => ({
-        templatePaths,
-        card,
-      })),
-    ),
-    mergeAll(),
+    map(([templatePaths, templateToCards]) => ({
+      templatePaths,
+      cards: templateToCards[templatePaths.filePath],
+    })),
   );
 };

@@ -36,7 +36,7 @@ describe('RawLayout', () => {
 
   it('should generate correct output', (done) => {
     const layout$ = of(<LayoutResult>{
-      templatePaths: { filePath: 'testCard' },
+      template: 'testCard',
       card: {
         name: 'testCard',
         count: '1',
@@ -71,7 +71,7 @@ describe('RawLayout', () => {
       .mockImplementation(() => {});
     const layout$ = of(
       <LayoutResult>{
-        templatePaths: { filePath: 'testCard' },
+        template: 'testCard',
         card: {
           name: 'testCard',
           count: '1',
@@ -80,7 +80,7 @@ describe('RawLayout', () => {
         format: 'testFormat',
       },
       <LayoutResult>{
-        templatePaths: { filePath: 'testCard' },
+        template: 'testCard',
         card: {
           name: 'testCard',
           count: '1',
