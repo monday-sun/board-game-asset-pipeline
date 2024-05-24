@@ -6,7 +6,7 @@ import { ReactRender } from '.';
 export const render: ReactRender = (templatePath: string, data: any) => {
   return from(import(`${templatePath}`)).pipe(
     map(({ default: Component }) => {
-      return renderToStaticMarkup(React.createElement(Component, data));
+      return renderToStaticMarkup(<Component {...data} />);
     }),
   );
 };
