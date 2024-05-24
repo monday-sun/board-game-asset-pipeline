@@ -17,6 +17,16 @@ describe('react-render', () => {
   data: { message: 'Goodbye!' },
 }}
     ${{
+  name: 'Width',
+  file: './test/test-component',
+  data: { message: 'Goodbye!', width: 100 },
+}}
+    ${{
+  name: 'Height',
+  file: './test/test-component',
+  data: { message: 'Goodbye!', height: 100 },
+}}
+    ${{
   name: 'Error',
   file: './does-not-exist-component',
   data: {},
@@ -39,8 +49,6 @@ describe('react-render', () => {
         .then((expectedResult) => {
           testSubject
             .then((result) => {
-              console.log(result);
-              console.log(expectedResult);
               expect(result.stdout).toEqual(expectedResult.stdout);
               expect(result.stderr).toEqual(expectedResult.stderr);
               done();
@@ -48,7 +56,6 @@ describe('react-render', () => {
             .catch((error) => {
               // Error should not be thrown if it wasn't expected
               expect(error).toBeFalsy();
-              console.log(error);
               done();
             });
         })
@@ -57,7 +64,6 @@ describe('react-render', () => {
             .then((result) => {
               // should not have result if error was expected
               expect(result).toBeFalsy();
-              console.log(result);
               done();
             })
             .catch((error: Error) => {
@@ -67,9 +73,6 @@ describe('react-render', () => {
               expect(error.message).toEqual(
                 expect.stringContaining(errorMessage as string),
               );
-              console.log('Error', error);
-              console.log('Expected', expectedError);
-
               done();
             });
         });
