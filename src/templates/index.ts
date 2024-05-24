@@ -1,12 +1,12 @@
 import { Observable, from, map, mergeMap, shareReplay, tap } from 'rxjs';
 import { Card } from '../cards';
 import { Deck } from '../decks';
-import { FileFactory, Paths, File } from '../file/file';
+import { File, FileFactory, Paths } from '../file/file';
 import { Arguments } from '../types';
 
 export type NeedsLayout = {
   templatePaths: Paths;
-  card: Card;
+  cards: Card[];
 };
 
 export type TemplatesFactory = (
@@ -37,12 +37,12 @@ export namespace Templates {
           File.factory(args, path, endWatch$),
         ),
       ),
-      tap(({ templatePaths, card }) =>
+      tap(({ templatePaths, cards }) =>
         console.log(
-          'Requested layout for card:',
-          card.name,
+          'Requested layout for cards:',
+          cards.map((card) => card.name).join(', '),
           'side:',
-          card.frontTemplate === templatePaths.filePath ? 'front' : 'back',
+          cards[0].frontTemplate === templatePaths.filePath ? 'front' : 'back',
         ),
       ),
       shareReplay(),

@@ -45,18 +45,14 @@ describe('ReactLayout', () => {
                 filePath: './test/test-component',
                 relativePath: './test/test-component',
               },
-              card: {
-                message: 'Goodbye!',
-              } as any,
-            },
-            <NeedsLayout>{
-              templatePaths: <Paths>{
-                filePath: './test/test-component',
-                relativePath: './test/test-component',
-              },
-              card: {
-                message: 'Hello!',
-              } as any,
+              cards: [
+                {
+                  message: 'Goodbye!',
+                } as any,
+                {
+                  message: 'Hello!',
+                } as any,
+              ],
             },
           ],
         ),
@@ -118,16 +114,18 @@ describe('ReactLayout', () => {
                 filePath: './does-not-exist-component',
                 relativePath: './does-not-exist-component',
               },
-              card: {} as any,
+              cards: [{} as any],
             },
             <NeedsLayout>{
               templatePaths: <Paths>{
                 filePath: './test/test-component',
                 relativePath: './test/test-component',
               },
-              card: {
-                message: 'Hello!',
-              } as any,
+              cards: [
+                {
+                  message: 'Hello!',
+                } as any,
+              ],
             },
           ],
         ),

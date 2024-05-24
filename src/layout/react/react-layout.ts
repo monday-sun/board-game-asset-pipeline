@@ -69,6 +69,12 @@ export const factory: LayoutFactory = (
 ): Observable<LayoutResult> => {
   return templates$.pipe(
     mergeMap((needsLayout) =>
+      needsLayout.cards.map((card) => ({
+        card,
+        templatePaths: needsLayout.templatePaths,
+      })),
+    ),
+    mergeMap((needsLayout) =>
       combineLatest([
         of(needsLayout),
         toHTML(
