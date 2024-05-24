@@ -5,6 +5,7 @@ import {
   BehaviorSubject,
   Observable,
   catchError,
+  debounceTime,
   filter,
   map,
   merge,
@@ -67,6 +68,8 @@ export namespace File {
         tap((path) => args.verbose && console.log('Watching', path)),
         mergeMap(() => watchSubject),
         filter((eventType) => eventType === 'change'),
+        // When watching, add debounce to prevent overrending if file is autosaved.
+        debounceTime(args.watch ? 1000 : 0),
         tap((info) => args.verbose && console.log('Watch info:', info)),
         map(() => paths),
         takeUntil(endWatch$),

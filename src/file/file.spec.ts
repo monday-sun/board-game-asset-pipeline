@@ -40,9 +40,8 @@ describe('File', () => {
     });
   });
 
-  it('should emit twice when watch is true and call watch', (done) => {
+  it('should emit once when watch is true and call watch', (done) => {
     const expectedEmits = [
-      { filePath: 'file1', relativePath: path.join(process.cwd(), 'file1') },
       { filePath: 'file1', relativePath: path.join(process.cwd(), 'file1') },
     ];
 
@@ -64,9 +63,8 @@ describe('File', () => {
     endWatch$.next(true);
   });
 
-  it('should emit three times when watching and file changes', (done) => {
+  it('should emit twice when watching and file changes after a delay', (done) => {
     const expectedEmits = [
-      { filePath: 'file1', relativePath: path.join(process.cwd(), 'file1') },
       { filePath: 'file1', relativePath: path.join(process.cwd(), 'file1') },
       { filePath: 'file1', relativePath: path.join(process.cwd(), 'file1') },
     ];
@@ -85,13 +83,14 @@ describe('File', () => {
       },
     });
 
-    watchCallBack('change', 'file1');
-    endWatch$.next(true);
+    setTimeout(() => {
+      watchCallBack('change', 'file1');
+      endWatch$.next(true);
+    }, 1500);
   });
 
   it('should watch once with multiple subscribers', (done) => {
     const expectedEmits = [
-      { filePath: 'file1', relativePath: path.join(process.cwd(), 'file1') },
       { filePath: 'file1', relativePath: path.join(process.cwd(), 'file1') },
       { filePath: 'file1', relativePath: path.join(process.cwd(), 'file1') },
     ];
@@ -111,7 +110,9 @@ describe('File', () => {
       },
     });
 
-    watchCallBack('change', 'file1');
-    endWatch$.next(true);
+    setTimeout(() => {
+      watchCallBack('change', 'file1');
+      endWatch$.next(true);
+    }, 1500);
   });
 });
