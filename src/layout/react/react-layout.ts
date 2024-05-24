@@ -1,8 +1,8 @@
 import path from 'path';
 import {
   Observable,
+  OperatorFunction,
   catchError,
-  combineLatest,
   filter,
   from,
   map,
@@ -19,7 +19,7 @@ function executeInThisProcess(
   templatePath: string,
   data: Record<string, string>,
   renderPath: string,
-): Observable<string> {
+): Observable<LayoutResult> {
   return from(import('./react-render/' + renderPath)).pipe(
     map(({ render }) => render as ReactRender),
     mergeMap((render) => render(templatePath, data)),
@@ -30,7 +30,7 @@ function executeInChildProcess(
   templatePath: string,
   data: Record<string, string>,
   renderPath: string,
-): Observable<string> {
+): Observable<LayoutResult> {
   return from(import('child_process')).pipe(
     map(({ execFileSync }) =>
       execFileSync('ts-node', [
@@ -40,6 +40,7 @@ function executeInChildProcess(
       ]),
     ),
     map((buffer) => buffer.toString()),
+    map((json) => JSON.parse(json) as LayoutResult),
   );
 }
 
@@ -48,7 +49,7 @@ function toHTML(
   data: Record<string, string>,
   process: 'this' | 'child',
   renderPath: string,
-): Observable<string> {
+): Observable<LayoutResult> {
   const layoutPipeline =
     process === 'this'
       ? executeInThisProcess(templatePath, data, renderPath)
@@ -56,8 +57,12 @@ function toHTML(
   return layoutPipeline.pipe(
     catchError((error) => {
       console.error('Error rendering React layout', error);
-      return of('');
+      return of(undefined);
     }),
+    filter((layout) => !!layout) as OperatorFunction<
+      LayoutResult | undefined,
+      LayoutResult
+    >,
   );
 }
 
@@ -75,22 +80,12 @@ export const factory: LayoutFactory = (
       })),
     ),
     mergeMap((needsLayout) =>
-      combineLatest([
-        of(needsLayout),
-        toHTML(
-          needsLayout.templatePaths.relativePath,
-          needsLayout.card,
-          args.watch ? 'child' : 'this',
-          reactRenderPath,
-        ),
-      ]),
+      toHTML(
+        needsLayout.templatePaths.relativePath,
+        needsLayout.card,
+        args.watch ? 'child' : 'this',
+        reactRenderPath,
+      ),
     ),
-    filter(([_, html]) => !!html),
-    map(([{ templatePaths, card }, layout]) => ({
-      template: templatePaths.filePath,
-      card,
-      layout,
-      format: 'html',
-    })),
   );
 };

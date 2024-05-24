@@ -1,4 +1,9 @@
 {
-  "stdout": "<html><head><style>body { width: fit-content; height: fit-content; }</style></head><body><div class=\"test_component\">Hello!</div></body></html>",
-  "stderr": ""
+  "stderr": "",
+  "stdout": {
+    "template": "./test/test-component",
+    "card": { "message": "Hello!" },
+    "layout": "<html><head><style>body { width: fit-content; height: fit-content; }</style></head><body><div class=\"test_component\">Hello!</div></body></html>",
+    "format": "html"
+  }
 }
