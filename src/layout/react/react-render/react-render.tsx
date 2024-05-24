@@ -1,25 +1,27 @@
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { from, map } from 'rxjs';
+import { OperatorFunction, catchError, filter, from, map, mergeMap, of, toArray } from 'rxjs';
 import { ReactRender } from '.';
 import { Card } from '../../../cards';
+import { LayoutResult } from '../..';
 
 export const render: ReactRender = (
   template: string,
-  card: {
+  cards: ({
     width?: number | string;
     height?: number | string;
-  } & Card,
+  } & Card)[],
 ) => {
   return from(import(`${template}`)).pipe(
-    map(({ default: Component }) => {
+    mergeMap((template) => cards.map((card) => ({ ...template, card }))),
+    map(({ default: Component, card }) => {
       const { width, height } = card;
 
       const bodyStyle = `body {
         width: ${width || 'fit-content'};
         height: ${height || 'fit-content'};
       }`;
-      return renderToStaticMarkup(
+      const layout = renderToStaticMarkup(
         <html>
           <head>
             <style>{bodyStyle}</style>
@@ -29,9 +31,23 @@ export const render: ReactRender = (
           </body>
         </html>,
       );
+      return { template, card, layout, format: 'html' };
     }),
-    map((html) => html.replace(/(\r\n|\n|\r)/gm, '').replace(/\s+/g, ' ')),
-    map((layout) => ({ template, card, layout, format: 'html' })),
+    catchError((error) => {
+      console.error(error);
+      return of(undefined);
+    }),
+    filter((layoutResult) => layoutResult !== undefined) as OperatorFunction<
+      LayoutResult | undefined,
+      LayoutResult
+    >,
+    map((layoutResult) => ({
+      ...layoutResult,
+      layout: layoutResult.layout
+        .replace(/(\r\n|\n|\r)/gm, '')
+        .replace(/\s+/g, ' '),
+    })),
+    toArray(),
   );
 };
 

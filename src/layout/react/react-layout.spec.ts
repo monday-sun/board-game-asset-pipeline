@@ -62,6 +62,7 @@ describe('ReactLayout', () => {
       const expectedLayouts = [
         {
           template: './test/test-component',
+
           card: {
             message: 'Goodbye!',
           },

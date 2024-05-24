@@ -7,29 +7,19 @@ describe('react-render', () => {
   it.each`
     case
     ${{
-  name: 'Hello',
+  name: 'Card Only',
   file: './test/test-component',
-  data: { message: 'Hello!' },
+  data: [{ message: 'Hello!' }, { message: 'Goodbye!' }],
 }}
     ${{
-  name: 'Goodbye',
+  name: 'Width and Height',
   file: './test/test-component',
-  data: { message: 'Goodbye!' },
-}}
-    ${{
-  name: 'Width',
-  file: './test/test-component',
-  data: { message: 'Goodbye!', width: 100 },
-}}
-    ${{
-  name: 'Height',
-  file: './test/test-component',
-  data: { message: 'Goodbye!', height: 100 },
+  data: [{ message: 'Goodbye!', width: 100 }, { message: 'Goodbye!', height: 100 }],
 }}
     ${{
   name: 'Error',
   file: './does-not-exist-component',
-  data: {},
+  data: [{}],
 }}
   `(
     'should load $case.name',
