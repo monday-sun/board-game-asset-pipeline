@@ -34,17 +34,6 @@ decks$.subscribe({
 process.on('SIGINT', () => {
   console.log('SIGINT signal received. Closing gracefully.');
   endDecksWatch$.next(true);
-  if (complete) {
-    process.exit(0);
-  } else {
-    decks$.subscribe({
-      complete: () => process.exit(0),
-      error: (err) => {
-        console.error(err);
-        process.exit(1);
-      },
-    });
-  }
 });
 
 function pollUntilComplete() {
