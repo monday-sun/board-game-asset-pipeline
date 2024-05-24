@@ -43,8 +43,6 @@ export const factory: TemplatesFactory = (
     map((templateToCards) => Object.keys(templateToCards)),
     mergeAll(),
     map((template) => fileFactory(args, template)),
-    // When watching, add debounce to prevent overrending if file is autosaved.
-    debounceTime(args.watch ? 1000 : 0),
     mergeAll(),
   );
 
