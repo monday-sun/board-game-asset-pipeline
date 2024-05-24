@@ -50,7 +50,7 @@ function toRenderInfo(
         cardName: layoutResult.card.name,
         suffix:
           layoutResult.card.frontTemplate ===
-          layoutResult.templatePaths.filePath
+          layoutResult.template
             ? 'front'
             : 'back',
       },

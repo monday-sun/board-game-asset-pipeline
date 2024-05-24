@@ -87,7 +87,7 @@ export const factory: LayoutFactory = (
     ),
     filter(([_, html]) => !!html),
     map(([{ templatePaths, card }, layout]) => ({
-      templatePaths,
+      template: templatePaths.filePath,
       card,
       layout,
       format: 'html',

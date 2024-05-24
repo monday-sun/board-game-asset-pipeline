@@ -40,7 +40,7 @@ describe('nodeIndividualCard)imageRender', () => {
 
   it('should generate correct output', (done) => {
     const layout$ = of(<LayoutResult>{
-      templatePaths: { filePath: 'testCard' },
+      template: 'testCard',
       card: {
         name: 'testCard',
         count: '1',
@@ -75,7 +75,7 @@ describe('nodeIndividualCard)imageRender', () => {
       .mockImplementation(() => {});
     const layout$ = of(
       <LayoutResult>{
-        templatePaths: { filePath: 'testCard' },
+        template: 'testCard',
         card: {
           name: 'testCard',
           count: '1',
@@ -84,7 +84,7 @@ describe('nodeIndividualCard)imageRender', () => {
         format: 'testFormat',
       },
       <LayoutResult>{
-        templatePaths: { filePath: 'testCard' },
+        template: 'testCard',
         card: {
           name: 'testCard',
           count: '1',

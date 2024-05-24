@@ -27,9 +27,7 @@ export const factory: OutputFactory = (
         outputPath: outputPath,
         cardName: result.card.name,
         suffix:
-          result.card.frontTemplate === result.templatePaths.filePath
-            ? 'front'
-            : 'back',
+          result.card.frontTemplate === result.template ? 'front' : 'back',
         format: result.format,
       }),
       format: result.format,
