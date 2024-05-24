@@ -3,6 +3,7 @@ import { Observable, catchError, filter, from, map, mergeMap, of } from 'rxjs';
 import { LayoutFactory, LayoutResult } from '..';
 import { Card } from '../../cards';
 import { Deck } from '../../decks';
+import { Paths } from '../../file/file';
 import { NeedsLayout } from '../../templates';
 import { Arguments } from '../../types';
 import { ReactRender } from './react-render';
@@ -37,21 +38,28 @@ function executeInChildProcess(
 }
 
 function toHTML(
-  templatePath: string,
+  templatePaths: Paths,
   cards: Card[],
   process: 'this' | 'child',
   renderPath: string,
-): Observable<LayoutResult[]> {
+): Observable<LayoutResult> {
   const layoutPipeline =
     process === 'this'
-      ? executeInThisProcess(templatePath, cards, renderPath)
-      : executeInChildProcess(templatePath, cards, renderPath);
+      ? executeInThisProcess(templatePaths.relativePath, cards, renderPath)
+      : executeInChildProcess(templatePaths.relativePath, cards, renderPath);
   return layoutPipeline.pipe(
     catchError((error) => {
       console.error('Error rendering React layout', error);
       return of([]);
     }),
     filter((layoutResults) => layoutResults.length > 0),
+    map((layoutResults) =>
+      layoutResults.map((layoutResult) => ({
+        ...layoutResult,
+        template: templatePaths.filePath,
+      })),
+    ),
+    mergeMap((layoutResults) => from(layoutResults)),
   );
 }
 
@@ -64,12 +72,11 @@ export const factory: LayoutFactory = (
   return templates$.pipe(
     mergeMap((needsLayout) =>
       toHTML(
-        needsLayout.templatePaths.relativePath,
+        needsLayout.templatePaths,
         needsLayout.cards,
         args.watch ? 'child' : 'this',
         reactRenderPath,
       ),
     ),
-    mergeMap((layoutResults) => from(layoutResults)),
   );
 };
