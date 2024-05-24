@@ -72,7 +72,8 @@ describe('ReactLayout', () => {
           card: {
             message: 'Goodbye!',
           },
-          layout: '<div>Goodbye!</div>',
+          layout:
+            '<html><head><style>body { width: fit-content; height: fit-content; }</style></head><body><div class="test_component">Goodbye!</div></body></html>',
           format: 'html',
         },
         {
@@ -83,7 +84,8 @@ describe('ReactLayout', () => {
           card: {
             message: 'Hello!',
           },
-          layout: '<div>Hello!</div>',
+          layout:
+            '<html><head><style>body { width: fit-content; height: fit-content; }</style></head><body><div class="test_component">Hello!</div></body></html>',
           format: 'html',
         },
       ];
@@ -141,7 +143,8 @@ describe('ReactLayout', () => {
           card: {
             message: 'Hello!',
           },
-          layout: '<div>Hello!</div>',
+          layout:
+            '<html><head><style>body { width: fit-content; height: fit-content; }</style></head><body><div class="test_component">Hello!</div></body></html>',
           format: 'html',
         },
       ];

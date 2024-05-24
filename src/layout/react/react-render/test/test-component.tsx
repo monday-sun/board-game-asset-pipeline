@@ -1,7 +1,7 @@
 import React from 'react';
 
 const TestComponent = ({ message }: { message: string }) => (
-  <div>{message}</div>
+  <div className="test_component">{message}</div>
 );
 
 export default TestComponent;

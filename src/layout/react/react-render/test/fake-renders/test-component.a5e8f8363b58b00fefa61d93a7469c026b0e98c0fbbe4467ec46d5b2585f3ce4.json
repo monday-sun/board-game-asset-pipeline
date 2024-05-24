@@ -1,4 +1,4 @@
 {
-  "stdout": "<div>Goodbye!</div>",
+  "stdout": "<html><head><style>body { width: fit-content; height: fit-content; }</style></head><body><div class=\"test_component\">Goodbye!</div></body></html>",
   "stderr": ""
 }
