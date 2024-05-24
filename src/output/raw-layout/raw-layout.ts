@@ -1,6 +1,7 @@
 import fs from 'fs';
 import fsPromises from 'fs/promises';
 import path from 'path';
+import * as prettier from 'prettier';
 import { Observable, catchError, filter, from, map, mergeMap, of } from 'rxjs';
 import { OutputFactory } from '..';
 import { OutputConfig } from '../../decks';
@@ -31,8 +32,18 @@ export const factory: OutputFactory = (
             : 'back',
         format: result.format,
       }),
+      format: result.format,
       layout: result.layout,
     })),
+    mergeMap(({ outputPath, format, layout: originalLayout }) =>
+      from(prettier.format(originalLayout, { parser: format })).pipe(
+        catchError((error) => {
+          console.error('Error formatting layout', error);
+          return of(originalLayout);
+        }),
+        map((prettierLayout) => ({ outputPath, layout: prettierLayout })),
+      ),
+    ),
     mergeMap(({ outputPath, layout }) =>
       from(fsPromises.writeFile(outputPath, layout)).pipe(
         map(() => [outputPath]),
